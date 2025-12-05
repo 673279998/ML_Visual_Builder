@@ -1,222 +1,221 @@
-# ML Visual Builder - 机器学习可视化平台
+# ML Visual Builder - Machine Learning Visual Platform
 
-## 🚀 项目概述
+## 🚀 Project Overview
 
-ML Visual Builder 是一个基于 Web 的机器学习可视化平台，通过拖拽式界面让用户无需编写代码即可构建、训练和部署机器学习模型。平台集成了数据预处理、特征工程、模型训练、超参数调优和结果可视化等完整机器学习流程。
+ML Visual Builder is a web-based machine learning visual platform that allows users to build, train, and deploy machine learning models without writing code through a drag-and-drop interface. The platform integrates complete machine learning workflows including data preprocessing, feature engineering, model training, hyperparameter tuning, and result visualization.
 
-## ✨ 核心功能
+## ✨ Core Features
 
-### 📊 数据管理
-- **多格式支持**: CSV、Excel、JSON 等常见数据格式导入
-- **数据预览**: 实时查看数据结构和统计信息
-- **数据清洗**: 缺失值处理、异常值检测、数据标准化
-- **特征工程**: 特征选择、特征变换、特征编码
+### 📊 Data Management
+- **Multi-format Support**: Import common data formats like CSV, Excel, JSON
+- **Data Preview**: Real-time viewing of data structure and statistical information
+- **Data Cleaning**: Missing value handling, outlier detection, data standardization
+- **Feature Engineering**: Feature selection, feature transformation, feature encoding
 
-### 🧩 可视化工作流
-- **拖拽式构建**: 通过画布拖拽组件构建机器学习流程
-- **节点化设计**: 数据节点、预处理节点、算法节点、评估节点
-- **流程可视化**: 实时展示数据处理和模型训练流程
-- **工作流管理**: 保存、加载、分享工作流配置
+### 🧩 Visual Workflow
+- **Drag-and-Drop Construction**: Build machine learning workflows by dragging components onto canvas
+- **Node-based Design**: Data nodes, preprocessing nodes, algorithm nodes, evaluation nodes
+- **Process Visualization**: Real-time display of data processing and model training workflows
+- **Workflow Management**: Save, load, and share workflow configurations
 
-### 🤖 算法库
+### 🤖 Algorithm Library
 
-#### 分类算法
-- **逻辑回归** (Logistic Regression) - 经典的线性分类模型
-- **决策树分类器** (Decision Tree Classifier) - 基于树结构的分类算法
-- **随机森林分类器** (Random Forest Classifier) - 集成学习，多棵决策树组合
-- **支持向量机分类器** (SVM Classifier) - 基于最大间隔的分类算法
-- **K近邻分类器** (KNN Classifier) - 基于距离度量的分类算法
-- **朴素贝叶斯分类器** (Naive Bayes Classifier) - 基于贝叶斯定理的概率分类
-- **梯度提升分类器** (Gradient Boosting Classifier) - 集成学习，逐步优化
-- **多层感知器分类器** (MLP Classifier) - 神经网络分类器
-- **XGBoost分类器** (XGBoost Classifier) - 优化的梯度提升算法
-- **LightGBM分类器** (LightGBM Classifier) - 微软开发的梯度提升框架
-- **CatBoost分类器** (CatBoost Classifier) - 处理类别特征的梯度提升算法
+#### Classification Algorithms
+- **Logistic Regression** - Classic linear classification model
+- **Decision Tree Classifier** - Tree-based classification algorithm
+- **Random Forest Classifier** - Ensemble learning with multiple decision trees
+- **SVM Classifier** - Classification algorithm based on maximum margin
+- **KNN Classifier** - Distance-based classification algorithm
+- **Naive Bayes Classifier** - Probabilistic classification based on Bayes theorem
+- **Gradient Boosting Classifier** - Ensemble learning with sequential optimization
+- **MLP Classifier** - Neural network classifier
+- **XGBoost Classifier** - Optimized gradient boosting algorithm
+- **LightGBM Classifier** - Gradient boosting framework developed by Microsoft
+- **CatBoost Classifier** - Gradient boosting algorithm for categorical features
 
-#### 回归算法
-- **线性回归** (Linear Regression) - 基础的线性回归模型
-- **岭回归** (Ridge Regression) - L2正则化的线性回归
-- **Lasso回归** (Lasso Regression) - L1正则化的线性回归
-- **弹性网络回归** (ElasticNet Regression) - L1+L2正则化的线性回归
-- **决策树回归器** (Decision Tree Regressor) - 基于树结构的回归算法
-- **随机森林回归器** (Random Forest Regressor) - 集成学习的回归算法
-- **梯度提升回归器** (Gradient Boosting Regressor) - 集成学习的回归算法
-- **支持向量回归器** (SVR) - 基于支持向量机的回归算法
-- **多层感知器回归器** (MLP Regressor) - 神经网络回归器
-- **XGBoost回归器** (XGBoost Regressor) - 优化的梯度提升回归
-- **LightGBM回归器** (LightGBM Regressor) - 微软开发的梯度提升回归
+#### Regression Algorithms
+- **Linear Regression** - Basic linear regression model
+- **Ridge Regression** - L2-regularized linear regression
+- **Lasso Regression** - L1-regularized linear regression
+- **ElasticNet Regression** - L1+L2 regularized linear regression
+- **Decision Tree Regressor** - Tree-based regression algorithm
+- **Random Forest Regressor** - Ensemble learning regression algorithm
+- **Gradient Boosting Regressor** - Ensemble learning regression algorithm
+- **Support Vector Regressor (SVR)** - SVM-based regression algorithm
+- **MLP Regressor** - Neural network regressor
+- **XGBoost Regressor** - Optimized gradient boosting regression
+- **LightGBM Regressor** - Microsoft's gradient boosting regression
 
-#### 聚类算法
-- **K均值聚类** (K-Means Clustering) - 基于距离的经典聚类算法
-- **DBSCAN聚类** (DBSCAN Clustering) - 基于密度的聚类算法
-- **高斯混合模型** (GMM Clustering) - 基于概率分布的聚类算法
-- **层次聚类** (Hierarchical Clustering) - 构建聚类层次结构
-- **谱聚类** (Spectral Clustering) - 基于图论的聚类算法
+#### Clustering Algorithms
+- **K-Means Clustering** - Classic distance-based clustering algorithm
+- **DBSCAN Clustering** - Density-based clustering algorithm
+- **Gaussian Mixture Model (GMM)** - Probability distribution-based clustering
+- **Hierarchical Clustering** - Builds clustering hierarchy
+- **Spectral Clustering** - Graph theory-based clustering algorithm
 
-#### 降维算法
-- **主成分分析** (PCA) - 线性降维，最大化方差
-- **线性判别分析** (LDA) - 有监督的线性降维
-- **t-SNE降维** (t-SNE) - 非线性降维，保持局部结构
-- **UMAP降维** (UMAP) - 非线性降维，保持全局和局部结构
+#### Dimensionality Reduction Algorithms
+- **Principal Component Analysis (PCA)** - Linear dimensionality reduction maximizing variance
+- **Linear Discriminant Analysis (LDA)** - Supervised linear dimensionality reduction
+- **t-SNE** - Non-linear dimensionality reduction preserving local structure
+- **UMAP** - Non-linear dimensionality reduction preserving global and local structure
 
-### ⚙️ 模型训练与调优
-- **自动超参数调优**: 网格搜索、随机搜索、贝叶斯优化
-- **交叉验证**: K折交叉验证、留一法验证
-- **模型评估**: 准确率、精确率、召回率、F1分数、AUC、RMSE、MAE 等指标
-- **模型持久化**: 训练好的模型可保存为文件或数据库存储
+### ⚙️ Model Training & Tuning
+- **Automatic Hyperparameter Tuning**: Grid search, random search, Bayesian optimization
+- **Cross-Validation**: K-fold cross-validation, leave-one-out validation
+- **Model Evaluation**: Accuracy, precision, recall, F1-score, AUC, RMSE, MAE, and other metrics
+- **Model Persistence**: Trained models can be saved as files or stored in database
 
-### 📈 结果可视化
-- **训练过程可视化**: 损失曲线、准确率曲线、特征重要性
-- **预测结果可视化**: 混淆矩阵、ROC曲线、残差图、聚类结果可视化
-- **交互式图表**: 支持缩放、平移、数据点查看
-- **报告生成**: 自动生成模型评估报告
+### 📈 Result Visualization
+- **Training Process Visualization**: Loss curves, accuracy curves, feature importance
+- **Prediction Result Visualization**: Confusion matrices, ROC curves, residual plots, clustering results
+- **Interactive Charts**: Support zooming, panning, data point inspection
+- **Report Generation**: Automatic generation of model evaluation reports
 
-## 🎯 项目特色
+## 🎯 Project Highlights
 
-### 🎨 用户友好界面
-- **零代码操作**: 无需编程经验，通过可视化界面完成机器学习任务
-- **直观设计**: 简洁明了的界面设计，降低学习成本
-- **实时反馈**: 操作过程中实时显示处理结果和状态
+### 🎨 User-Friendly Interface
+- **Zero-Code Operation**: Complete machine learning tasks through visual interface without programming experience
+- **Intuitive Design**: Clean and clear interface design reduces learning curve
+- **Real-time Feedback**: Real-time display of processing results and status during operations
 
-## 🚀 快速开始
+## 🚀 Quick Start
 
-### 环境要求
-- Python 3.10 或更高版本
-- Windows/macOS/Linux 操作系统
-- 4GB 以上内存（推荐8GB）
-- 2GB 以上可用磁盘空间
+### Environment Requirements
+- Python 3.10 or higher
+- Windows/macOS/Linux operating system
+- 4GB+ RAM (8GB recommended)
+- 2GB+ available disk space
 
-### 安装步骤
+### Installation Steps
 
-#### 方法一：使用启动脚本（推荐）
-1. 克隆或下载项目到本地
-2. 双击运行 `start.bat`（Windows）或执行 `./start.sh`（Linux/macOS）
-3. 脚本会自动：
-   - 检查 Python 环境
-   - 安装 uv 包管理器
-   - 创建虚拟环境
-   - 安装所有依赖
-   - 初始化数据库
-   - 启动 Flask 服务器
+#### Method 1: Using Startup Script (Recommended)
+1. Clone or download the project locally
+2. Double-click `start.bat` (Windows) or execute `./start.sh` (Linux/macOS)
+3. The script will automatically:
+   - Check Python environment
+   - Install uv package manager
+   - Create virtual environment
+   - Install all dependencies
+   - Initialize database
+   - Start Flask server
 
-#### 方法二：手动安装
+#### Method 2: Manual Installation
 ```bash
-# 1. 克隆项目
+# 1. Clone the project
 git clone https://github.com/673279998/ML_Visual_Builder.git
 cd ML_Visual_Builder
 
-# 2. 创建虚拟环境
+# 2. Create virtual environment
 python -m venv .venv
 
-# 3. 激活虚拟环境
+# 3. Activate virtual environment
 # Windows:
 .venv\Scripts\activate
 # Linux/macOS:
 source .venv/bin/activate
 
-# 4. 安装依赖
+# 4. Install dependencies
 pip install -r requirements.txt
 
-# 5. 初始化数据库
+# 5. Initialize database
 python backend/database/models.py
 
-# 6. 启动服务器
+# 6. Start server
 cd backend
 python app.py
 ```
 
-### 运行平台
-1. 启动成功后，在浏览器中访问：`http://localhost:5000`
-2. 平台主界面包含以下功能模块：
-   - **工作流**: 拖拽式构建机器学习流程
-   - **数据管理**: 导入、查看、处理数据
-   - **模型管理**: 查看已训练的模型
-   - **模型预测**: 使用训练好的模型进行预测
+### Running the Platform
+1. After successful startup, access in browser: `http://localhost:5000`
+2. The platform main interface includes:
+   - **Workflow**: Drag-and-drop machine learning workflow construction
+   - **Data Management**: Import, view, process data
+   - **Model Management**: View trained models
+   - **Model Prediction**: Use trained models for prediction
 
-## 📖 使用指南
+## 📖 User Guide
 
-### 1. 数据导入
-- 点击"数据管理"页面
-- 选择"导入数据"按钮
-- 上传 CSV、Excel 或 JSON 文件
-- 预览数据并确认导入
+### 1. Data Import
+- Click "Data Management" page
+- Select "Import Data" button
+- Upload CSV, Excel, or JSON files
+- Preview data and confirm import
 
-### 2. 创建工作流
-- 进入"工作流"页面
-- 从左侧工具栏拖拽组件到画布：
-  - **数据源**: 选择已导入的数据集
-  - **预处理**: 数据清洗、特征工程
-  - **算法**: 选择机器学习算法
-  - **评估**: 模型评估指标
-- 连接组件构建完整流程
+### 2. Create Workflow
+- Go to "Workflow" page
+- Drag components from left toolbar to canvas:
+  - **Data Source**: Select imported datasets
+  - **Preprocessing**: Data cleaning, feature engineering
+  - **Algorithm**: Select machine learning algorithms
+  - **Evaluation**: Model evaluation metrics
+- Connect components to build complete workflow
 
-### 3. 模型训练
-- 配置算法参数
-- 设置训练/测试集划分比例
-- 点击"执行"按钮开始训练
-- 实时查看训练进度和结果
+### 3. Model Training
+- Configure algorithm parameters
+- Set train/test split ratio
+- Click "Execute" button to start training
+- View training progress and results in real-time
 
-### 4. 结果分析
-- 查看模型评估指标
-- 分析可视化图表
-- 保存训练好的模型
-- 导出评估报告
+### 4. Result Analysis
+- View model evaluation metrics
+- Analyze visualization charts
+- Save trained models
+- Export evaluation reports
 
-## 🏗️ 项目结构
+## 🏗️ Project Structure
 
 ```
 ML_Visual_Builder/
-├── backend/                    # 后端代码
-│   ├── algorithms/            # 算法实现
-│   │   ├── classification/    # 分类算法
-│   │   ├── regression/        # 回归算法
-│   │   ├── clustering/        # 聚类算法
-│   │   └── dimensionality_reduction/ # 降维算法
-│   ├── database/              # 数据库管理
-│   ├── encoding/              # 特征编码
-│   ├── hyperparameter/        # 超参数调优
-│   ├── result_generators/     # 结果生成器
-│   ├── routes/                # API路由
-│   ├── services/              # 业务服务
-│   └── utils/                 # 工具函数
-├── frontend/                  # 前端代码
-│   ├── css/                   # 样式文件
-│   ├── js/                    # JavaScript代码
-│   │   ├── workflow/          # 工作流相关
-│   │   ├── visualization/     # 可视化
-│   │   └── utils/             # 工具函数
-│   └── assets/                # 静态资源
-├── requirements.txt           # Python依赖
-├── start.bat                  # Windows启动脚本
-└── README.md                  # 项目说明文档
+├── backend/                    # Backend code
+│   ├── algorithms/            # Algorithm implementations
+│   │   ├── classification/    # Classification algorithms
+│   │   ├── regression/        # Regression algorithms
+│   │   ├── clustering/        # Clustering algorithms
+│   │   └── dimensionality_reduction/ # Dimensionality reduction algorithms
+│   ├── database/              # Database management
+│   ├── encoding/              # Feature encoding
+│   ├── hyperparameter/        # Hyperparameter tuning
+│   ├── result_generators/     # Result generators
+│   ├── routes/                # API routes
+│   ├── services/              # Business services
+│   └── utils/                 # Utility functions
+├── frontend/                  # Frontend code
+│   ├── css/                   # Style files
+│   ├── js/                    # JavaScript code
+│   │   ├── workflow/          # Workflow related
+│   │   ├── visualization/     # Visualization
+│   │   └── utils/             # Utility functions
+│   └── assets/                # Static resources
+├── requirements.txt           # Python dependencies
+├── start.bat                  # Windows startup script
+├── README.md                  # English documentation
+└── README_CN.md               # Chinese documentation
 ```
 
+## 🤝 Contributing
 
+We welcome contributions! Please follow these steps:
 
-## 🤝 贡献指南
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-欢迎贡献代码！请遵循以下步骤：
+## 📄 License
 
-1. Fork 本仓库
-2. 创建功能分支 (`git checkout -b feature/AmazingFeature`)
-3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
-4. 推送到分支 (`git push origin feature/AmazingFeature`)
-5. 开启 Pull Request
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
 
-## 📄 许可证
+## 📞 Support & Feedback
 
-本项目采用 MIT 许可证 - 查看 [LICENSE](LICENSE) 文件了解详情
+- **Issue Reporting**: Please submit issues on GitHub Issues
+- **Feature Suggestions**: Welcome to suggest improvements
+- **Technical Discussion**: Technical discussions can be conducted through Issues
 
-## 📞 支持与反馈
+## 🌟 Acknowledgments
 
-- **问题反馈**: 请在 GitHub Issues 中提交问题
-- **功能建议**: 欢迎提出改进建议
-- **技术讨论**: 可通过 Issues 进行技术讨论
-
-## 🌟 致谢
-
-感谢所有为项目做出贡献的开发者！
+Thanks to all developers who contributed to the project!
 
 ---
 
-**开始你的机器学习之旅吧！无需编程，轻松构建智能模型。**
+**Start your machine learning journey! No coding required, build intelligent models easily.**
