@@ -10,6 +10,7 @@ import joblib
 from datetime import datetime
 import logging
 from pathlib import Path
+import json
 from sklearn.preprocessing import LabelEncoder
 
 from backend.config import MODELS_DIR, PREDICTIONS_DIR
@@ -235,110 +236,151 @@ class PredictionService:
         }
     
     def _apply_preprocessing(self, data: pd.DataFrame, components: List[Dict]) -> pd.DataFrame:
-        """应用预处理组件"""
         df = data.copy()
-        
-        # 自动处理日期列
         preprocessor = PreprocessingService()
         df = preprocessor._handle_datetime_columns(df)
-        
-        # 按顺序应用组件
-        # 组件列表应当已经按照 Imputer -> Encoder -> Scaler 的顺序排列
-        for comp in components:
-            c_type = comp['component_type']
+
+        order_map = {'imputer': 0, 'encoder': 1, 'scaler': 2}
+        components_sorted = sorted(components, key=lambda c: order_map.get(c.get('component_type'), 99))
+
+        encoders = [c for c in components_sorted if c.get('component_type') == 'encoder']
+        imputers = [c for c in components_sorted if c.get('component_type') == 'imputer']
+        scalers = [c for c in components_sorted if c.get('component_type') == 'scaler']
+
+        for comp in imputers:
             c_path = comp['file_path']
             c_cols = comp['applied_columns']
-            c_config = comp['configuration']
-            
-            # 处理相对路径
             if c_path and not os.path.isabs(c_path):
                 from backend.config import BASE_DIR
                 c_path = os.path.join(BASE_DIR, c_path)
-            
             if not c_path or not os.path.exists(c_path):
-                error_msg = f"预处理组件文件不存在: {c_path} (组件: {comp.get('component_name')})"
-                logger.error(error_msg)
-                raise FileNotFoundError(error_msg)
-                
+                logger.error(f"预处理组件文件不存在: {c_path} (组件: {comp.get('component_name')})")
+                raise FileNotFoundError(f"预处理组件文件不存在: {c_path}")
+            try:
+                transformer = joblib.load(c_path)
+                missing_cols = [c for c in c_cols if c not in df.columns]
+                if missing_cols:
+                    logger.warning(f"组件 {comp['component_name']} 缺少输入列: {missing_cols}")
+                    continue
+                data_part = df[c_cols]
+                transformed = transformer.transform(data_part)
+                df[c_cols] = transformed
+            except Exception as e:
+                logger.error(f"应用预处理组件 {comp['component_name']} 失败: {str(e)}")
+
+        # 先应用编码器，因为编码器可能会创建新列
+        for comp in encoders:
+            c_path = comp['file_path']
+            c_cols = comp['applied_columns']
+            if c_path and not os.path.isabs(c_path):
+                from backend.config import BASE_DIR
+                c_path = os.path.join(BASE_DIR, c_path)
+            if not c_path or not os.path.exists(c_path):
+                logger.error(f"预处理组件文件不存在: {c_path} (组件: {comp.get('component_name')})")
+                raise FileNotFoundError(f"预处理组件文件不存在: {c_path}")
+            try:
+                transformer = joblib.load(c_path)
+                for col in c_cols:
+                    if col not in df.columns:
+                        continue
+                    series = df[col]
+                    transformed = transformer.transform(series)
+                    if hasattr(transformed, 'toarray'):
+                        transformed = transformed.toarray()
+                    if isinstance(transformed, pd.DataFrame):
+                        df = df.drop(columns=[col])
+                        df = pd.concat([df, transformed], axis=1)
+                    elif isinstance(transformed, np.ndarray):
+                        if transformed.ndim == 1:
+                            df[col] = transformed
+                        else:
+                            try:
+                                if hasattr(transformer, 'get_feature_names_out'):
+                                    new_cols = transformer.get_feature_names_out([col])
+                                else:
+                                    new_cols = [f"{col}_{i}" for i in range(transformed.shape[1])]
+                            except:
+                                new_cols = [f"{col}_{i}" for i in range(transformed.shape[1])]
+                            encoded_df = pd.DataFrame(transformed, columns=new_cols, index=df.index)
+                            df = df.drop(columns=[col])
+                            df = pd.concat([df, encoded_df], axis=1)
+                    else:
+                        df[col] = transformed
+            except Exception as e:
+                logger.error(f"应用预处理组件 {comp['component_name']} 失败: {str(e)}")
+
+        # 现在应用缩放器，缩放器应该作用于编码后的列
+        for comp in scalers:
+            c_path = comp['file_path']
+            c_cols = comp['applied_columns']
+            if c_path and not os.path.isabs(c_path):
+                from backend.config import BASE_DIR
+                c_path = os.path.join(BASE_DIR, c_path)
+            if not c_path or not os.path.exists(c_path):
+                logger.error(f"预处理组件文件不存在: {c_path} (组件: {comp.get('component_name')})")
+                raise FileNotFoundError(f"预处理组件文件不存在: {c_path}")
             try:
                 transformer = joblib.load(c_path)
                 
-                # 验证列是否存在
-                missing_cols = [c for c in c_cols if c not in df.columns]
-                # 对于Encoder，如果列已经在之前的步骤被处理（比如被Imputer处理过），可能还在
-                # 但如果被OneHot处理过，列名会变。所以顺序很重要。
-                if missing_cols:
-                    # 可能是之前的步骤改变了列名，或者输入数据缺失
-                    # 如果是特征选择，不需要列存在，只需要过滤
-                    if c_type != 'feature_selector':
-                         # 检查是否是OneHot之后的情况? 不，Encoder处理原始列。
-                         logger.warning(f"组件 {comp['component_name']} 缺少输入列: {missing_cols}")
-                         continue
-
-                if c_type == 'imputer':
-                    # Imputer通常返回numpy array，我们需要保持DataFrame格式
-                    # Sklearn Imputer transform
-                    data_part = df[c_cols]
-                    transformed = transformer.transform(data_part)
-                    
-                    # 如果是SimpleImputer，transformed shape和c_cols一致
-                    if isinstance(transformed, pd.DataFrame):
-                        df[c_cols] = transformed
+                # 增强的列名匹配逻辑
+                # 目的：解决输入数据列名格式（如空格、下划线、大小写）与组件期望不一致的问题
+                # 避免因匹配失败导致错误的"补0"操作
+                
+                actual_cols_in_df = []
+                # 创建归一化映射: normalized_name -> actual_name
+                # 归一化规则: 转小写，去除空格、下划线、括号
+                def normalize_col(name):
+                    return str(name).strip().lower().replace(' ', '').replace('_', '').replace('(', '').replace(')', '')
+                
+                df_col_norm = {normalize_col(c): c for c in df.columns}
+                
+                missing_cols_log = []
+                
+                for req_col in c_cols:
+                    if req_col in df.columns:
+                        actual_cols_in_df.append(req_col)
                     else:
-                        df[c_cols] = transformed
-                        
-                elif c_type == 'scaler':
-                    # Scaler transform
-                    data_part = df[c_cols]
-                    transformed = transformer.transform(data_part)
-                    if isinstance(transformed, pd.DataFrame):
-                        df[c_cols] = transformed
-                    else:
-                        df[c_cols] = transformed
-                        
-                elif c_type == 'encoder':
-                    # 处理编码器 (LabelEncoder, OneHotEncoder, etc.)
-                    for col in c_cols:
-                        if col not in df.columns:
-                            continue
-                            
-                        series = df[col]
-                        transformed = transformer.transform(series)
-                        
-                        if hasattr(transformed, 'toarray'): # 处理稀疏矩阵
-                            transformed = transformed.toarray()
-                            
-                        if isinstance(transformed, pd.DataFrame):
-                            # 如果返回的是DataFrame (如 category_encoders)
-                            df = df.drop(columns=[col])
-                            df = pd.concat([df, transformed], axis=1)
-                        elif isinstance(transformed, np.ndarray):
-                            if transformed.ndim == 1:
-                                # LabelEncoder or similar: 替换原列
-                                df[col] = transformed
-                            else:
-                                # OneHotEncoder (sklearn): 返回2D数组
-                                # 尝试获取列名
-                                try:
-                                    if hasattr(transformer, 'get_feature_names_out'):
-                                        new_cols = transformer.get_feature_names_out([col])
-                                    else:
-                                        new_cols = [f"{col}_{i}" for i in range(transformed.shape[1])]
-                                except:
-                                    new_cols = [f"{col}_{i}" for i in range(transformed.shape[1])]
-                                
-                                encoded_df = pd.DataFrame(transformed, columns=new_cols, index=df.index)
-                                df = df.drop(columns=[col])
-                                df = pd.concat([df, encoded_df], axis=1)
+                        # 尝试模糊匹配
+                        req_norm = normalize_col(req_col)
+                        if req_norm in df_col_norm:
+                            found_col = df_col_norm[req_norm]
+                            actual_cols_in_df.append(found_col)
+                            logger.info(f"缩放器列名模糊匹配: 期望 '{req_col}' -> 实际 '{found_col}'")
                         else:
-                             # Fallback
-                             df[col] = transformed
-
+                            # 确实缺失
+                            missing_cols_log.append(req_col)
+                            # 仅作为最后的手段填充0 (兼容OneHot稀疏情况)
+                            # 但对于数值特征，这通常意味着错误
+                            logger.warning(f"缩放器期望列 '{req_col}' 缺失且无法匹配，填充0。这可能导致预测结果严重偏差！")
+                            df[req_col] = 0
+                            actual_cols_in_df.append(req_col)
+                
+                if missing_cols_log:
+                    logger.warning(f"组件 {comp['component_name']} 存在缺失列: {missing_cols_log}")
+                
+                # 按照组件期望的顺序提取数据（使用匹配到的实际列名）
+                data_part = df[actual_cols_in_df]
+                
+                # 调试：记录数据形状
+                logger.debug(f"缩放器应用: 组件={comp['component_name']}, 数据形状={data_part.shape}")
+                
+                # 使用 .values 避免 sklearn 检查列名 (只要顺序一致即可)
+                # data_part 的列顺序已经通过 actual_cols_in_df 保证与组件期望一致
+                transformed = transformer.transform(data_part.values)
+                
+                # 将转换后的数据写回 DataFrame (更新对应的实际列)
+                # 注意：这里会直接修改实际存在的列
+                # 如果是新创建的补0列，也会被更新
+                
+                # 为了避免SettingWithCopyWarning或潜在的赋值问题，我们直接赋值
+                # Pandas 允许 df[list_of_cols] = matrix
+                df[actual_cols_in_df] = transformed
+                
+                logger.debug(f"缩放器应用成功: {comp['component_name']}")
+                
             except Exception as e:
                 logger.error(f"应用预处理组件 {comp['component_name']} 失败: {str(e)}")
-                # 继续尝试下一个组件
-                continue
-                
+
         return df
 
     def _prepare_input_data(
@@ -356,13 +398,19 @@ class PredictionService:
         Returns:
             准备好的数据数组
         """
+        logger.info(f"Preparing input data. Shape: {data.shape}")
+        logger.info(f"Input columns: {data.columns.tolist()}")
+        logger.info(f"Input data head (raw): {data.iloc[0].to_dict() if not data.empty else 'Empty'}")
+
         # 1. 获取预处理组件
         model_id = model_info['id']
         components = self.db_manager.get_preprocessing_components(model_id)
+        logger.info(f"Found {len(components)} preprocessing components for model {model_id}")
         
         # 2. 应用预处理
         if components:
             data = self._apply_preprocessing(data, components)
+            logger.info(f"Data after preprocessing: {data.iloc[0].to_dict() if not data.empty else 'Empty'}")
         
         # 3. 选择模型需要的特征
         # 注意：这里的 required_features 应该是经过预处理后的特征列表
@@ -394,6 +442,7 @@ class PredictionService:
         # 我们应该尽量匹配 model_features (训练时的列)
         
         final_features = model_features if model_features else required_features
+        logger.info(f"Final features selected: {final_features}")
         
         if not final_features:
             # 如果都找不到，直接返回 data.values (可能报错)
@@ -402,6 +451,7 @@ class PredictionService:
         # 检查缺失列并填充0 (为了鲁棒性)
         missing_features = [f for f in final_features if f not in data.columns]
         if missing_features:
+            logger.warning(f"Missing features in prepared data: {missing_features}. Filling with 0.")
             # 可能是特征选择删除了它们? 
             # 或者 OneHot 编码产生的列不匹配 (比如新数据缺少某个类别)?
             # 对于 OneHot，缺少的类别列应该补0
@@ -431,21 +481,46 @@ class PredictionService:
             target_columns = input_requirements.get('target', [])
             
             if not target_columns:
+                logger.info(f"模型 {model_id} 未定义目标列，跳过反向变换")
                 return predictions
                 
-            target_column = target_columns[0]
+            target_column = target_columns[0].strip()
+            logger.info(f"模型 {model_id} 目标列: {target_column}, 准备反向变换")
                 
             # 获取所有预处理组件
             components = self.db_manager.get_preprocessing_components(model_id)
             if not components:
+                logger.info(f"模型 {model_id} 无预处理组件")
                 return predictions
                 
             # 筛选出作用于目标列的组件
             target_components = []
-            for comp in components:
-                if target_column in comp.get('applied_columns', []):
-                    target_components.append(comp)
             
+            def normalize_col(name):
+                return str(name).strip().lower().replace(' ', '').replace('_', '').replace('(', '').replace(')', '')
+                
+            target_column_norm = normalize_col(target_column)
+            
+            for comp in components:
+                applied_cols = comp.get('applied_columns', [])
+                # 确保 applied_cols 是列表
+                if isinstance(applied_cols, str):
+                    try:
+                        applied_cols = json.loads(applied_cols)
+                    except:
+                        applied_cols = [applied_cols]
+                
+                # 使用归一化匹配
+                for col in applied_cols:
+                    if normalize_col(col) == target_column_norm:
+                        target_components.append(comp)
+                        logger.info(f"找到目标列组件: {comp.get('component_name')} ({comp.get('component_type')})")
+                        break
+            
+            if not target_components:
+                logger.info(f"未找到作用于目标列 {target_column} 的组件")
+                return predictions
+
             # 按应用顺序的倒序执行反变换 (Scaler -> Encoder)
             original_predictions = predictions.copy()
             
@@ -465,24 +540,41 @@ class PredictionService:
                     transformer = joblib.load(file_path)
                     c_type = comp['component_type']
                     
+                    logger.info(f"正在应用反向变换: {comp.get('component_name')} ({c_type})")
+                    
                     if c_type == 'scaler':
                         # Scaler通常期望 2D array
-                        if original_predictions.ndim == 1:
+                        is_1d = original_predictions.ndim == 1
+                        if is_1d:
                             original_predictions = original_predictions.reshape(-1, 1)
+                            
                         original_predictions = transformer.inverse_transform(original_predictions)
+                        
                         # 恢复为 1D array
-                        original_predictions = original_predictions.ravel()
+                        if is_1d:
+                            original_predictions = original_predictions.ravel()
                         
                     elif c_type == 'encoder':
                         # LabelEncoder
                         if isinstance(transformer, LabelEncoder):
                              # LabelEncoder期望整数
+                             # 注意：如果是分类预测，predictions可能是概率或浮点数，需先转int
+                             # 但通常 LabelEncoder 用于分类任务的 predict 结果 (即已经是 0, 1, 2)
                              original_predictions = transformer.inverse_transform(original_predictions.astype(int))
+                             
+                    logger.info(f"反向变换成功: {comp.get('component_name')}")
+                             
                 except Exception as e:
-                    logger.warning(f"反转变换失败 {comp['component_name']}: {e}")
+                    logger.warning(f"反转变换失败 {comp.get('component_name')}: {e}")
+                    import traceback
+                    traceback.print_exc()
                     
             return original_predictions
         except Exception as e:
+            logger.error(f"反向变换过程发生错误: {e}")
+            import traceback
+            traceback.print_exc()
+            return predictions
             logger.error(f"反转预测结果失败: {e}")
             return predictions
 
@@ -557,4 +649,18 @@ class PredictionService:
             预测历史列表
         """
         predictions = self.db_manager.get_predictions(model_id=model_id, limit=limit)
+        
+        # 处理历史记录，确保 'predictions' 字段是反缩放后的数据
+        for pred in predictions:
+            summary = pred.get('prediction_summary', {})
+            if summary:
+                # 如果存在 original_predictions，优先使用它作为展示的 predictions
+                if 'original_predictions' in summary:
+                    summary['predictions'] = summary['original_predictions']
+                # 如果没有，检查是否存在 prediction_original (可能是文件保存时的字段名)
+                # 但 summary 结构通常是我们在 _save_prediction_record 中定义的
+                
+                # 更新 summary
+                pred['prediction_summary'] = summary
+                
         return predictions

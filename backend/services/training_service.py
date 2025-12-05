@@ -326,20 +326,16 @@ class TrainingService:
         # 1. 收集数据集历史中的预处理组件 (新增逻辑)
         history_components = self._collect_dataset_components(dataset_id)
         if history_components:
+            # 历史组件已经应用在数据集中（因为我们读取的是处理后的文件），
+            # 所以只需要保存到新模型的组件列表中，不需要再次应用到 df
             components_to_save.extend(history_components)
+            print(f"训练服务: 发现 {len(history_components)} 个历史预处理组件，将包含在模型中但不重复应用")
         
         if preprocessing_components:
             components_to_save.extend(preprocessing_components)
-        
-        # 应用预处理组件
-        print(f"训练服务: 准备应用预处理组件，组件数量: {len(components_to_save)}")
-        if components_to_save:
-            print(f"训练服务: 组件详情: {[c.get('type') + '_' + c.get('name', 'unknown') for c in components_to_save]}")
-            df = self._apply_preprocessing_components(df, components_to_save, preprocessor)
-            print(f"训练服务: 应用预处理组件后，数据列: {list(df.columns)}")
-            print(f"训练服务: 数据形状: {df.shape}")
-        else:
-            print(f"训练服务: 没有预处理组件需要应用")
+            # 外部传入的组件通常是需要应用的新组件
+            print(f"训练服务: 应用外部传入的预处理组件: {len(preprocessing_components)} 个")
+            df = self._apply_preprocessing_components(df, preprocessing_components, preprocessor)
         
         if preprocessing_config:
             # 1. 缺失值处理
@@ -393,10 +389,18 @@ class TrainingService:
                 specified_cols = scale_config.get('columns')
                 
                 # 确定要缩放的列
+                # 首先确定有效的特征列范围
+                effective_feature_cols = feature_columns
+                if effective_feature_cols is None:
+                    effective_feature_cols = [c for c in df.columns if c not in target_columns]
+                
+                # 缩放范围应限制在 (特征列 + 目标列) 内
+                valid_scope = set(effective_feature_cols) | set(target_columns)
+
                 if specified_cols:
-                    cols_to_scale = specified_cols
+                    cols_to_scale = [c for c in specified_cols if c in valid_scope]
                 else:
-                    cols_to_scale = df.select_dtypes(include=[np.number]).columns.tolist()
+                    cols_to_scale = [c for c in df.select_dtypes(include=[np.number]).columns.tolist() if c in valid_scope]
                 
                 y_scaler = None
                 
