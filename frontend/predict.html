@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>模型预测 - 机器学习平台</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/data_editor.css">
+    <style>
+        .predict-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .predict-sections {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .predict-section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .predict-section h2 {
+            margin-top: 0;
+            color: #333;
+            font-size: 18px;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .form-group select,
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .form-group textarea {
+            min-height: 150px;
+            font-family: 'Courier New', monospace;
+            resize: vertical;
+        }
+
+        .predict-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .model-info {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+
+        .model-info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+        }
+
+        .model-info-label {
+            font-weight: 500;
+            color: #666;
+        }
+
+        .model-info-value {
+            color: #333;
+        }
+
+        .results-section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .results-table th,
+        .results-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .results-table th {
+            background: #f5f5f5;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .results-table tr:hover {
+            background: #f9f9f9;
+        }
+
+        .probability-bar {
+            height: 20px;
+            background: linear-gradient(to right, #4CAF50, #FFC107, #f44336);
+            border-radius: 4px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .probability-value {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            line-height: 20px;
+        }
+
+        .prediction-history {
+            margin-top: 20px;
+        }
+
+        .history-item {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .history-item:hover {
+            background: #f0f0f0;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .history-item-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .history-item-time {
+            color: #999;
+            font-size: 12px;
+        }
+
+        .history-item-info {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .input-format-hint {
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+        }
+
+        .alert {
+            padding: 12px 15px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #4CAF50;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <header class="header">
+            <div class="logo">
+                <h1>ML Visual Builder</h1>
+                <p>模型预测</p>
+            </div>
+            <nav class="main-nav">
+                <a href="index.html" class="nav-link">工作流</a>
+                <a href="data_editor.html" class="nav-link">数据管理</a>
+                <a href="models.html" class="nav-link">模型管理</a>
+                <a href="predict.html" class="nav-link active">模型预测</a>
+                <a href="#" class="nav-link" onclick="alert('帮助文档正在建设中'); return false;">帮助</a>
+            </nav>
+            <div class="header-actions">
+                <!-- 预留操作区域 -->
+            </div>
+        </header>
+
+        <div class="main-container">
+            <div style="flex: 1; overflow-y: auto;">
+                <div class="predict-container">
+                    <h1>模型预测</h1>
+
+                    <div class="predict-sections">
+                        <!-- 模型选择和信息 -->
+                        <div class="predict-section">
+                            <h2>选择模型</h2>
+                            <div class="form-group">
+                                <label for="model-select">选择训练好的模型:</label>
+                                <select id="model-select">
+                                    <option value="">请选择模型...</option>
+                                </select>
+                            </div>
+                            <div id="model-info" class="model-info" style="display: none;">
+                                <div class="model-info-item">
+                                    <span class="model-info-label">算法类型:</span>
+                                    <span class="model-info-value" id="info-algorithm-type"></span>
+                                </div>
+                                <div class="model-info-item">
+                                    <span class="model-info-label">算法名称:</span>
+                                    <span class="model-info-value" id="info-algorithm-name"></span>
+                                </div>
+                                <div class="model-info-item">
+                                    <span class="model-info-label">训练时间:</span>
+                                    <span class="model-info-value" id="info-created-at"></span>
+                                </div>
+                                <div class="model-info-item">
+                                    <span class="model-info-label">输入特征:</span>
+                                    <span class="model-info-value" id="info-features"></span>
+                                </div>
+                            </div>
+
+                            <div id="preprocessing-info" class="model-info" style="display: none; margin-top: 15px;">
+                                <h3 style="font-size: 16px; margin-top: 0; border-bottom: 1px solid #ddd; padding-bottom: 5px;">数据预处理详情</h3>
+                                
+                                <div class="model-info-item">
+                                    <span class="model-info-label">数据集实例格式:</span>
+                                    <pre id="info-dataset-format" style="margin: 5px 0; background: #fff; padding: 5px; border: 1px solid #eee; font-size: 12px; overflow-x: auto;"></pre>
+                                </div>
+                                
+                                <div style="margin-top: 10px;">
+                                    <div class="model-info-label" style="margin-bottom: 5px;">特征列信息:</div>
+                                    <div id="info-columns" style="font-size: 13px; background: #fff; padding: 10px; border: 1px solid #eee; max-height: 200px; overflow-y: auto;"></div>
+                                </div>
+                                
+                                <div style="margin-top: 10px;">
+                                    <div class="model-info-label" style="margin-bottom: 5px;">预处理方法:</div>
+                                    <div id="info-components" style="font-size: 13px; background: #fff; padding: 10px; border: 1px solid #eee;"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 输入数据 -->
+                        <div class="predict-section">
+                            <h2>输入预测数据</h2>
+                            <div class="form-group">
+                                <label>选择输入方式:</label>
+                                <select id="input-mode">
+                                    <option value="manual">手动输入</option>
+                                    <option value="dataset">选择数据集</option>
+                                </select>
+                            </div>
+
+                            <!-- 手动输入 -->
+                            <div id="manual-input" class="form-group">
+                                <label for="input-data">输入数据 (JSON格式):</label>
+                                <textarea id="input-data" placeholder='请输入JSON格式的数据，例如:
+[
+  {"feature1": 5.1, "feature2": 3.5, "feature3": 1.4},
+  {"feature1": 6.2, "feature2": 2.8, "feature3": 4.8}
+]'></textarea>
+                                <div class="input-format-hint">
+                                    💡 提示: 输入JSON数组格式，每个对象代表一条数据
+                                </div>
+                            </div>
+
+                            <!-- 数据集选择 -->
+                            <div id="dataset-input" class="form-group" style="display: none;">
+                                <label for="dataset-select">选择数据集:</label>
+                                <select id="dataset-select">
+                                    <option value="">请选择数据集...</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>
+                                    <input type="checkbox" id="return-probabilities">
+                                    返回预测概率 (仅分类模型)
+                                </label>
+                            </div>
+
+                            <div class="predict-actions">
+                                <button class="btn btn-primary" id="predict-btn">开始预测</button>
+                                <button class="btn btn-secondary" id="clear-btn">清空</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 加载指示器 -->
+                    <div class="loading" id="loading">
+                        <div class="spinner"></div>
+                        <p>正在预测中...</p>
+                    </div>
+
+                    <!-- 预测结果 -->
+                    <div class="results-section" id="results-section" style="display: none;">
+                        <h2>预测结果</h2>
+                        <div id="alert-container"></div>
+                        <div id="results-content"></div>
+                    </div>
+
+                    <!-- 预测历史 -->
+                    <div class="results-section prediction-history">
+                        <h2>预测历史</h2>
+                        <div id="history-list"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="status-bar">
+            <div class="status-left">
+                <span>就绪</span>
+            </div>
+            <div class="status-right">
+                <span id="version">v1.0.0</span>
+            </div>
+        </footer>
+    </div>
+
+    <script src="js/utils/api-client.js"></script>
+    <script src="js/utils/ui-helper.js"></script>
+    <script src="js/predict.js"></script>
+</body>
+</html>

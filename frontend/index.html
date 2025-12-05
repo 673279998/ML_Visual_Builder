@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>机器学习可视化平台</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/progress.css">
+    <!-- Fabric.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js"></script>
+</head>
+<body>
+    <div id="app">
+        <header class="header">
+            <div class="logo">
+                <h1>ML Visual Builder</h1>
+                <p>机器学习可视化平台</p>
+            </div>
+            <nav class="main-nav">
+                <a href="index.html" class="nav-link active">工作流</a>
+                <a href="data_editor.html" class="nav-link">数据管理</a>
+                <a href="models.html" class="nav-link">模型管理</a>
+                <a href="predict.html" class="nav-link">模型预测</a>
+                <a href="#" class="nav-link" onclick="alert('帮助文档正在建设中'); return false;">帮助</a>
+            </nav>
+            <div class="header-actions">
+                <button class="btn btn-secondary" id="btn-manage-workflows">管理工作流</button>
+                <button class="btn btn-secondary" id="btn-save">保存</button>
+                <button class="btn btn-primary" id="btn-execute">执行</button>
+            </div>
+        </header>
+
+        <div class="main-container">
+            <!-- 左侧模块面板 -->
+            <aside class="module-panel">
+                <h3>模块</h3>
+                <div class="module-category">
+                    <h4>数据输入</h4>
+                    <div class="module-list">
+                        <div class="module-item" draggable="true">
+                            <span class="module-icon">📁</span>
+                            <span class="module-name">数据上传</span>
+                        </div>
+                        <div class="module-item" draggable="true">
+                            <span class="module-icon">📊</span>
+                            <span class="module-name">数据集选择</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="module-category">
+                    <h4>数据处理</h4>
+                    <div class="module-list">
+                        <div class="module-item" draggable="true">
+                            <span class="module-icon">⚙️</span>
+                            <span class="module-name">预处理</span>
+                        </div>
+                        <div class="module-item" draggable="true">
+                            <span class="module-icon">📉</span>
+                            <span class="module-name">异常值检测</span>
+                        </div>
+                        <div class="module-item" draggable="true">
+                            <span class="module-icon">✨</span>
+                            <span class="module-name">特征选择</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="module-category">
+                    <h4>算法</h4>
+                    <div class="module-list">
+                        <div class="module-item" draggable="true">
+                            <span class="module-icon">🎯</span>
+                            <span class="module-name">分类算法</span>
+                        </div>
+                        <div class="module-item" draggable="true">
+                            <span class="module-icon">📈</span>
+                            <span class="module-name">回归算法</span>
+                        </div>
+                        <div class="module-item" draggable="true">
+                            <span class="module-icon">📊</span>
+                            <span class="module-name">聚类算法</span>
+                        </div>
+                        <div class="module-item" draggable="true">
+                            <span class="module-icon">🔬</span>
+                            <span class="module-name">降维算法</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="module-category">
+                    <h4>训练控制</h4>
+                    <div class="module-list">
+                        <div class="module-item" draggable="true">
+                            <span class="module-icon">⚙️</span>
+                            <span class="module-name">超参数调优</span>
+                        </div>
+                        <div class="module-item" draggable="true">
+                            <span class="module-icon">🔄</span>
+                            <span class="module-name">交叉验证</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="module-category">
+                    <h4>输出模块</h4>
+                    <div class="module-list">
+                        <div class="module-item" draggable="true">
+                            <span class="module-icon">📋</span>
+                            <span class="module-name">模型结果</span>
+                        </div>
+                        <div class="module-item" draggable="true">
+                            <span class="module-icon">📊</span>
+                            <span class="module-name">可视化</span>
+                        </div>
+                        <div class="module-item" draggable="true">
+                            <span class="module-icon">💾</span>
+                            <span class="module-name">模型保存</span>
+                        </div>
+                        <div class="module-item" draggable="true">
+                            <span class="module-icon">⛔</span>
+                            <span class="module-name">终止</span>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- 中央画布区域 -->
+            <main class="canvas-container">
+                <div class="canvas-toolbar">
+                    <button class="toolbar-btn" title="撤销"><span>↶</span></button>
+                    <button class="toolbar-btn" title="重做"><span>↷</span></button>
+                    <button class="toolbar-btn" id="btn-auto-fit" title="缩放适应"><span>⊡</span></button>
+                </div>
+                <div class="canvas" id="workflow-canvas">
+                    <div class="canvas-hint">
+                        <h3>欢迎使用机器学习可视化平台</h3>
+                        <p>从左侧拖拽模块到画布开始构建工作流</p>
+                        <p class="system-info">
+                            系统状态: <span id="system-status" class="status-ok">正常运行</span>
+                        </p>
+                    </div>
+                </div>
+            </main>
+
+            <!-- 右侧属性面板 -->
+            <aside class="properties-panel">
+                <h3>属性配置</h3>
+                <div class="properties-content">
+                    <p class="empty-hint">选择一个模块查看其属性</p>
+                </div>
+            </aside>
+        </div>
+
+        <!-- 底部状态栏 -->
+        <footer class="status-bar">
+            <div class="status-left">
+                <span>就绪</span>
+            </div>
+            <div class="status-right">
+                <span id="version">v1.0.0</span>
+            </div>
+        </footer>
+    </div>
+
+    <!-- 工作流管理对话框 -->
+    <div class="modal" id="workflow-manage-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>工作流管理</h3>
+                <button class="modal-close" id="btn-close-workflow-manage">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="workflow-tools" style="margin-bottom: 10px;">
+                    <button class="btn btn-danger btn-sm" id="btn-batch-delete-workflows" style="display:none;">批量删除</button>
+                    <button class="btn-icon" id="btn-refresh-workflows" title="刷新">🔄</button>
+                </div>
+                <div class="workflow-list" id="workflow-list" style="max-height: 400px; overflow-y: auto;">
+                    <!-- 工作流列表项 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/utils/api-client.js"></script>
+    <script src="js/utils/ui-helper.js"></script>
+    <script src="js/utils/progress-monitor.js"></script>
+    <script src="js/workflow/workflow_canvas.js"></script>
+    <script src="js/workflow/workflow_manager.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        // 初始化工作流画布
+        const workflowCanvas = new WorkflowCanvas('workflow-canvas');
+        const workflowManager = new WorkflowManager(workflowCanvas);
+        
+        // 将 workflowCanvas 设为全局变量，便于其他模块使用
+        window.workflowCanvas = workflowCanvas;
+        window.workflowManager = workflowManager;
+        
+        // DOM加载完成后检查系统状态
+        document.addEventListener('DOMContentLoaded', () => {
+            // 检查系统状态
+            apiClient.get('/api/health')
+                .then(data => {
+                    const statusEl = document.getElementById('system-status');
+                    if (statusEl && data.status === 'ok') {
+                        statusEl.textContent = '正常运行 ✓';
+                        statusEl.className = 'status-ok';
+                        console.log('系统状态:', data.message);
+                    }
+                })
+                .catch(err => {
+                    const statusEl = document.getElementById('system-status');
+                    if (statusEl) {
+                        statusEl.textContent = '连接失败 ✗';
+                        statusEl.className = 'status-error';
+                    }
+                    console.error('系统状态检查失败:', err);
+                });
+        });
+    </script>
+</body>
+</html>

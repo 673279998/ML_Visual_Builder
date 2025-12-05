@@ -1,0 +1,240 @@
+/**
+ * 进度条样式
+ */
+
+.progress-container {
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin: 20px 0;
+}
+
+.progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.progress-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+}
+
+.progress-cancel-btn {
+    padding: 6px 12px;
+    background: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    color: #666;
+    transition: all 0.3s;
+}
+
+.progress-cancel-btn:hover {
+    background: #ff4d4f;
+    color: #fff;
+    border-color: #ff4d4f;
+}
+
+.progress-bar-wrapper {
+    position: relative;
+    height: 30px;
+    background: #f0f0f0;
+    border-radius: 15px;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #1890ff, #40a9ff);
+    border-radius: 15px;
+    transition: width 0.3s ease, background 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 10px;
+}
+
+.progress-bar.success {
+    background: linear-gradient(90deg, #52c41a, #73d13d);
+}
+
+.progress-bar.error {
+    background: linear-gradient(90deg, #ff4d4f, #ff7875);
+}
+
+.progress-bar.cancelled {
+    background: linear-gradient(90deg, #d9d9d9, #bfbfbf);
+}
+
+.progress-percentage {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    z-index: 1;
+}
+
+.progress-message {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 10px;
+    min-height: 20px;
+}
+
+.progress-details {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: #999;
+    padding-top: 10px;
+    border-top: 1px solid #f0f0f0;
+}
+
+.progress-step,
+.progress-time {
+    display: flex;
+    align-items: center;
+}
+
+.step-info,
+.time-info {
+    font-weight: 600;
+    color: #666;
+    margin-left: 5px;
+}
+
+/* 进度条动画 */
+@keyframes progress-shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+.progress-bar.running {
+    background: linear-gradient(
+        90deg,
+        #1890ff 0%,
+        #40a9ff 50%,
+        #1890ff 100%
+    );
+    background-size: 200% 100%;
+    animation: progress-shimmer 2s ease-in-out infinite;
+}
+
+/* 小型进度条样式 */
+.progress-container.compact {
+    padding: 10px;
+    margin: 10px 0;
+}
+
+.progress-container.compact .progress-bar-wrapper {
+    height: 20px;
+}
+
+.progress-container.compact .progress-title {
+    font-size: 14px;
+}
+
+.progress-container.compact .progress-percentage {
+    font-size: 12px;
+}
+
+.progress-container.compact .progress-message {
+    font-size: 12px;
+}
+
+/* 模态框中的进度条 */
+.modal-progress {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    z-index: 10000;
+    min-width: 400px;
+}
+
+.modal-progress-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+    .progress-container {
+        padding: 15px;
+    }
+    
+    .modal-progress {
+        min-width: 90%;
+        padding: 20px;
+    }
+    
+    .progress-details {
+        flex-direction: column;
+        gap: 5px;
+    }
+}
+
+/* 内联进度条（用于表格行等） */
+.progress-inline {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.progress-inline .progress-bar-wrapper {
+    flex: 1;
+    height: 20px;
+    margin: 0;
+}
+
+.progress-inline .progress-percentage {
+    position: static;
+    transform: none;
+    min-width: 40px;
+    text-align: right;
+}
+
+/* 多任务进度列表 */
+.progress-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.progress-list-item {
+    background: #fff;
+    border: 1px solid #e8e8e8;
+    border-radius: 6px;
+    padding: 15px;
+    transition: box-shadow 0.3s;
+}
+
+.progress-list-item:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.progress-list-item .progress-bar-wrapper {
+    margin-bottom: 5px;
+}

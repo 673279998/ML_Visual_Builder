@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据编辑器 - ML Visual Builder</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/data_editor.css">
+    <!-- Tabulator CSS -->
+    <link href="https://unpkg.com/tabulator-tables@5.5.2/dist/css/tabulator.min.css" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+        <header class="header">
+            <div class="logo">
+                <h1>ML Visual Builder</h1>
+                <p>数据编辑器</p>
+            </div>
+            <nav class="main-nav">
+                <a href="index.html" class="nav-link">工作流</a>
+                <a href="#" class="nav-link active" data-page="data">数据管理</a>
+                <a href="models.html" class="nav-link" data-page="models">模型管理</a>
+                <a href="predict.html" class="nav-link">模型预测</a>
+                <a href="#" class="nav-link" data-page="help">帮助</a>
+            </nav>
+            <div class="header-actions">
+                <button class="btn btn-secondary" id="btn-save-data">保存数据</button>
+                <button class="btn btn-primary" id="btn-upload-data">上传新数据</button>
+            </div>
+        </header>
+
+        <div class="main-container editor-container">
+            <!-- 左侧数据集列表 -->
+            <aside class="dataset-panel">
+                <div class="panel-header">
+                    <h3>数据集列表</h3>
+                    <div class="header-tools">
+                        <button class="btn-icon" id="btn-batch-delete-datasets" title="批量删除" style="display:none; color: #dc3545; margin-right: 5px;">🗑️</button>
+                        <button class="btn-icon" id="btn-refresh-datasets" title="刷新">🔄</button>
+                    </div>
+                </div>
+                <div class="dataset-list" id="dataset-list">
+                    <div class="loading-spinner">加载中...</div>
+                </div>
+            </aside>
+
+            <!-- 中央编辑区域 -->
+            <main class="editor-main">
+                <!-- 工具栏 -->
+                <div class="editor-toolbar">
+                    <div class="toolbar-left">
+                        <button class="toolbar-btn" id="btn-add-row" title="添加行">
+                            <span>➕ 行</span>
+                        </button>
+                        <button class="toolbar-btn" id="btn-delete-row" title="删除选中行">
+                            <span>➖ 行</span>
+                        </button>
+                        <button class="toolbar-btn" id="btn-add-column" title="添加列">
+                            <span>➕ 列</span>
+                        </button>
+                        <button class="toolbar-btn" id="btn-delete-column" title="删除列">
+                            <span>➖ 列</span>
+                        </button>
+                        <div class="toolbar-divider"></div>
+                        <button class="toolbar-btn" id="btn-undo" title="撤销">
+                            <span>↶</span>
+                        </button>
+                        <button class="toolbar-btn" id="btn-redo" title="重做">
+                            <span>↷</span>
+                        </button>
+                    </div>
+                    <div class="toolbar-right">
+                        <span class="info-text">
+                            行数: <span id="row-count">0</span> | 
+                            列数: <span id="col-count">0</span>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- 数据表格 -->
+                <div class="table-container">
+                    <div id="data-table"></div>
+                    <div class="empty-state" id="empty-state">
+                        <div class="empty-content">
+                            <div class="empty-icon">📊</div>
+                            <h3>暂无数据</h3>
+                            <p>请从左侧选择数据集，或上传新的数据文件</p>
+                            <button class="btn btn-primary" id="btn-upload-empty">上传数据</button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <!-- 右侧列属性面板 -->
+            <aside class="column-properties-panel">
+                <div class="panel-header">
+                    <h3>列属性</h3>
+                </div>
+                <div class="properties-content" id="column-properties">
+                    <div class="empty-hint">
+                        <p>点击表格列标题查看和编辑列属性</p>
+                    </div>
+                </div>
+            </aside>
+        </div>
+
+        <!-- 底部状态栏 -->
+        <footer class="status-bar">
+            <div class="status-left">
+                <span id="status-message">就绪</span>
+            </div>
+            <div class="status-right">
+                <span id="current-dataset">未选择数据集</span>
+            </div>
+        </footer>
+    </div>
+
+    <!-- 上传数据对话框 -->
+    <div class="modal" id="upload-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>上传数据文件</h3>
+                <button class="modal-close" id="btn-close-upload">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="upload-area" id="upload-area">
+                    <div class="upload-icon">📁</div>
+                    <p>点击选择文件或拖拽文件到此处</p>
+                    <p class="upload-hint">支持 CSV, Excel (XLSX, XLS) 格式</p>
+                    <input type="file" id="file-input" accept=".csv,.xlsx,.xls" style="display:none;">
+                </div>
+                <div class="form-group">
+                    <label>数据集名称:</label>
+                    <input type="text" id="dataset-name" class="form-control" placeholder="请输入数据集名称">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="btn-cancel-upload">取消</button>
+                <button class="btn btn-primary" id="btn-confirm-upload" disabled>确认上传</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加列对话框 -->
+    <div class="modal" id="add-column-modal">
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h3>添加新列</h3>
+                <button class="modal-close" id="btn-close-add-column">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>列名:</label>
+                    <input type="text" id="new-column-name" class="form-control" placeholder="请输入列名">
+                </div>
+                <div class="form-group">
+                    <label>数据类型:</label>
+                    <select id="new-column-type" class="form-control">
+                        <option value="numeric">数值型</option>
+                        <option value="categorical">分类型</option>
+                        <option value="text">文本型</option>
+                        <option value="datetime">日期时间</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>默认值:</label>
+                    <input type="text" id="new-column-default" class="form-control" placeholder="留空则为空值">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="btn-cancel-add-column">取消</button>
+                <button class="btn btn-primary" id="btn-confirm-add-column">确认添加</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabulator JS -->
+    <script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.5.2/dist/js/tabulator.min.js"></script>
+    <script src="js/utils/api-client.js"></script>
+    <script src="js/utils/ui-helper.js"></script>
+    <script src="js/data/data_editor.js"></script>
+</body>
+</html>

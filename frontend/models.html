@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>模型管理 - ML Visual Builder</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/visualization.css">
+    <!-- Chart.js -->
+    <script src="js/libs/chart.umd.min.js"></script>
+</head>
+<body>
+    <div id="app">
+        <header class="header">
+            <div class="logo">
+                <h1>ML Visual Builder</h1>
+                <p>模型管理</p>
+            </div>
+            <nav class="main-nav">
+                <a href="index.html" class="nav-link">工作流</a>
+                <a href="data_editor.html" class="nav-link">数据管理</a>
+                <a href="#" class="nav-link active" data-page="models">模型管理</a>
+                <a href="predict.html" class="nav-link">模型预测</a>
+                <a href="#" class="nav-link" data-page="help">帮助</a>
+            </nav>
+            <div class="header-actions">
+                <button class="btn btn-warning" id="btn-cleanup" style="margin-right: 10px; background-color: #faad14; border-color: #faad14; color: white;">清理垃圾文件</button>
+                <button class="btn btn-secondary" id="btn-refresh">刷新列表</button>
+            </div>
+        </header>
+
+        <div class="main-container">
+            <!-- 模型列表 -->
+            <div id="models-list-view" style="display: block;">
+                <div class="list-toolbar" style="padding: 20px 20px 0 20px; display: flex; justify-content: space-between; align-items: center;">
+                    <div class="select-controls">
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                            <input type="checkbox" id="select-all-models">
+                            <span>全选</span>
+                        </label>
+                    </div>
+                    <div class="batch-actions">
+                        <button class="btn btn-danger" id="btn-batch-delete" disabled style="background-color: #ff4d4f; color: white; opacity: 0.5; cursor: not-allowed;">
+                            批量删除 <span id="selected-count" style="display: none;">(0)</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="model-list" id="model-list">
+                    <div class="loading-spinner">
+                        <div class="spinner"></div>
+                        <p>加载模型列表中...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 模型详情 -->
+            <div id="model-detail-view" style="display: none;">
+                <div class="results-container">
+                    <div style="padding: 20px; background: white; margin-bottom: 20px; border-radius: 8px;">
+                        <button class="btn btn-secondary" id="btn-back-to-list">← 返回列表</button>
+                        <h2 id="model-title" style="margin: 20px 0 10px 0;"></h2>
+                        <p id="model-subtitle" style="color: #666;"></p>
+                    </div>
+                    
+                    <div id="results-content"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部状态栏 -->
+        <footer class="status-bar">
+            <div class="status-left">
+                <span id="status-message">就绪</span>
+            </div>
+            <div class="status-right">
+                <span id="model-count">模型数: 0</span>
+            </div>
+        </footer>
+    </div>
+
+    <script src="js/utils/api-client.js"></script>
+    <script src="js/utils/ui-helper.js"></script>
+    <script src="js/visualization/result_visualizer.js"></script>
+    <script>
+        // 模型管理器
+        class ModelManager {
+            constructor() {
+                this.visualizer = new ResultVisualizer();
+                this.models = [];
+                this.currentModelId = null;
+                this.selectedModels = new Set();
+                this.init();
+            }
+            
+            init() {
+                this.loadModels();
+                this.bindEvents();
+            }
+            
+            bindEvents() {
+                document.getElementById('btn-refresh').addEventListener('click', () => {
+                    this.loadModels();
+                });
+                
+                document.getElementById('btn-cleanup').addEventListener('click', () => {
+                    this.cleanupSystem();
+                });
+                
+                document.getElementById('btn-back-to-list').addEventListener('click', () => {
+                    this.showListView();
+                });
+
+                // 批量操作事件
+                document.getElementById('select-all-models').addEventListener('change', (e) => {
+                    this.toggleSelectAll(e.target.checked);
+                });
+
+                document.getElementById('btn-batch-delete').addEventListener('click', () => {
+                    this.deleteSelectedModels();
+                });
+            }
+            
+            async loadModels() {
+                try {
+                    this.showMessage('加载中...', 'info');
+                    
+                    const result = await apiClient.getModels();
+                    
+                    if (result.success) {
+                        this.models = result.data || [];
+                        this.selectedModels.clear();
+                        this.updateSelectionUI();
+                        this.renderModelList();
+                        this.showMessage('就绪', 'success');
+                        document.getElementById('model-count').textContent = `模型数: ${this.models.length}`;
+                    } else {
+                        throw new Error(result.error || '加载失败');
+                    }
+                } catch (error) {
+                    console.error('加载模型失败:', error);
+                    this.showMessage('加载失败', 'error');
+                    this.showEmptyState('加载模型失败: ' + error.message);
+                }
+            }
+            
+            renderModelList() {
+                const container = document.getElementById('model-list');
+                
+                if (this.models.length === 0) {
+                    this.showEmptyState('暂无训练的模型');
+                    return;
+                }
+                
+                container.innerHTML = '';
+                
+                this.models.forEach(model => {
+                    const card = this.createModelCard(model);
+                    container.appendChild(card);
+                });
+            }
+            
+            createModelCard(model) {
+                const card = document.createElement('div');
+                card.className = 'model-card';
+                
+                // 获取主要指标
+                const metrics = model.performance_metrics || {};
+                let mainMetrics = [];
+                
+                if (model.algorithm_type === 'classification') {
+                    if (metrics.accuracy !== undefined) {
+                        mainMetrics.push({ label: '准确率', value: (metrics.accuracy * 100).toFixed(2) + '%' });
+                    }
+                    if (metrics.f1_score !== undefined) {
+                        mainMetrics.push({ label: 'F1分数', value: metrics.f1_score.toFixed(4) });
+                    }
+                } else if (model.algorithm_type === 'regression') {
+                    if (metrics.r2 !== undefined) {
+                        mainMetrics.push({ label: 'R²', value: metrics.r2.toFixed(4) });
+                    }
+                    if (metrics.rmse !== undefined) {
+                        mainMetrics.push({ label: 'RMSE', value: metrics.rmse.toFixed(4) });
+                    }
+                }
+                
+                card.innerHTML = `
+                    <div class="model-card-header">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <input type="checkbox" class="model-select-checkbox" value="${model.id}" 
+                                onclick="event.stopPropagation(); modelManager.toggleSelection(${model.id})"
+                                ${this.selectedModels.has(model.id) ? 'checked' : ''}>
+                            <div class="model-name" title="${model.name}">${model.name || `模型 ${model.id}`}</div>
+                        </div>
+                        <div class="model-type-badge ${model.algorithm_type}">
+                            ${this.getAlgorithmTypeText(model.algorithm_type)}
+                        </div>
+                    </div>
+                    <div class="model-info">
+                        算法: ${model.algorithm_name || '未知'}<br>
+                        创建时间: ${new Date(model.created_at).toLocaleString('zh-CN')}
+                    </div>
+                    ${mainMetrics.length > 0 ? `
+                    <div class="model-metrics">
+                        ${mainMetrics.map(m => `
+                            <div class="model-metric-item">
+                                <span class="model-metric-label">${m.label}:</span>
+                                <span class="model-metric-value">${m.value}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    ` : ''}
+                    <div class="model-actions">
+                        <button class="btn btn-primary" onclick="modelManager.viewModelResults(${model.id})">
+                            查看详情
+                        </button>
+                        <button class="btn btn-secondary" onclick="modelManager.deleteModel(${model.id})">
+                            删除
+                        </button>
+                    </div>
+                `;
+                
+                // 点击卡片任意位置（除了按钮和checkbox）也可以查看详情
+                card.addEventListener('click', (e) => {
+                    if (e.target.tagName !== 'BUTTON' && e.target.tagName !== 'INPUT') {
+                        this.viewModelResults(model.id);
+                    }
+                });
+
+                return card;
+            }
+
+            toggleSelection(modelId) {
+                if (this.selectedModels.has(modelId)) {
+                    this.selectedModels.delete(modelId);
+                } else {
+                    this.selectedModels.add(modelId);
+                }
+                this.updateSelectionUI();
+            }
+
+            toggleSelectAll(checked) {
+                if (checked) {
+                    this.models.forEach(m => this.selectedModels.add(m.id));
+                } else {
+                    this.selectedModels.clear();
+                }
+                
+                // 更新所有checkbox
+                document.querySelectorAll('.model-select-checkbox').forEach(cb => {
+                    cb.checked = checked;
+                });
+                
+                this.updateSelectionUI();
+            }
+
+            updateSelectionUI() {
+                const count = this.selectedModels.size;
+                const btn = document.getElementById('btn-batch-delete');
+                const countSpan = document.getElementById('selected-count');
+                const selectAllCb = document.getElementById('select-all-models');
+                
+                if (count > 0) {
+                    btn.disabled = false;
+                    btn.style.opacity = '1';
+                    btn.style.cursor = 'pointer';
+                    countSpan.textContent = `(${count})`;
+                    countSpan.style.display = 'inline';
+                } else {
+                    btn.disabled = true;
+                    btn.style.opacity = '0.5';
+                    btn.style.cursor = 'not-allowed';
+                    countSpan.style.display = 'none';
+                }
+                
+                // 更新全选框状态
+                if (this.models.length > 0 && count === this.models.length) {
+                    selectAllCb.checked = true;
+                    selectAllCb.indeterminate = false;
+                } else if (count > 0) {
+                    selectAllCb.checked = false;
+                    selectAllCb.indeterminate = true;
+                } else {
+                    selectAllCb.checked = false;
+                    selectAllCb.indeterminate = false;
+                }
+            }
+
+            async deleteSelectedModels() {
+                const count = this.selectedModels.size;
+                if (count === 0) return;
+
+                const confirmed = await UIHelper.confirm(`确定要删除选中的 ${count} 个模型吗？此操作不可恢复。`, '批量删除确认');
+                if (!confirmed) return;
+
+                try {
+                    this.showMessage('正在批量删除...', 'info');
+                    
+                    // 调用批量删除API
+                    const modelIds = Array.from(this.selectedModels);
+                    const result = await apiClient.post('/api/models/batch', { model_ids: modelIds });
+                    
+                    if (result.success) {
+                        UIHelper.showMessage(`成功删除 ${result.deleted_count} 个模型`, 'success');
+                        if (result.errors && result.errors.length > 0) {
+                            console.warn('部分删除失败:', result.errors);
+                        }
+                        this.loadModels();
+                    } else {
+                        throw new Error(result.error || '批量删除失败');
+                    }
+                } catch (error) {
+                    console.error('批量删除失败:', error);
+                    this.showMessage('批量删除失败', 'error');
+                    UIHelper.showMessage('批量删除失败: ' + error.message, 'error');
+                }
+            }
+            
+            getAlgorithmTypeText(type) {
+                const typeMap = {
+                    'classification': '分类',
+                    'regression': '回归',
+                    'clustering': '聚类',
+                    'dimensionality_reduction': '降维'
+                };
+                return typeMap[type] || type;
+            }
+            
+            async viewModelResults(modelId) {
+                try {
+                    this.showMessage('加载模型详情...', 'info');
+                    
+                    const result = await apiClient.getModel(modelId);
+                    
+                    if (result.success) {
+                        this.currentModelId = modelId;
+                        this.showDetailView(result.data);
+                        this.showMessage('就绪', 'success');
+                    } else {
+                        throw new Error(result.error || '加载失败');
+                    }
+                } catch (error) {
+                    console.error('加载模型详情失败:', error);
+                    this.showMessage('加载失败', 'error');
+                    UIHelper.showMessage('加载模型详情失败: ' + error.message, 'error');
+                }
+            }
+            
+            showDetailView(model) {
+                // 切换视图
+                document.getElementById('models-list-view').style.display = 'none';
+                document.getElementById('model-detail-view').style.display = 'block';
+                
+                // 设置标题
+                document.getElementById('model-title').textContent = model.name || `模型 ${model.id}`;
+                document.getElementById('model-subtitle').textContent = 
+                    `${model.algorithm_name} - ${this.getAlgorithmTypeText(model.algorithm_type)} - ${new Date(model.created_at).toLocaleString('zh-CN')}`;
+                
+                // 清空之前的图表
+                this.visualizer.clearAll();
+                
+                // 渲染结果
+                this.visualizer.renderTrainingResults('results-content', {
+                    algorithm_type: model.algorithm_type,
+                    algorithm_name: model.algorithm_name,
+                    performance_metrics: model.performance_metrics,
+                    complete_results: model.complete_results,
+                    feature_importance: model.feature_importance
+                });
+            }
+            
+            showListView() {
+                document.getElementById('models-list-view').style.display = 'block';
+                document.getElementById('model-detail-view').style.display = 'none';
+                this.currentModelId = null;
+                this.visualizer.clearAll();
+            }
+            
+            async deleteModel(modelId) {
+                const confirmed = await UIHelper.confirm('确定要删除这个模型吗？', '确认删除');
+                if (!confirmed) {
+                    return;
+                }
+                
+                try {
+                    this.showMessage('删除中...', 'info');
+                    
+                    const result = await apiClient.deleteModel(modelId);
+                    
+                    if (result.success) {
+                        UIHelper.showMessage('删除成功', 'success');
+                        this.loadModels();
+                    } else {
+                        throw new Error(result.error || '删除失败');
+                    }
+                } catch (error) {
+                    console.error('删除模型失败:', error);
+                    this.showMessage('删除失败', 'error');
+                    UIHelper.showMessage('删除模型失败: ' + error.message, 'error');
+                }
+            }
+
+            async cleanupSystem() {
+                const confirmed = await UIHelper.confirm('确定要清理系统中的无用文件吗？\n这将删除未使用的处理后数据集、模型文件、预测结果和临时文件。', '确认清理');
+                if (!confirmed) return;
+
+                try {
+                    this.showMessage('正在清理系统文件...', 'info');
+                    
+                    const response = await fetch('/api/system/cleanup', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        const data = result.data;
+                        // 格式化显示清理结果
+                        const msg = [
+                            '清理完成！',
+                            `删除数据集: ${data.datasets_deleted}`,
+                            `删除模型文件: ${data.models_deleted}`,
+                            `删除预测文件: ${data.predictions_deleted}`,
+                            `删除组件文件: ${data.components_deleted}`
+                        ].join('\n');
+                        
+                        UIHelper.showMessage(msg, 'success');
+                        this.loadModels(); 
+                    } else {
+                        throw new Error(result.error || '清理失败');
+                    }
+                } catch (error) {
+                    console.error('清理失败:', error);
+                    UIHelper.showMessage('清理失败: ' + error.message, 'error');
+                } finally {
+                    this.showMessage('就绪', 'info');
+                }
+            }
+            
+            showEmptyState(message) {
+                const container = document.getElementById('model-list');
+                container.innerHTML = `
+                    <div class="empty-results">
+                        <div class="empty-results-icon">📊</div>
+                        <h3>暂无模型</h3>
+                        <p>${message}</p>
+                        <a href="index.html" class="btn btn-primary">开始训练模型</a>
+                    </div>
+                `;
+            }
+            
+            showMessage(message, type = 'info') {
+                const statusEl = document.getElementById('status-message');
+                statusEl.textContent = message;
+                statusEl.className = `status-${type}`;
+            }
+        }
+        
+        // 初始化
+        const modelManager = new ModelManager();
+    </script>
+</body>
+</html>
