@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>帮助文档 - 机器学习可视化平台</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/help.css">
+</head>
+<body>
+    <div id="app">
+        <header class="header">
+            <div class="logo">
+                <h1>ML Visual Builder</h1>
+                <p>机器学习可视化平台</p>
+            </div>
+            <nav class="main-nav">
+                <a href="index.html" class="nav-link">工作流</a>
+                <a href="data_editor.html" class="nav-link">数据管理</a>
+                <a href="models.html" class="nav-link">模型管理</a>
+                <a href="predict.html" class="nav-link">模型预测</a>
+                <a href="help.html" class="nav-link active">帮助</a>
+            </nav>
+            <div class="header-actions">
+                <button class="btn btn-secondary" onclick="window.location.href='index.html'">返回工作流</button>
+            </div>
+        </header>
+
+        <div class="main-container">
+            <div class="help-container">
+                <div class="help-sidebar">
+                    <h3>目录</h3>
+                    <ul class="help-nav">
+                        <li><a href="#getting-started" class="help-nav-link active">快速开始</a></li>
+                        <li><a href="#workflow" class="help-nav-link">工作流构建</a></li>
+                        <li><a href="#data-management" class="help-nav-link">数据管理</a></li>
+                        <li><a href="#model-training" class="help-nav-link">模型训练</a></li>
+                        <li><a href="#prediction" class="help-nav-link">模型预测</a></li>
+                        <li><a href="#algorithms" class="help-nav-link">算法指南</a></li>
+                        <li><a href="#faq" class="help-nav-link">常见问题</a></li>
+                        <li><a href="#contact" class="help-nav-link">联系我们</a></li>
+                    </ul>
+                </div>
+
+                <div class="help-content">
+                    <div class="help-section" id="getting-started">
+                        <h2>快速开始</h2>
+                        <div class="help-card">
+                            <h3>平台简介</h3>
+                            <p>机器学习可视化平台是一个本地化部署的机器学习工具，提供从数据上传、预处理、模型训练到预测的全流程可视化操作。</p>
+                            <div class="feature-list">
+                                <div class="feature-item">
+                                    <span class="feature-icon">✨</span>
+                                    <div>
+                                        <h4>可视化拖拽式工作流</h4>
+                                        <p>通过直观的拖拽操作构建机器学习流程</p>
+                                    </div>
+                                </div>
+                                <div class="feature-item">
+                                    <span class="feature-icon">🤖</span>
+                                    <div>
+                                        <h4>31种机器学习算法</h4>
+                                        <p>支持分类、回归、聚类、降维等多种算法</p>
+                                    </div>
+                                </div>
+                                <div class="feature-item">
+                                    <span class="feature-icon">📊</span>
+                                    <div>
+                                        <h4>完整的数据管理</h4>
+                                        <p>支持7种编码方式和多种预处理方法</p>
+                                    </div>
+                                </div>
+                                <div class="feature-item">
+                                    <span class="feature-icon">🚀</span>
+                                    <div>
+                                        <h4>本地化部署</h4>
+                                        <p>无需复杂配置，一键启动运行</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="help-card">
+                            <h3>启动平台</h3>
+                            <p>平台支持多种启动方式：</p>
+                            <div class="code-block">
+                                <h4>Windows系统</h4>
+                                <pre><code># 一键启动（推荐）
+start.bat
+
+# 或手动启动
+uv venv
+.venv\Scripts\activate
+uv pip install -r requirements.txt
+python backend\app.py</code></pre>
+                            </div>
+                            <div class="code-block">
+                                <h4>Linux/Mac系统</h4>
+                                <pre><code># 创建虚拟环境
+uv venv
+source .venv/bin/activate
+
+# 安装依赖
+uv pip install -r requirements.txt
+
+# 启动应用
+python backend/app.py</code></pre>
+                            </div>
+                            <p>启动成功后，在浏览器中访问：<a href="http://localhost:5000" target="_blank">http://localhost:5000</a></p>
+                        </div>
+                    </div>
+
+                    <div class="help-section" id="workflow">
+                        <h2>工作流构建</h2>
+                        <div class="help-card">
+                            <h3>工作流概念</h3>
+                            <p>工作流是平台的核心功能，通过拖拽模块构建完整的机器学习流程。每个工作流包含多个节点，节点之间通过连线表示数据流向。</p>
+                            <div class="workflow-steps">
+                                <div class="step">
+                                    <div class="step-number">1</div>
+                                    <div class="step-content">
+                                        <h4>选择模块</h4>
+                                        <p>从左侧模块面板拖拽需要的模块到画布</p>
+                                    </div>
+                                </div>
+                                <div class="step">
+                                    <div class="step-number">2</div>
+                                    <div class="step-content">
+                                        <h4>配置参数</h4>
+                                        <p>双击模块打开配置面板，设置相关参数</p>
+                                    </div>
+                                </div>
+                                <div class="step">
+                                    <div class="step-number">3</div>
+                                    <div class="step-content">
+                                        <h4>连接模块</h4>
+                                        <p>从一个模块的输出端口拖拽到另一个模块的输入端口</p>
+                                    </div>
+                                </div>
+                                <div class="step">
+                                    <div class="step-number">4</div>
+                                    <div class="step-content">
+                                        <h4>执行工作流</h4>
+                                        <p>点击右上角"执行"按钮运行整个工作流</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="help-card">
+                            <h3>模块类型</h3>
+                            <div class="module-grid">
+                                <div class="module-card">
+                                    <h4>数据输入模块</h4>
+                                    <ul>
+                                        <li>数据上传：上传CSV、Excel等格式的数据文件</li>
+                                        <li>数据集选择：从已上传的数据集中选择</li>
+                                    </ul>
+                                </div>
+                                <div class="module-card">
+                                    <h4>预处理模块</h4>
+                                    <ul>
+                                        <li>数据清洗：处理缺失值、异常值</li>
+                                        <li>特征编码：7种编码方式</li>
+                                        <li>特征缩放：标准化、归一化</li>
+                                    </ul>
+                                </div>
+                                <div class="module-card">
+                                    <h4>算法模块</h4>
+                                    <ul>
+                                        <li>分类算法：11种分类算法</li>
+                                        <li>回归算法：11种回归算法</li>
+                                        <li>聚类算法：5种聚类算法</li>
+                                        <li>降维算法：4种降维算法</li>
+                                    </ul>
+                                </div>
+                                <div class="module-card">
+                                    <h4>输出模块</h4>
+                                    <ul>
+                                        <li>模型保存：保存训练好的模型</li>
+                                        <li>结果可视化：查看训练结果和预测结果</li>
+                                        <li>数据导出：导出处理后的数据</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="help-section" id="data-management">
+                        <h2>数据管理</h2>
+                        <div class="help-card">
+                            <h3>数据上传</h3>
+                            <p>平台支持多种数据格式：</p>
+                            <ul>
+                                <li><strong>CSV文件</strong>：逗号分隔值文件，最常用的数据格式</li>
+                                <li><strong>Excel文件</strong>：支持.xlsx和.xls格式</li>
+                                <li><strong>JSON文件</strong>：JavaScript对象表示法</li>
+                            </ul>
+                            <p>上传步骤：</p>
+                            <ol>
+                                <li>进入"数据管理"页面</li>
+                                <li>点击"上传数据集"按钮</li>
+                                <li>选择文件并设置数据集名称</li>
+                                <li>点击"上传"按钮</li>
+                            </ol>
+                        </div>
+
+                        <div class="help-card">
+                            <h3>数据编辑</h3>
+                            <p>平台提供类SPSS的数据编辑界面：</p>
+                            <ul>
+                                <li><strong>表格编辑</strong>：直接在表格中修改数据</li>
+                                <li><strong>列操作</strong>：添加、删除、重命名列</li>
+                                <li><strong>行操作</strong>：添加、删除、筛选行</li>
+                                <li><strong>数据类型</strong>：设置数值型、文本型、日期型等</li>
+                            </ul>
+                        </div>
+
+                        <div class="help-card">
+                            <h3>预处理功能</h3>
+                            <div class="preprocess-grid">
+                                <div class="preprocess-item">
+                                    <h4>缺失值处理</h4>
+                                    <ul>
+                                        <li>删除缺失值</li>
+                                        <li>均值填充</li>
+                                        <li>中位数填充</li>
+                                        <li>众数填充</li>
+                                    </ul>
+                                </div>
+                                <div class="preprocess-item">
+                                    <h4>特征编码</h4>
+                                    <ul>
+                                        <li>One-Hot编码</li>
+                                        <li>标签编码</li>
+                                        <li>序数编码</li>
+                                        <li>目标编码</li>
+                                        <li>频率编码</li>
+                                        <li>哈希编码</li>
+                                        <li>二进制编码</li>
+                                    </ul>
+                                </div>
+                                <div class="preprocess-item">
+                                    <h4>特征缩放</h4>
+                                    <ul>
+                                        <li>标准化</li>
+                                        <li>归一化</li>
+                                        <li>最大最小缩放</li>
+                                    </ul>
+                                </div>
+                                <div class="preprocess-item">
+                                    <h4>特征选择</h4>
+                                    <ul>
+                                        <li>方差阈值</li>
+                                        <li>相关性分析</li>
+                                        <li>递归特征消除</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="help-section" id="model-training">
+                        <h2>模型训练</h2>
+                        <div class="help-card">
+                            <h3>训练流程</h3>
+                            <ol>
+                                <li><strong>选择数据集</strong>：从已上传的数据集中选择训练数据</li>
+                                <li><strong>选择算法</strong>：根据任务类型选择合适的算法</li>
+                                <li><strong>设置参数</strong>：配置算法超参数和训练参数</li>
+                                <li><strong>划分数据集</strong>：设置训练集、验证集、测试集比例</li>
+                                <li><strong>开始训练</strong>：点击训练按钮开始模型训练</li>
+                                <li><strong>查看结果</strong>：训练完成后查看评估指标和可视化结果</li>
+                            </ol>
+                        </div>
+
+                        <div class="help-card">
+                            <h3>超参数调优</h3>
+                            <p>平台支持多种超参数调优方法：</p>
+                            <div class="tuning-methods">
+                                <div class="method">
+                                    <h4>网格搜索</h4>
+                                    <p>遍历所有可能的参数组合，寻找最优解</p>
+                                </div>
+                                <div class="method">
+                                    <h4>随机搜索</h4>
+                                    <p>在参数空间中随机采样，效率更高</p>
+                                </div>
+                                <div class="method">
+                                    <h4>贝叶斯优化</h4>
+                                    <p>基于贝叶斯定理的智能优化方法</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="help-card">
+                            <h3>评估指标</h3>
+                            <div class="metrics-grid">
+                                <div class="metric-card">
+                                    <h4>分类任务</h4>
+                                    <ul>
+                                        <li>准确率</li>
+                                        <li>精确率</li>
+                                        <li>召回率</li>
+                                        <li>F1分数</li>
+                                        <li>AUC-ROC</li>
+                                        <li>混淆矩阵</li>
+                                    </ul>
+                                </div>
+                                <div class="metric-card">
+                                    <h4>回归任务</h4>
+                                    <ul>
+                                        <li>均方误差</li>
+                                        <li>平均绝对误差</li>
+                                        <li>R²分数</li>
+                                        <li>解释方差</li>
+                                    </ul>
+                                </div>
+                                <div class="metric-card">
+                                    <h4>聚类任务</h4>
+                                    <ul>
+                                        <li>轮廓系数</li>
+                                        <li>Calinski-Harabasz指数</li>
+                                        <li>Davies-Bouldin指数</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="help-section" id="prediction">
+                        <h2>模型预测</h2>
+                        <div class="help-card">
+                            <h3>预测流程</h3>
+                            <ol>
+                                <li><strong>选择模型</strong>：从已训练的模型中选择</li>
+                                <li><strong>准备数据</strong>：上传或输入预测数据</li>
+                                <li><strong>配置参数</strong>：设置预测参数（如是否返回概率）</li>
+                                <li><strong>执行预测</strong>：点击预测按钮开始预测</li>
+                                <li><strong>查看结果</strong>：查看预测结果和可视化分析</li>
+                            </ol>
+                        </div>
+
+                        <div class="help-card">
+                            <h3>批量预测</h3>
+                            <p>支持批量数据预测：</p>
+                            <ul>
+                                <li>上传CSV文件进行批量预测</li>
+                                <li>支持实时数据输入预测</li>
+                                <li>预测结果可下载为CSV文件</li>
+                                <li>支持概率预测（分类任务）</li>
+                            </ul>
+                        </div>
+
+                        <div class="help-card">
+                            <h3>结果分析</h3>
+                            <div class="analysis-grid">
+                                <div class="analysis-item">
+                                    <h4>分类结果</h4>
+                                    <ul>
+                                        <li>预测类别分布</li>
+                                        <li>概率分布图</li>
+                                        <li>错误分析</li>
+                                    </ul>
+                                </div>
+                                <div class="analysis-item">
+                                    <h4>回归结果</h4>
+                                    <ul>
+                                        <li>预测值与真实值对比</li>
+                                        <li>残差分析</li>
+                                        <li>误差分布</li>
+                                    </ul>
+                                </div>
+                                <div class="analysis-item">
+                                    <h4>聚类结果</h4>
+                                    <ul>
+                                        <li>聚类分布可视化</li>
+                                        <li>聚类中心分析</li>
+                                        <li>样本归属分析</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="help-section" id="algorithms">
+                        <h2>算法指南</h2>
+                        
+                        <div class="help-card">
+                            <h3>算法选择指南</h3>
+                            <table class="algorithm-table">
+                                <thead>
+                                    <tr>
+                                        <th>任务类型</th>
+                                        <th>推荐算法</th>
+                                        <th>适用场景</th>
+                                        <th>包含算法</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>二分类</td>
+                                        <td>逻辑回归、随机森林、XGBoost</td>
+                                        <td>数据量适中，需要可解释性</td>
+                                        <td>逻辑回归、随机森林、决策树、梯度提升、XGBoost、LightGBM、CatBoost、SVM、朴素贝叶斯、KNN、MLP</td>
+                                    </tr>
+                                    <tr>
+                                        <td>多分类</td>
+                                        <td>随机森林、LightGBM、MLP</td>
+                                        <td>类别较多，特征复杂</td>
+                                        <td>逻辑回归、随机森林、决策树、梯度提升、XGBoost、LightGBM、CatBoost、SVM、朴素贝叶斯、KNN、MLP</td>
+                                    </tr>
+                                    <tr>
+                                        <td>线性回归</td>
+                                        <td>线性回归、岭回归、Lasso回归</td>
+                                        <td>特征与目标呈线性关系</td>
+                                        <td>线性回归、岭回归、Lasso回归、弹性网络回归</td>
+                                    </tr>
+                                    <tr>
+                                        <td>非线性回归</td>
+                                        <td>随机森林回归、XGBoost回归、MLP回归</td>
+                                        <td>复杂非线性关系预测</td>
+                                        <td>决策树回归、随机森林回归、梯度提升回归、XGBoost回归、LightGBM回归、SVR回归、MLP回归</td>
+                                    </tr>
+                                    <tr>
+                                        <td>划分聚类</td>
+                                        <td>K-Means、高斯混合模型</td>
+                                        <td>数据分布呈球形或高斯分布</td>
+                                        <td>K-Means、高斯混合模型</td>
+                                    </tr>
+                                    <tr>
+                                        <td>层次聚类</td>
+                                        <td>层次聚类、谱聚类</td>
+                                        <td>需要探索聚类层次结构</td>
+                                        <td>层次聚类、谱聚类</td>
+                                    </tr>
+                                    <tr>
+                                        <td>密度聚类</td>
+                                        <td>DBSCAN</td>
+                                        <td>非球形簇，密度不均匀数据</td>
+                                        <td>DBSCAN</td>
+                                    </tr>
+                                    <tr>
+                                        <td>线性降维</td>
+                                        <td>PCA、LDA</td>
+                                        <td>线性特征提取，有监督降维</td>
+                                        <td>PCA、LDA</td>
+                                    </tr>
+                                    <tr>
+                                        <td>非线性降维</td>
+                                        <td>t-SNE、UMAP</td>
+                                        <td>高维数据可视化，流形学习</td>
+                                        <td>t-SNE、UMAP</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="help-card">
+                            <h3>分类算法详解</h3>
+                            <div class="algorithm-details">
+                                <div class="algorithm-item">
+                                    <h4>1. 逻辑回归 (Logistic Regression)</h4>
+                                    <p><strong>原理</strong>: 使用逻辑函数将线性回归的输出映射到[0,1]区间，用于二分类或多分类任务。</p>
+                                    <p><strong>特点</strong>: 可解释性强，计算效率高，适合线性可分数据。</p>
+                                    <p><strong>适用场景</strong>: 二分类问题，需要概率输出的场景。</p>
+                                    <p><strong>关键参数</strong>: C(正则化强度)、penalty(正则化类型)、solver(优化算法)</p>
+                                </div>
+                                
+                                <div class="algorithm-item">
+                                    <h4>2. 随机森林分类器 (Random Forest Classifier)</h4>
+                                    <p><strong>原理</strong>: 集成学习方法，通过构建多个决策树并投票决定最终分类结果。</p>
+                                    <p><strong>特点</strong>: 抗过拟合能力强，可处理高维数据，提供特征重要性评估。</p>
+                                    <p><strong>适用场景</strong>: 各种分类任务，特别是特征维度较高的数据集。</p>
+                                    <p><strong>关键参数</strong>: n_estimators(树的数量)、max_depth(树的最大深度)</p>
+                                </div>
+                                
+                                <div class="algorithm-item">
+                                    <h4>3. 决策树分类器 (Decision Tree Classifier)</h4>
+                                    <p><strong>原理</strong>: 基于树结构的分类模型，通过特征划分构建决策路径。</p>
+                                    <p><strong>特点</strong>: 可解释性强，可视化效果好，无需特征缩放。</p>
+                                    <p><strong>适用场景</strong>: 需要可解释性的分类任务，特征重要性分析。</p>
+                                    <p><strong>关键参数</strong>: max_depth(最大深度)、min_samples_split(最小分裂样本数)</p>
+                                </div>
+                                
+                                <div class="algorithm-item">
+                                    <h4>4. 梯度提升分类器 (Gradient Boosting Classifier)</h4>
+                                    <p><strong>原理</strong>: 集成学习方法，通过串行训练弱学习器，每轮纠正前一轮的错误。</p>
+                                    <p><strong>特点</strong>: 预测精度高，可处理复杂非线性关系。</p>
+                                    <p><strong>适用场景</strong>: 对预测精度要求高的分类任务。</p>
+                                    <p><strong>关键参数</strong>: n_estimators(弱学习器数量)、learning_rate(学习率)</p>
+                                </div>
+                                
+                                <div class="algorithm-item">
+                                    <h4>5. XGBoost分类器 (XGBoost Classifier)</h4>
+                                    <p><strong>原理</strong>: 优化的梯度提升算法，加入正则化项防止过拟合。</p>
+                                    <p><strong>特点</strong>: 速度快，精度高，支持并行计算。</p>
+                                    <p><strong>适用场景</strong>: 大规模数据集，竞赛级分类任务。</p>
+                                    <p><strong>关键参数</strong>: n_estimators、max_depth、learning_rate</p>
+                                </div>
+                                
+                                <div class="algorithm-item">
+                                    <h4>6. LightGBM分类器 (LightGBM Classifier)</h4>
+                                    <p><strong>原理</strong>: 基于直方图的梯度提升算法，使用叶子生长策略。</p>
+                                    <p><strong>特点</strong>: 内存占用小，训练速度快，适合大规模数据。</p>
+                                    <p><strong>适用场景</strong>: 大规模高维数据集，需要快速训练的场景。</p>
+                                    <p><strong>关键参数</strong>: num_leaves(叶子数量)、learning_rate</p>
+                                </div>
+                                
+                                <div class="algorithm-item">
+                                    <h4>7. CatBoost分类器 (CatBoost Classifier)</h4>
+                                    <p><strong>原理</strong>: 梯度提升算法，专门优化了类别特征处理。</p>
+                                    <p><strong>特点</strong>: 自动处理类别特征，抗过拟合能力强。</p>
+                                    <p><strong>适用场景</strong>: 包含大量类别特征的数据集。</p>
+                                    <p><strong>关键参数</strong>: iterations(迭代次数)、depth(树深度)</p>
+                                </div>
+                                
+                                <div class="algorithm-item">
+                                    <h4>8. SVM分类器 (Support Vector Machine Classifier)</h4>
+                                    <p><strong>原理</strong>: 寻找最优超平面，最大化类别间隔。</p>
+                                    <p><strong>特点</strong>: 在高维空间表现好，适合小样本数据。</p>
+                                    <p><strong>适用场景</strong>: 文本分类、图像识别等小样本高维数据。</p>
+                                    <p><strong>关键参数</strong>: C(惩罚系数)、kernel(核函数)</p>
+                                </div>
+                                
+                                <div class="algorithm-item">
+                                    <h4>9. 朴素贝叶斯 (Naive Bayes Classifier)</h4>
+                                    <p><strong>原理</strong>: 基于贝叶斯定理，假设特征之间条件独立。</p>
+                                    <p><strong>特点</strong>: 计算速度快，适合文本分类，对缺失数据不敏感。</p>
+                                    <p><strong>适用场景</strong>: 文本分类、垃圾邮件检测等。</p>
+                                    <p><strong>关键参数</strong>: alpha(平滑参数)</p>
+                                </div>
+                                
+                                <div class="algorithm-item">
+                                    <h4>10. KNN分类器 (K-Nearest Neighbors Classifier)</h4>
+                                    <p><strong>原理</strong>: 基于距离度量，根据最近邻样本的类别进行预测。</p>
+                                    <p><strong>特点</strong>: 简单直观，无需训练过程，适合小数据集。</p>
+                                    <p><strong>适用场景</strong>: 样本量较小的分类任务。</p>
+                                    <p><strong>关键参数</strong>: n_neighbors(邻居数量)、weights(权重函数)</p>
+                                </div>
+                                
+                                <div class="algorithm-item">
+                                    <h4>11. MLP分类器 (Multi-Layer Perceptron Classifier)</h4>
+                                    <p><strong>原理</strong>: 人工神经网络，通过多层感知器学习复杂模式。</p>
+                                    <p><strong>特点</strong>: 可学习复杂非线性关系，适合各种数据类型。</p>
+                                    <p><strong>适用场景</strong>: 复杂模式识别，图像、语音等数据。</p>
+                                    <p><strong>关键参数</strong>: hidden_layer_sizes(隐藏层结构)、activation(激活函数)</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="help-card">
+                            <h3>回归算法详解</h3>
+                            <div class="algorithm-details">
+                                <div class="algorithm-item">
+                                    <h4>1. 线性回归 (Linear Regression)</h4>
+                                    <p><strong>原理</strong>: 建立特征与目标值之间的线性关系模型。</p>
+                                    <p><strong>特点</strong>: 简单直观，可解释性强，计算速度快。</p>
+                                    <p><strong>适用场景</strong>: 特征与目标呈线性关系的预测任务。</p>
+                                    <p><strong>关键参数</strong>: fit_intercept(是否计算截距)</p>
+                                </div>
+                                
+                                <div class="algorithm-item">
+                                    <h4>2. 岭回归 (Ridge Regression)</h4>
+                                    <p><strong>原理</strong>: 在线性回归基础上加入L2正则化项。</p>
+                                    <p><strong>特点</strong>: 解决多重共线性问题，防止过拟合。</p>
+                                    <p><strong>适用场景</strong>: 特征之间存在相关性的回归任务。</p>
+                                    <p><strong>关键参数</strong>: alpha(正则化强度)</p>
+                                </div>
+                                
+                                <div class="algorithm-item">
+                                    <h4>3. Lasso回归 (Lasso Regression)</h4>
+                                    <p><strong>原理</strong>: 在线性回归基础上加入L1正则化项。</p>
+                                    <p><strong>特点</strong>: 可进行特征选择，产生稀疏解。</p>
+                                    <p><strong>适用场景</strong>: 高维数据，需要进行特征选择的场景。</p>
+                                    <p><strong>关键参数</strong>: alpha(正则化强度)</p>
+                                </div>
+                                
+                                <div class="algorithm-item">
+                                    <h4>4. 弹性网络回归 (ElasticNet Regression)</h4>
+                                    <p><strong>原理</strong>: 结合L1和L2正则化的线性回归。</p>
+                                    <p><strong>特点</strong>: 兼具岭回归和Lasso回归的优点。</p>
+                                    <p><strong>适用场景</strong>: 特征数量多于样本数量的回归任务。</p>
+                                    <p><strong>关键参数</strong>: alpha(正则化强度)、l1_ratio(L1比例)</p>
+                                </div>
+                                
+                                <div class="algorithm-item">
+                                    <h4>5. 决策树回归器 (Decision Tree Regressor)</h4>
+                                    <p><strong>原理</strong>: 基于树结构的回归模型，通过特征划分预测连续值。</p>
+                                    <p><strong>特点</strong>: 可解释性强，可处理非线性关系。</p>
+                                    <p><strong>适用场景</strong>: 需要可解释性的回归任务。</p>
+                                    <p><strong>关键参数</strong>: max_depth(最大深度)、min_samples_split(最小分裂样本数)</p>
+                                </div>
+                                
+                                <div class="algorithm-item">
+                                    <h4>6. 随机森林回归器 (Random Forest Regressor)</h4>
+                                    <p><strong>原理</strong>: 集成多个决策树，通过平均预测值提高精度。</p>
+                                    <p><strong>特点</strong>: 抗过拟合能力强，可提供特征重要性。</p>
+                                    <p><strong>适用场景</strong>: 各种回归任务，特别是复杂非线性关系。</p>
+                                    <p><strong>关键参数</strong>: n_estimators(树的数量)、max_depth(树的最大深度)</p>
+                                </div>
+                                
+                                <div class="algorithm-item">
+                                    <h4>7. 梯度提升回归器 (Gradient Boosting Regressor)</h4>
+                                    <p><strong>原理</strong>: 串行训练弱学习器，逐步减少残差。</p>
+                                    <p><strong>特点</strong>: 预测精度高，可处理复杂模式。</p>
+                                    <p><strong>适用场景</strong>: 对预测精度要求高的回归任务。</p>
+                                    <p><strong>关键参数</strong>: n_estimators(弱学习器数量)、learning_rate(学习率)</p>
+                                </div>
+                                
+                                <div class="algorithm-item">
+                                    <h4>8. XGBoost回归器 (XGBoost Regressor)</h4>
+                                    <p><strong>原理</strong>: 优化的梯度提升算法，加入正则化项。</p>
+                                    <p><strong>特点</strong>: 速度快，精度高，支持并行计算。</p>
+                                    <p><strong>适用场景</strong>: 大规模数据集，竞赛级回归任务。</p>
+                                    <p><strong>关键参数</strong>: n_estimators、max_depth、learning_rate</p>
+                                </div>
+                                
+                                <div class="algorithm-item">
+                                    <h4>9. LightGBM回归器 (LightGBM Regressor)</h4>
+                                    <p><strong>原理</strong>: 基于直方图的梯度提升算法。</p>
+                                    <p><strong>特点</strong>: 内存占用小，训练速度快。</p>
+                                    <p><strong>适用场景</strong>: 大规模高维数据集。</p>
+                                    <p><strong>关键参数</strong>: num_leaves(叶子数量)、learning_rate</p>
+                                </div>
+                                
+                                <div class="algorithm-item">
+                                    <h4>10. SVR回归器 (Support Vector Regressor)</h4>
+                                    <p><strong>原理</strong>: 支持向量机在回归问题上的应用。</p>
+                                    <p><strong>特点</strong>: 对异常值不敏感，适合小样本数据。</p>
+                                    <p><strong>适用场景</strong>: 小样本回归任务，需要鲁棒性的场景。</p>
+                                    <p><strong>关键参数</strong>: C(惩罚系数)、kernel(核函数)</p>
+                                </div>
+                                
+                                <div class="algorithm-item">
+                                    <h4>11. MLP回归器 (Multi-Layer Perceptron Regressor)</h4>
+                                    <p><strong>原理</strong>: 人工神经网络用于回归任务。</p>
+                                    <p><strong>特点</strong>: 可学习复杂非线性关系。</p>
+                                    <p><strong>适用场景</strong>: 复杂非线性回归任务。</p>
+                                    <p><strong>关键参数</strong>: hidden_layer_sizes(隐藏层结构)、activation(激活函数)</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="help-card">
+                            <h3>聚类算法详解</h3>
+                            <div class="algorithm-details">
+                                <div class="algorithm-item">
+                                    <h4>1. K-Means聚类</h4>
+                                    <p><strong>原理</strong>: 将数据划分为K个簇，使簇内样本距离最小化。</p>
+                                    <p><strong>特点</strong>: 简单高效，适合球形簇，需要指定簇数量。</p>
+                                    <p><strong>适用场景</strong>: 数据分布呈球形的聚类任务。</p>
+                                    <p><strong>关键参数</strong>: n_clusters(簇数量)、init(初始化方法)</p>
+                                </div>
+                                
+                                <div class="algorithm-item">
+                                    <h4>2. 层次聚类 (Hierarchical Clustering)</h4>
+                                    <p><strong>原理</strong>: 通过层次分解或合并构建聚类树。</p>
+                                    <p><strong>特点</strong>: 无需指定簇数量，可生成树状图。</p>
+                                    <p><strong>适用场景</strong>: 需要探索不同层次聚类结构的任务。</p>
+                                    <p><strong>关键参数</strong>: n_clusters(簇数量)、linkage(链接方法)</p>
+                                </div>
+                                
+                                <div class="algorithm-item">
+                                    <h4>3. DBSCAN聚类</h4>
+                                    <p><strong>原理</strong>: 基于密度的聚类，识别高密度区域。</p>
+                                    <p><strong>特点</strong>: 可发现任意形状的簇，自动确定簇数量。</p>
+                                    <p><strong>适用场景</strong>: 非球形簇，密度不均匀的数据。</p>
+                                    <p><strong>关键参数</strong>: eps(邻域半径)、min_samples(最小样本数)</p>
+                                </div>
+                                
+                                <div class="algorithm-item">
+                                    <h4>4. 高斯混合模型 (Gaussian Mixture Model)</h4>
+                                    <p><strong>原理</strong>: 假设数据由多个高斯分布混合生成。</p>
+                                    <p><strong>特点</strong>: 软聚类，提供样本属于各簇的概率。</p>
+                                    <p><strong>适用场景</strong>: 需要概率输出的聚类任务。</p>
+                                    <p><strong>关键参数</strong>: n_components(混合成分数量)</p>
+                                </div>
+                                
+                                <div class="algorithm-item">
+                                    <h4>5. 谱聚类 (Spectral Clustering)</h4>
+                                    <p><strong>原理</strong>: 基于图论的聚类方法，利用特征向量进行聚类。</p>
+                                    <p><strong>特点</strong>: 可发现复杂形状的簇，适合高维数据。</p>
+                                    <p><strong>适用场景</strong>: 非凸形状的簇，图数据聚类。</p>
+                                    <p><strong>关键参数</strong>: n_clusters(簇数量)、affinity(相似度度量)</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="help-card">
+                            <h3>降维算法详解</h3>
+                            <div class="algorithm-details">
+                                <div class="algorithm-item">
+                                    <h4>1. PCA降维 (Principal Component Analysis)</h4>
+                                    <p><strong>原理</strong>: 通过正交变换将相关特征转换为线性无关的主成分。</p>
+                                    <p><strong>特点</strong>: 线性降维，保留最大方差，可解释性强。</p>
+                                    <p><strong>适用场景</strong>: 高维数据可视化，特征压缩。</p>
+                                    <p><strong>关键参数</strong>: n_components(主成分数量)</p>
+                                </div>
+                                
+                                <div class="algorithm-item">
+                                    <h4>2. t-SNE降维 (t-Distributed Stochastic Neighbor Embedding)</h4>
+                                    <p><strong>原理</strong>: 基于概率分布的降维，保持局部相似性。</p>
+                                    <p><strong>特点</strong>: 非线性降维，可视化效果好，计算复杂度高。</p>
+                                    <p><strong>适用场景</strong>: 高维数据可视化，探索数据结构。</p>
+                                    <p><strong>关键参数</strong>: n_components(目标维度)、perplexity(困惑度)</p>
+                                </div>
+                                
+                                <div class="algorithm-item">
+                                    <h4>3. UMAP降维 (Uniform Manifold Approximation and Projection)</h4>
+                                    <p><strong>原理</strong>: 基于流形学习的降维方法，保持全局和局部结构。</p>
+                                    <p><strong>特点</strong>: 速度快，可处理大规模数据，可视化效果好。</p>
+                                    <p><strong>适用场景</strong>: 大规模高维数据可视化。</p>
+                                    <p><strong>关键参数</strong>: n_components(目标维度)、n_neighbors(邻居数量)</p>
+                                </div>
+                                
+                                <div class="algorithm-item">
+                                    <h4>4. LDA降维 (Linear Discriminant Analysis)</h4>
+                                    <p><strong>原理</strong>: 有监督的降维方法，最大化类间距离，最小化类内距离。</p>
+                                    <p><strong>特点</strong>: 有监督降维，适合分类任务的特征提取。</p>
+                                    <p><strong>适用场景</strong>: 分类任务的特征降维。</p>
+                                    <p><strong>关键参数</strong>: n_components(目标维度)</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="help-card">
+                            <h3>算法选择建议</h3>
+                            <div class="selection-guide">
+                                <div class="guide-item">
+                                    <h4>根据数据规模选择</h4>
+                                    <ul>
+                                        <li><strong>小数据集 (&lt;10,000样本)</strong>: 逻辑回归、SVM、KNN</li>
+                                        <li><strong>中等数据集 (10,000-100,000样本)</strong>: 随机森林、梯度提升</li>
+                                        <li><strong>大数据集 (&gt;100,000样本)</strong>: XGBoost、LightGBM、CatBoost</li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="guide-item">
+                                    <h4>根据特征类型选择</h4>
+                                    <ul>
+                                        <li><strong>数值特征为主</strong>: 线性模型、树模型、神经网络</li>
+                                        <li><strong>类别特征较多</strong>: CatBoost、LightGBM</li>
+                                        <li><strong>文本特征</strong>: 朴素贝叶斯、SVM</li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="guide-item">
+                                    <h4>根据任务需求选择</h4>
+                                    <ul>
+                                        <li><strong>需要可解释性</strong>: 逻辑回归、决策树</li>
+                                        <li><strong>需要高精度</strong>: XGBoost、LightGBM、神经网络</li>
+                                        <li><strong>需要快速训练</strong>: 逻辑回归、LightGBM</li>
+                                        <li><strong>需要概率输出</strong>: 逻辑回归、朴素贝叶斯、高斯混合模型</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="help-section" id="faq">
+                        <h2>常见问题</h2>
+                        <div class="faq-list">
+                            <div class="faq-item">
+                                <h3>Q: 如何添加新的机器学习算法？</h3>
+                                <p>A: 在 <code>backend/algorithms/</code> 相应目录下创建新的算法类，继承 <code>BaseAlgorithm</code>，并在 <code>algorithm_factory.py</code> 中注册。</p>
+                            </div>
+                            <div class="faq-item">
+                                <h3>Q: 如何自定义预处理步骤？</h3>
+                                <p>A: 在 <code>backend/services/preprocessing_service.py</code> 中添加新的预处理方法，并在相应路由中暴露API。</p>
+                            </div>
+                            <div class="faq-item">
+                                <h3>Q: 数据存储在哪里？</h3>
+                                <p>A: 所有数据都存储在本地 <code>data/</code> 目录中，包括数据库文件、上传的数据集、训练的模型等。</p>
+                            </div>
+                            <div class="faq-item">
+                                <h3>Q: 如何备份数据？</h3>
+                                <p>A: 直接复制整个 <code>data/</code> 目录即可备份所有数据。</p>
+                            </div>
+                            <div class="faq-item">
+                                <h3>Q: 平台支持哪些数据格式？</h3>
+                                <p>A: 支持CSV、Excel、JSON等常见数据格式。</p>
+                            </div>
+                            <div class="faq-item">
+                                <h3>Q: 如何查看训练进度？</h3>
+                                <p>A: 训练过程中会显示进度条和实时日志，可在训练页面查看。</p>
+                            </div>
+                            <div class="faq-item">
+                                <h3>Q: 模型训练失败怎么办？</h3>
+                                <p>A: 检查数据格式是否正确、内存是否充足、参数设置是否合理。查看错误日志获取详细信息。</p>
+                            </div>
+                            <div class="faq-item">
+                                <h3>Q: 如何导出训练结果？</h3>
+                                <p>A: 训练完成后，可在结果页面下载评估报告、可视化图表和模型文件。</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="help-section" id="contact">
+                        <h2>联系我们</h2>
+                        <div class="help-card">
+                            <h3>反馈与支持</h3>
+                            <p>如果您在使用过程中遇到问题或有改进建议，欢迎通过以下方式联系我们：</p>
+                            <div class="contact-info">
+                                <div class="contact-item">
+                                    <h4>问题反馈</h4>
+                                    <p>请详细描述您遇到的问题，包括：</p>
+                                    <ul>
+                                        <li>操作步骤</li>
+                                        <li>错误信息</li>
+                                        <li>期望结果</li>
+                                        <li>实际结果</li>
+                                    </ul>
+                                </div>
+                                <div class="contact-item">
+                                    <h4>功能建议</h4>
+                                    <p>欢迎提出新功能建议，包括：</p>
+                                    <ul>
+                                        <li>功能描述</li>
+                                        <li>使用场景</li>
+                                        <li>预期效果</li>
+                                    </ul>
+                                </div>
+                                <div class="contact-item">
+                                    <h4>文档改进</h4>
+                                    <p>如果您发现文档有误或不清晰，请告诉我们：</p>
+                                    <ul>
+                                        <li>文档位置</li>
+                                        <li>问题描述</li>
+                                        <li>改进建议</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="help-card">
+                            <h3>版本信息</h3>
+                            <ul>
+                                <li><strong>项目名称</strong>：机器学习可视化平台</li>
+                                <li><strong>版本号</strong>：1.0.0</li>
+                                <li><strong>最后更新</strong>：2025年12月5日</li>
+                                <li><strong>维护状态</strong>：活跃开发中</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/utils/ui-helper.js"></script>
+    <script>
+        // 帮助页面导航
+        document.addEventListener('DOMContentLoaded', function() {
+            // 导航链接点击事件
+            const navLinks = document.querySelectorAll('.help-nav-link');
+            const sections = document.querySelectorAll('.help-section');
+            
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // 移除所有active类
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    
+                    // 添加当前active类
+                    this.classList.add('active');
+                    
+                    // 滚动到对应部分
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetSection = document.getElementById(targetId);
+                    if (targetSection) {
+                        targetSection.scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+            });
+            
+            // 滚动时更新导航
+            window.addEventListener('scroll', function() {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    if (scrollY >= (sectionTop - 100)) {
+                        current = section.getAttribute('id');
+                    }
+                });
+                
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').substring(1) === current) {
+                        link.classList.add('active');
+                    }
+                });
+            });
+            
+            // 初始化第一个链接为active
+            if (navLinks.length > 0) {
+                navLinks[0].classList.add('active');
+            }
+        });
+    </script>
+</body>
+</html>
