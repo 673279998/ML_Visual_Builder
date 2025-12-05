@@ -1,24 +1,9 @@
 """
 数据库模型定义
 """
-import os
-import sys
 import sqlite3
 from datetime import datetime
-from pathlib import Path
-
-# 添加项目根目录到Python路径，确保导入正确
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
-
-try:
-    from backend.config import DATABASE_PATH
-except ImportError:
-    # 如果无法导入，直接计算路径
-    BASE_DIR = Path(__file__).resolve().parent.parent.parent
-    DATA_DIR = BASE_DIR / 'data'
-    DATABASE_DIR = DATA_DIR / 'databases'
-    DATABASE_DIR.mkdir(parents=True, exist_ok=True)
-    DATABASE_PATH = DATABASE_DIR / 'ml_platform.db'
+from backend.config import DATABASE_PATH
 
 
 class DatabaseModels:

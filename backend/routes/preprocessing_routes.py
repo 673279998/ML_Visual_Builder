@@ -2,8 +2,10 @@
 预处理API路由
 Preprocessing Routes
 """
-from flask import Blueprint, request, jsonify
 import logging
+import uuid
+import time
+from flask import Blueprint, request, jsonify
 from backend.services.preprocessing_service import PreprocessingService
 from backend.services.data_service import DataService
 
@@ -151,6 +153,11 @@ def handle_missing_values():
         data = request.get_json()
         dataset_id = data.get('dataset_id')
         workflow_id = data.get('workflow_id')
+        
+        # 如果没有workflow_id，生成一个唯一的任务ID，确保文件隔离
+        if not workflow_id:
+            workflow_id = f"task_{int(time.time())}_{str(uuid.uuid4())[:8]}"
+            
         strategy = data.get('strategy', 'mean')
         columns = data.get('columns')
         fill_value = data.get('fill_value')
@@ -236,6 +243,11 @@ def encode_features():
         data = request.get_json()
         dataset_id = data.get('dataset_id')
         workflow_id = data.get('workflow_id')
+        
+        # 如果没有workflow_id，生成一个唯一的任务ID，确保文件隔离
+        if not workflow_id:
+            workflow_id = f"task_{int(time.time())}_{str(uuid.uuid4())[:8]}"
+            
         target_column = data.get('target_column')
         
         if not dataset_id:

@@ -510,8 +510,30 @@ class TrainingService:
                     y = y.ravel()
                 y = le.fit_transform(y)
                 print(f"DEBUG: 已对分类目标变量进行LabelEncoding转换, Classes: {le.classes_}")
+                
+                # 保存LabelEncoder以便预测时还原
+                encoder_dir = DATA_DIR / 'encoders' / str(dataset_id)
+                if not encoder_dir.exists():
+                    encoder_dir.mkdir(parents=True, exist_ok=True)
+                    
+                le_filename = f"target_label_encoder_{algorithm_name}_{dataset_id}.pkl"
+                le_path = encoder_dir / le_filename
+                joblib.dump(le, le_path)
+                
+                # 添加到组件列表以便保存到数据库
+                # 注意：这里我们使用 target_columns 作为 applied_columns
+                components_to_save.append({
+                    'type': 'encoder', # 使用 'encoder' 类型，PredictionService 会识别它
+                    'name': f"target_encoder_{algorithm_name}",
+                    'path': str(le_path), # 保存绝对路径或相对路径
+                    'columns': target_columns,
+                    'config': {'method': 'label_encoder', 'is_target': True}
+                })
+                
             except Exception as e:
-                print(f"WARNING: LabelEncoding转换失败: {e}")
+                print(f"WARNING: LabelEncoding转换或保存失败: {e}")
+                import traceback
+                traceback.print_exc()
 
         # 划分训练集和测试集
         if task_id:

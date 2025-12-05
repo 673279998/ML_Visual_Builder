@@ -250,6 +250,11 @@ class PredictionService:
             c_cols = comp['applied_columns']
             c_config = comp['configuration']
             
+            # 处理相对路径
+            if c_path and not os.path.isabs(c_path):
+                from backend.config import BASE_DIR
+                c_path = os.path.join(BASE_DIR, c_path)
+            
             if not c_path or not os.path.exists(c_path):
                 error_msg = f"预处理组件文件不存在: {c_path} (组件: {comp.get('component_name')})"
                 logger.error(error_msg)
@@ -446,10 +451,18 @@ class PredictionService:
             
             for comp in reversed(target_components):
                 try:
-                    if not comp.get('file_path') or not os.path.exists(comp['file_path']):
+                    file_path = comp.get('file_path')
+                    
+                    # 处理相对路径
+                    if file_path and not os.path.isabs(file_path):
+                        from backend.config import BASE_DIR
+                        file_path = os.path.join(BASE_DIR, file_path)
+                        
+                    if not file_path or not os.path.exists(file_path):
+                        logger.warning(f"组件文件不存在: {file_path}")
                         continue
                         
-                    transformer = joblib.load(comp['file_path'])
+                    transformer = joblib.load(file_path)
                     c_type = comp['component_type']
                     
                     if c_type == 'scaler':

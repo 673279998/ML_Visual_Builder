@@ -315,14 +315,36 @@ class DatabaseManager:
                 
                 if count == 0:
                     should_delete_dataset = True
-                    # 关键步骤：如果决定删除数据集，先删除其关联的 encoders 记录
-                    # 这样后续的组件文件清理检查 dataset_usage 时就会为 0，从而允许删除文件
+                    # 关键步骤：如果决定删除数据集，先获取并删除其关联的 encoders 文件和记录
+                    # 获取编码器文件
+                    encoders = self.execute_query('SELECT file_path FROM dataset_encoders WHERE encoded_dataset_id = ?', (dataset_id,))
+                    for enc in encoders:
+                        f_path = enc['file_path']
+                        if f_path and os.path.exists(f_path):
+                            try:
+                                os.remove(f_path)
+                                print(f"已删除关联的编码器文件: {f_path}")
+                                # 尝试删除父目录（如果为空）
+                                parent_dir = os.path.dirname(f_path)
+                                if os.path.exists(parent_dir) and not os.listdir(parent_dir):
+                                    try:
+                                        os.rmdir(parent_dir)
+                                    except:
+                                        pass
+                            except OSError as e:
+                                print(f"删除编码器文件失败: {e}")
+
                     self.execute_update('DELETE FROM dataset_encoders WHERE encoded_dataset_id = ?', (dataset_id,))
 
         # 3. 获取并删除预处理组件文件
         components = self.get_preprocessing_components(model_id)
         for comp in components:
             file_path = comp.get('file_path')
+            # 处理相对路径
+            if file_path and not os.path.isabs(file_path):
+                from backend.config import BASE_DIR
+                file_path = os.path.join(BASE_DIR, file_path)
+
             if file_path and os.path.exists(file_path):
                 # 检查文件是否被其他模型使用
                 other_model_usage = self.execute_query(
@@ -341,6 +363,13 @@ class DatabaseManager:
                     try:
                         os.remove(file_path)
                         print(f"已删除无关联的预处理组件文件: {file_path}")
+                        # 尝试删除父目录（如果为空）
+                        parent_dir = os.path.dirname(file_path)
+                        if os.path.exists(parent_dir) and not os.listdir(parent_dir):
+                            try:
+                                os.rmdir(parent_dir)
+                            except:
+                                pass
                     except OSError as e:
                         print(f"删除预处理组件文件失败: {e}")
                 else:
