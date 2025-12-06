@@ -29,7 +29,7 @@ class HyperparameterTuner:
     def _prepare_target(self, y: np.ndarray, algorithm_type: str) -> np.ndarray:
         """
         准备目标变量
-        针对分类任务，如果目标是连续值(float)，尝试转换为离散值
+        针对分类任务，确保目标变量为数值类型
         """
         if algorithm_type == 'classification':
             try:
@@ -38,13 +38,29 @@ class HyperparameterTuner:
                     y = y.ravel()
                     
                 target_type = type_of_target(y)
-                if target_type == 'continuous':
-                    logger.info("检测到分类任务的目标变量为连续值，尝试进行LabelEncoding转换")
-                    from sklearn.preprocessing import LabelEncoder
-                    le = LabelEncoder()
-                    y = le.fit_transform(y)
+                logger.info(f"目标变量类型检测: {target_type}")
+                
+                # 对于分类任务，确保目标变量为数值类型
+                # 如果目标变量是字符串或非数值类型，进行LabelEncoding转换
+                if target_type in ['binary', 'multiclass']:
+                    # 检查是否需要转换
+                    if y.dtype.kind in 'OSU':  # 字符串类型
+                        logger.info("检测到分类任务的目标变量为字符串类型，进行LabelEncoding转换")
+                        from sklearn.preprocessing import LabelEncoder
+                        le = LabelEncoder()
+                        y = le.fit_transform(y)
+                        logger.info(f"LabelEncoding转换完成，类别: {le.classes_}")
+                    elif target_type == 'continuous':
+                        # 连续值转换为离散值（如0.0, 1.0 -> 0, 1）
+                        logger.info("检测到分类任务的目标变量为连续值，尝试转换为离散值")
+                        from sklearn.preprocessing import LabelEncoder
+                        le = LabelEncoder()
+                        y = le.fit_transform(y)
+                        logger.info(f"LabelEncoding转换完成，类别: {le.classes_}")
             except Exception as e:
                 logger.warning(f"目标变量转换失败: {e}")
+                import traceback
+                logger.warning(traceback.format_exc())
         return y
 
     def grid_search(
