@@ -435,6 +435,84 @@
     font-weight: 600;
 }
 
+/* 编码方式详情 */
+.encoding-details {
+    margin-top: 20px;
+}
+
+.encoding-item {
+    margin-bottom: 24px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.encoding-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.encoding-item h4 {
+    font-size: 18px;
+    margin-bottom: 12px;
+    color: var(--primary-color);
+    border-left: 4px solid var(--primary-color);
+    padding-left: 12px;
+}
+
+.encoding-item p {
+    margin: 8px 0;
+    line-height: 1.6;
+}
+
+.encoding-item strong {
+    color: var(--text-color);
+    font-weight: 600;
+}
+
+/* 编码方式总结 */
+.encoding-summary {
+    margin-top: 32px;
+    padding: 20px;
+    background: var(--secondary-color);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.encoding-summary h4 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    color: var(--primary-color);
+    font-size: 18px;
+}
+
+.encoding-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 16px;
+}
+
+.encoding-table th,
+.encoding-table td {
+    border: 1px solid var(--border-color);
+    padding: 12px;
+    text-align: left;
+    font-size: 14px;
+}
+
+.encoding-table th {
+    background: var(--bg-color);
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.encoding-table tr:nth-child(even) {
+    background: var(--bg-color);
+}
+
+.encoding-table tr:hover {
+    background: var(--hover-color);
+}
+
 /* 算法选择指南 */
 .selection-guide {
     display: grid;

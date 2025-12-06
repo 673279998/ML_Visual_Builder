@@ -387,6 +387,143 @@ python backend/app.py</code></pre>
                         <h2>算法指南</h2>
                         
                         <div class="help-card">
+                            <h3>特征编码方式详解</h3>
+                            <p>平台支持7种特征编码方式，适用于不同的数据场景：</p>
+                            
+                            <div class="encoding-details">
+                                <div class="encoding-item">
+                                    <h4>1. 标签编码 (Label Encoding)</h4>
+                                    <p><strong>原理</strong>: 将每个类别映射为一个唯一的整数（0, 1, 2...）。</p>
+                                    <p><strong>特点</strong>: 简单高效，不增加特征维度，但会引入类别间的顺序关系。</p>
+                                    <p><strong>适用场景</strong>: 树模型（决策树、随机森林、XGBoost等）通常能处理这种顺序关系，类别数量较少时效果较好。</p>
+                                    <p><strong>示例</strong>: ["北京", "上海", "广州"] → [0, 1, 2]</p>
+                                    <p><strong>注意事项</strong>: 线性模型可能将整数编码误解为有序关系，使用时需注意。</p>
+                                </div>
+                                
+                                <div class="encoding-item">
+                                    <h4>2. 独热编码 (One-Hot Encoding)</h4>
+                                    <p><strong>原理</strong>: 为每个类别创建一个新的二值特征列（0或1）。</p>
+                                    <p><strong>特点</strong>: 完全消除类别间的顺序关系，但会增加特征维度（维度爆炸问题）。</p>
+                                    <p><strong>适用场景</strong>: 需要消除顺序关系的场景，如线性模型（逻辑回归、SVM）、神经网络等，类别数量较少（建议少于15个）时效果最佳。</p>
+                                    <p><strong>示例</strong>: ["北京", "上海", "广州"] → 北京:[1,0,0], 上海:[0,1,0], 广州:[0,0,1]</p>
+                                    <p><strong>注意事项</strong>: 类别过多时会导致维度灾难，需要配合特征选择或降维。</p>
+                                </div>
+                                
+                                <div class="encoding-item">
+                                    <h4>3. 序数编码 (Ordinal Encoding)</h4>
+                                    <p><strong>原理</strong>: 按照指定的顺序为类别分配整数，保持类别间的顺序关系。</p>
+                                    <p><strong>特点</strong>: 保留类别顺序信息，适合有自然顺序的类别。</p>
+                                    <p><strong>适用场景</strong>: 教育程度（小学、中学、大学）、产品等级（低、中、高）等有序类别，树模型和线性模型都能利用这种顺序信息。</p>
+                                    <p><strong>示例</strong>: ["小学", "中学", "大学"] → [0, 1, 2]（保持顺序）</p>
+                                    <p><strong>注意事项</strong>: 需要预先定义类别顺序，否则可能引入错误的顺序关系。</p>
+                                </div>
+                                
+                                <div class="encoding-item">
+                                    <h4>4. 目标编码 (Target Encoding)</h4>
+                                    <p><strong>原理</strong>: 使用目标变量的均值（或其他统计量）来编码每个类别。</p>
+                                    <p><strong>特点</strong>: 编码值包含目标信息，能提高模型性能，但容易导致目标泄漏。</p>
+                                    <p><strong>适用场景</strong>: 高基数类别特征（如城市、产品ID），树模型通常能更好地利用这种编码。</p>
+                                    <p><strong>示例</strong>: 城市"北京"的目标均值是500，则所有"北京"编码为500</p>
+                                    <p><strong>注意事项</strong>: 必须在交叉验证中谨慎使用，防止数据泄漏。</p>
+                                </div>
+                                
+                                <div class="encoding-item">
+                                    <h4>5. 频率编码 (Frequency Encoding)</h4>
+                                    <p><strong>原理</strong>: 使用类别在数据集中出现的频率（或比例）进行编码。</p>
+                                    <p><strong>特点</strong>: 不增加特征维度，编码值反映类别的重要性。</p>
+                                    <p><strong>适用场景</strong>: 高基数类别，树模型和线性模型都能使用，树模型通常能更好地利用频率信息。</p>
+                                    <p><strong>示例</strong>: 类别"北京"出现100次，总样本1000，则编码为0.1（频率）或100（计数）</p>
+                                    <p><strong>注意事项</strong>: 稀有类别可能被赋予相似的频率值，失去区分度。</p>
+                                </div>
+                                
+                                <div class="encoding-item">
+                                    <h4>6. 二进制编码 (Binary Encoding)</h4>
+                                    <p><strong>原理</strong>: 先将类别映射为整数，再将整数转换为二进制表示，每位二进制作为一个特征。</p>
+                                    <p><strong>特点</strong>: 维度介于标签编码和独热编码之间，平衡了效率和效果。</p>
+                                    <p><strong>适用场景</strong>: 类别数量中等（几十到几百个），需要控制特征维度，各种模型都适用。</p>
+                                    <p><strong>示例</strong>: 8个类别需要3位二进制（2³=8），如类别3编码为011</p>
+                                    <p><strong>注意事项</strong>: 二进制位之间没有实际意义，可能影响模型解释性。</p>
+                                </div>
+                                
+                                <div class="encoding-item">
+                                    <h4>7. 哈希编码 (Hash Encoding)</h4>
+                                    <p><strong>原理</strong>: 使用哈希函数将类别映射到固定数量的特征桶中。</p>
+                                    <p><strong>特点</strong>: 特征维度固定，适合类别数量极多（如用户ID、IP地址）。</p>
+                                    <p><strong>适用场景</strong>: 高基数类别（成千上万个），在线学习系统，各种模型都适用。</p>
+                                    <p><strong>示例</strong>: 使用8位哈希，将任意类别映射到256个特征桶之一</p>
+                                    <p><strong>注意事项</strong>: 存在哈希冲突，不可逆，不适合需要解释性的场景。</p>
+                                </div>
+                            </div>
+                            
+                            <div class="encoding-summary">
+                                <h4>编码方式特性对比</h4>
+                                <table class="encoding-table">
+                                    <thead>
+                                        <tr>
+                                            <th>编码方式</th>
+                                            <th>特征维度</th>
+                                            <th>主要特点</th>
+                                            <th>推荐类别数量</th>
+                                            <th>顺序处理</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>标签编码</td>
+                                            <td>不增加</td>
+                                            <td>简单高效，树模型能处理顺序关系</td>
+                                            <td>少（&lt;10）</td>
+                                            <td>引入顺序关系</td>
+                                        </tr>
+                                        <tr>
+                                            <td>独热编码</td>
+                                            <td>大幅增加</td>
+                                            <td>消除顺序关系，适合需要独立特征的模型</td>
+                                            <td>少（&lt;15）</td>
+                                            <td>完全消除顺序</td>
+                                        </tr>
+                                        <tr>
+                                            <td>序数编码</td>
+                                            <td>不增加</td>
+                                            <td>保持定义好的顺序关系</td>
+                                            <td>少（&lt;10）</td>
+                                            <td>保持指定顺序</td>
+                                        </tr>
+                                        <tr>
+                                            <td>目标编码</td>
+                                            <td>不增加</td>
+                                            <td>编码包含目标信息，需防止数据泄漏</td>
+                                            <td>多（高基数）</td>
+                                            <td>不保持顺序</td>
+                                        </tr>
+                                        <tr>
+                                            <td>频率编码</td>
+                                            <td>不增加</td>
+                                            <td>编码反映类别重要性</td>
+                                            <td>多（高基数）</td>
+                                            <td>不保持顺序</td>
+                                        </tr>
+                                        <tr>
+                                            <td>二进制编码</td>
+                                            <td>中等增加</td>
+                                            <td>平衡维度与效果</td>
+                                            <td>中等（几十-几百）</td>
+                                            <td>不保持顺序</td>
+                                        </tr>
+                                        <tr>
+                                            <td>哈希编码</td>
+                                            <td>固定</td>
+                                            <td>维度固定，适合极多类别</td>
+                                            <td>极多（成千上万）</td>
+                                            <td>不保持顺序</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <p style="margin-top: 16px; font-size: 14px; color: #666;"><strong>注意</strong>: 大多数编码方式都适用于各种模型，选择时主要考虑特征维度、类别数量和是否需要保持顺序关系。树模型通常对编码方式更鲁棒，线性模型和神经网络对编码更敏感。</p>
+                            </div>
+                        </div>
+                        
+                        <div class="help-card">
                             <h3>算法选择指南</h3>
                             <table class="algorithm-table">
                                 <thead>
