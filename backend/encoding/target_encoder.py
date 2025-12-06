@@ -37,13 +37,31 @@ class TargetEncoder(BaseEncoder):
         if target is None:
             raise ValueError("Target编码需要目标变量")
         
+        # 检查目标变量类型，如果是字符串类型，尝试转换为数值
+        target_processed = target.copy()
+        if target_processed.dtype == 'object' or target_processed.dtype.name == 'category':
+            try:
+                # 尝试转换为数值
+                target_processed = pd.to_numeric(target_processed, errors='coerce')
+                # 检查转换后是否有NaN
+                if target_processed.isna().any():
+                    # 如果转换失败，尝试Label Encoding
+                    from sklearn.preprocessing import LabelEncoder
+                    le = LabelEncoder()
+                    target_processed = pd.Series(le.fit_transform(target), index=target.index)
+            except Exception as e:
+                # 转换失败，使用Label Encoding
+                from sklearn.preprocessing import LabelEncoder
+                le = LabelEncoder()
+                target_processed = pd.Series(le.fit_transform(target), index=target.index)
+        
         # 计算全局均值
-        self.global_mean = target.mean()
+        self.global_mean = target_processed.mean()
         
         # 计算每个类别的均值和数量
         for category in data.unique():
             mask = data == category
-            category_target = target[mask]
+            category_target = target_processed[mask]
             
             self.category_counts[str(category)] = len(category_target)
             self.category_means[str(category)] = category_target.mean()
