@@ -75,23 +75,23 @@ class WorkflowManager {
             case '特征选择':
                 this.showFeatureSelectionConfig(nodeId, config);
                 break;
-            case '分类算法':
+            case '分类算法选择':
                 this.showAlgorithmConfig(nodeId, 'classification', config);
                 break;
-            case '回归算法':
+            case '回归算法选择':
                 this.showAlgorithmConfig(nodeId, 'regression', config);
                 break;
-            case '聚类算法':
+            case '聚类算法选择':
                 this.showAlgorithmConfig(nodeId, 'clustering', config);
                 break;
-            case '降维算法':
+            case '降维算法选择':
                 this.showAlgorithmConfig(nodeId, 'dimensionality_reduction', config);
                 break;
             case '超参数调优':
                 this.showHyperparameterTuningConfig(nodeId, config);
                 break;
-            case '交叉验证':
-                this.showCrossValidationConfig(nodeId, config);
+            case '模型训练':
+                this.showModelTrainingConfig(nodeId, config);
                 break;
             case '模型结果':
             case '可视化':
@@ -337,6 +337,45 @@ class WorkflowManager {
     }
     
     /**
+     * 显示模型训练配置
+     */
+    showModelTrainingConfig(nodeId, config) {
+        this.showModal('模型训练配置', `
+            <div class="form-group">
+                <label>目标列 (留空则使用数据集默认目标):</label>
+                <input type="text" id="config-target-columns" class="form-control" 
+                       value="${(config.target_columns || []).join(',')}" 
+                       placeholder="例如: target">
+                <small class="form-text text-muted">多个目标列用逗号分隔</small>
+            </div>
+            <div class="form-group">
+                <label>测试集比例:</label>
+                <input type="number" id="config-test-size" class="form-control" 
+                       value="${config.test_size || 0.2}" 
+                       min="0.1" max="0.5" step="0.05">
+            </div>
+             <div class="form-group">
+                <label>
+                    <input type="checkbox" id="config-random-state" 
+                           ${config.use_random_state !== false ? 'checked' : ''}>
+                    固定随机种子 (42)
+                </label>
+            </div>
+        `, () => {
+            const targetColumns = document.getElementById('config-target-columns').value
+                .split(',').map(c => c.trim()).filter(c => c);
+            const testSize = parseFloat(document.getElementById('config-test-size').value);
+            
+            this.canvas.updateNodeConfig(nodeId, {
+                target_columns: targetColumns,
+                test_size: testSize,
+                use_random_state: document.getElementById('config-random-state').checked
+            });
+            this.hideModal();
+        });
+    }
+
+    /**
      * 显示算法配置
      */
     async showAlgorithmConfig(nodeId, algorithmType, config) {
@@ -366,7 +405,7 @@ class WorkflowManager {
                 `<option value="${alg.name}" ${config.algorithm === alg.name ? 'selected' : ''}>${alg.display_name}</option>`
             ).join('');
             
-            this.showModal('算法配置', `
+            this.showModal('算法选择配置', `
                 <div class="form-group">
                     <label>选择算法:</label>
                     <select id="config-algorithm" class="form-control">
@@ -375,36 +414,19 @@ class WorkflowManager {
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>目标列 (留空则使用数据集默认目标):</label>
-                    <input type="text" id="config-target-columns" class="form-control" 
-                           value="${(config.target_columns || []).join(',')}" 
-                           placeholder="例如: target">
-                    <small class="form-text text-muted">多个目标列用逗号分隔</small>
-                </div>
-                <div class="form-group">
-                    <label>测试集比例:</label>
-                    <input type="number" id="config-test-size" class="form-control" 
-                           value="${config.test_size || 0.2}" 
-                           min="0.1" max="0.5" step="0.05">
-                </div>
-                <div class="form-group">
-                    <label>超参数（JSON格式）:</label>
+                    <label>超参数 / 参数范围 (JSON格式):</label>
                     <textarea id="config-hyperparameters" class="form-control" rows="4" 
-                              placeholder='{"param1": value1, "param2": value2}'>${JSON.stringify(config.hyperparameters || {}, null, 2)}</textarea>
+                              placeholder='{"param1": [1, 10], "param2": "value"}'>${JSON.stringify(config.hyperparameters || {}, null, 2)}</textarea>
+                    <small class="form-text text-muted">用于固定参数或调优范围</small>
                 </div>
             `, () => {
                 const algorithm = document.getElementById('config-algorithm').value;
-                const targetColumns = document.getElementById('config-target-columns').value
-                    .split(',').map(c => c.trim()).filter(c => c);
-                const testSize = parseFloat(document.getElementById('config-test-size').value);
                 const hyperparametersText = document.getElementById('config-hyperparameters').value.trim();
                 
                 if (!algorithm) {
                     alert('请选择算法');
                     return;
                 }
-                
-                // 允许目标列为空，后端将使用数据集默认目标列
                 
                 let hyperparameters = {};
                 if (hyperparametersText) {
@@ -418,9 +440,8 @@ class WorkflowManager {
                 
                 this.canvas.updateNodeConfig(nodeId, {
                     algorithm: algorithm,
-                    target_columns: targetColumns,
-                    test_size: testSize,
-                    hyperparameters: hyperparameters
+                    hyperparameters: hyperparameters,
+                    algorithm_type: algorithmType
                 });
                 this.hideModal();
             });
@@ -576,34 +597,6 @@ class WorkflowManager {
                 target_column: document.getElementById('config-target-column').value,
                 n_features: nFeatures ? parseInt(nFeatures) : null,
                 threshold: parseFloat(document.getElementById('config-selection-threshold').value)
-            });
-            this.hideModal();
-        });
-    }
-    
-    /**
-     * 显示交叉验证配置
-     */
-    showCrossValidationConfig(nodeId, config) {
-        this.showModal('交叉验证配置', `
-            <div class="form-group">
-                <label>折叠数 (K):</label>
-                <input type="number" id="config-cv-folds" class="form-control" 
-                       value="${config.n_folds || 5}" min="2" max="10">
-            </div>
-            <div class="form-group">
-                <label>评估指标:</label>
-                <select id="config-cv-scoring" class="form-control">
-                    <option value="accuracy" ${config.scoring === 'accuracy' ? 'selected' : ''}>准确率</option>
-                    <option value="f1" ${config.scoring === 'f1' ? 'selected' : ''}>F1分数</option>
-                    <option value="roc_auc" ${config.scoring === 'roc_auc' ? 'selected' : ''}>ROC AUC</option>
-                    <option value="r2" ${config.scoring === 'r2' ? 'selected' : ''}>R2分数</option>
-                </select>
-            </div>
-        `, () => {
-            this.canvas.updateNodeConfig(nodeId, {
-                n_folds: parseInt(document.getElementById('config-cv-folds').value),
-                scoring: document.getElementById('config-cv-scoring').value
             });
             this.hideModal();
         });
@@ -905,6 +898,12 @@ class WorkflowManager {
                         if (output.algorithm_type) {
                             config.upstream_algorithm_type = output.algorithm_type;
                         }
+                        // 传递 hyperparameters 信息 (来自算法选择节点或超参数调优节点)
+                        if (output.best_params) {
+                            config.upstream_hyperparameters = output.best_params;
+                        } else if (output.hyperparameters) {
+                            config.upstream_hyperparameters = output.hyperparameters;
+                        }
 
                         // 传递 preprocessing_components
                         if (output.preprocessing_components) {
@@ -929,6 +928,36 @@ class WorkflowManager {
                     await new Promise(resolve => setTimeout(resolve, 500));
                     break;
 
+                case '分类算法选择':
+                case '回归算法选择':
+                case '聚类算法选择':
+                case '降维算法选择':
+                    // 算法选择节点：不进行训练，仅传递配置
+                    result = {
+                        algorithm_name: config.algorithm,
+                        algorithm_type: config.algorithm_type,
+                        hyperparameters: config.hyperparameters,
+                        dataset_id: config.dataset_id
+                    };
+                    await new Promise(resolve => setTimeout(resolve, 500)); // 模拟短暂执行
+                    break;
+
+                case '模型训练':
+                    // 模型训练节点：接收上游算法配置进行训练
+                    if (!config.upstream_algorithm_name) {
+                        throw new Error('模型训练节点必须连接到上游的算法选择节点或超参数调优节点');
+                    }
+                    
+                    // 合并配置
+                    const trainConfig = {
+                        ...config,
+                        algorithm: config.upstream_algorithm_name,
+                        hyperparameters: config.upstream_hyperparameters || {}
+                    };
+                    
+                    result = await this.trainModelAsync(trainConfig, nodeId);
+                    break;
+
                 case '分类算法':
                 case '回归算法':
                 case '聚类算法':
@@ -942,6 +971,10 @@ class WorkflowManager {
                     // 如果配置中没有指定算法，尝试使用上游传入的算法
                     if (!config.algorithm && config.upstream_algorithm_name) {
                         config.algorithm = config.upstream_algorithm_name;
+                    }
+                    // 优先使用上游传入的超参数/搜索空间
+                    if (config.upstream_hyperparameters) {
+                        config.hyperparameters = config.upstream_hyperparameters;
                     }
                     result = await this.tuneHyperparameters(config, nodeId);
                     break;
@@ -1055,7 +1088,8 @@ class WorkflowManager {
                 cv_folds: config.cv_folds || 5,
                 n_iter: config.n_iter || 10,
                 scoring: config.scoring || 'accuracy',
-                use_recommended: config.use_recommended !== false
+                use_recommended: config.use_recommended !== false,
+                param_grid: config.hyperparameters
             })
         });
         
