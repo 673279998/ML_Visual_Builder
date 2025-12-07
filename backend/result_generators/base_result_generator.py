@@ -46,9 +46,24 @@ class BaseResultGenerator(ABC):
         """
         pass
     
+    def generate_algorithm_specific_info(self, model: Any, algorithm_name: str = None) -> Dict[str, Any]:
+        """
+        生成算法特定的额外信息
+        
+        Args:
+            model: 训练好的模型
+            algorithm_name: 算法名称
+            
+        Returns:
+            包含算法特定信息的字典
+        """
+        # 默认返回空字典,子类可以重写
+        return {}
+    
     def generate_complete_results(self, y_true: np.ndarray, y_pred: np.ndarray,
                                  model: Any, X_test: np.ndarray = None,
-                                 feature_names: List[str] = None) -> Dict[str, Any]:
+                                 feature_names: List[str] = None,
+                                 algorithm_name: str = None) -> Dict[str, Any]:
         """
         生成完整的结果(指标+可视化)
         
@@ -71,5 +86,10 @@ class BaseResultGenerator(ABC):
         # 添加特征名称(如果提供)
         if feature_names:
             results['feature_names'] = feature_names
+        
+        # 添加算法特定信息
+        algorithm_info = self.generate_algorithm_specific_info(model, algorithm_name)
+        if algorithm_info:
+            results['algorithm_specific_info'] = algorithm_info
         
         return results

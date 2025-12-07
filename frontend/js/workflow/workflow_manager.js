@@ -613,32 +613,17 @@ class WorkflowManager {
      * 显示输出模块配置
      */
     showOutputModuleConfig(nodeId, nodeName, config) {
+        // 模型结果和可视化节点不需要配置,直接标记为已配置
+        if (nodeName === '模型结果' || nodeName === '可视化') {
+            // 直接更新节点状态为已配置
+            this.canvas.updateNodeConfig(nodeId, { auto_configured: true });
+            alert(`${nodeName}节点无需配置，将在工作流执行后自动显示结果。\n\n请直接点击节点查看属性面板以查看结果。`);
+            return;
+        }
+        
         let content = '';
         
-        if (nodeName === '模型结果') {
-            content = `
-                <div class="form-group">
-                    <label>结果类型:</label>
-                    <select id="config-result-type" class="form-control">
-                        <option value="metrics" ${config.result_type === 'metrics' ? 'selected' : ''}>评估指标</option>
-                        <option value="predictions" ${config.result_type === 'predictions' ? 'selected' : ''}>预测结果</option>
-                        <option value="both" ${config.result_type === 'both' ? 'selected' : ''}>两者都有</option>
-                    </select>
-                </div>
-            `;
-        } else if (nodeName === '可视化') {
-            content = `
-                <div class="form-group">
-                    <label>图表类型:</label>
-                    <select id="config-chart-type" class="form-control">
-                        <option value="confusion_matrix" ${config.chart_type === 'confusion_matrix' ? 'selected' : ''}>混淆矩阵</option>
-                        <option value="roc_curve" ${config.chart_type === 'roc_curve' ? 'selected' : ''}>ROC曲线</option>
-                        <option value="feature_importance" ${config.chart_type === 'feature_importance' ? 'selected' : ''}>特征重要性</option>
-                        <option value="scatter" ${config.chart_type === 'scatter' ? 'selected' : ''}>散点图</option>
-                    </select>
-                </div>
-            `;
-        } else if (nodeName === '模型保存') {
+        if (nodeName === '模型保存') {
             content = `
                 <div class="form-group">
                     <label>模型名称:</label>
@@ -653,11 +638,7 @@ class WorkflowManager {
         this.showModal(`${nodeName} 配置`, content, () => {
             let newConfig = {};
             
-            if (nodeName === '模型结果') {
-                newConfig.result_type = document.getElementById('config-result-type').value;
-            } else if (nodeName === '可视化') {
-                newConfig.chart_type = document.getElementById('config-chart-type').value;
-            } else if (nodeName === '模型保存') {
+            if (nodeName === '模型保存') {
                 newConfig.model_name = document.getElementById('config-model-name').value;
                 if (!newConfig.model_name) {
                     alert('请输入模型名称');
@@ -911,6 +892,10 @@ class WorkflowManager {
                         // 传递 model_id
                         if (output.model_id) {
                             config.model_id = output.model_id;
+                        } else if (output.id && (output.algorithm || output.algorithm_name || output.metrics)) {
+                            // 兼容性处理：如果上游输出的是完整模型对象（如来自"模型结果"节点），使用其id作为model_id
+                            config.model_id = output.id;
+                            console.log(`从上游 ${upId} 推断 model_id:`, output.id);
                         }
 
                         // 传递 algorithm 信息
@@ -1481,7 +1466,8 @@ class WorkflowManager {
      * 获取模型结果
      */
     async getModelResults(modelId) {
-        const response = await fetch(`/api/models/${modelId}/results`);
+        // 获取完整模型详情，包含算法信息和完整结果
+        const response = await fetch(`/api/models/${modelId}`);
         const json = await response.json();
         if (json.success) {
             return json.data;
@@ -1494,9 +1480,27 @@ class WorkflowManager {
      */
     showExecutionResult(nodeId, result) {
         console.log('节点执行结果:', result);
-        // 可以在这里触发事件，通知UI更新
-        // 例如: const event = new CustomEvent('node-execution-result', { detail: { nodeId, result } });
-        // document.dispatchEvent(event);
+        
+        const node = this.canvas.nodes.get(nodeId);
+        if (node && result) {
+            // 将结果存储到节点数据中
+            node.executionResult = result;
+            
+            // 更新节点状态显示
+            const items = node.getObjects();
+            if (items.length >= 4) {
+                items[3].set('text', '点击查看结果');
+                items[3].set('fill', '#4CAF50');
+                items[3].set('fontWeight', 'bold');
+            }
+            
+            this.canvas.canvas.renderAll();
+            
+            // 如果该节点当前被选中，刷新属性面板
+            if (this.canvas.selectedNode === node) {
+                this.canvas.showNodeProperties(nodeId);
+            }
+        }
     }
 
     /**

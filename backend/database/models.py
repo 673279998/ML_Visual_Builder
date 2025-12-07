@@ -109,12 +109,32 @@ class DatabaseModels:
                 dataset_schema TEXT NOT NULL,
                 input_requirements TEXT NOT NULL,
                 feature_importance TEXT,
+                actual_hyperparameters TEXT,
+                complete_results TEXT,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (workflow_id) REFERENCES workflows(id),
                 FOREIGN KEY (dataset_id) REFERENCES datasets(id),
                 FOREIGN KEY (encoder_id) REFERENCES dataset_encoders(id)
             )
         ''')
+        
+        # 检查并添加新列 (兼容已存在的数据库)
+        cursor.execute("PRAGMA table_info(models)")
+        model_columns = [info[1] for info in cursor.fetchall()]
+        
+        if 'actual_hyperparameters' not in model_columns:
+            try:
+                cursor.execute("ALTER TABLE models ADD COLUMN actual_hyperparameters TEXT")
+                print("已添加 actual_hyperparameters 列到 models 表")
+            except Exception as e:
+                print(f"添加 actual_hyperparameters 列失败: {e}")
+        
+        if 'complete_results' not in model_columns:
+            try:
+                cursor.execute("ALTER TABLE models ADD COLUMN complete_results TEXT")
+                print("已添加 complete_results 列到 models 表")
+            except Exception as e:
+                print(f"添加 complete_results 列失败: {e}")
         
         # 6. preprocessing_components表(预处理组件表)
         cursor.execute('''

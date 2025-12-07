@@ -117,17 +117,21 @@ def get_model_results(model_id):
                 'error': '模型不存在'
             }), 404
         
-        # 返回性能指标和特征重要性
+        # 返回性能指标、特征重要性和完整结果(包含所有可视化数据)
+        response_data = {
+            'model_id': model_id,
+            'algorithm_name': model['algorithm_name'],
+            'algorithm_type': model['algorithm_type'],
+            'performance_metrics': model['performance_metrics'],
+            'feature_importance': model.get('feature_importance'),
+            'dataset_schema': model.get('dataset_schema'),
+            'actual_hyperparameters': model.get('actual_hyperparameters'),  # 实际使用的超参数
+            'complete_results': model.get('complete_results')  # 完整的训练结果(包含可视化)
+        }
+        
         return jsonify({
             'success': True,
-            'data': {
-                'model_id': model_id,
-                'algorithm_name': model['algorithm_name'],
-                'algorithm_type': model['algorithm_type'],
-                'performance_metrics': model['performance_metrics'],
-                'feature_importance': model.get('feature_importance'),
-                'dataset_schema': model.get('dataset_schema')
-            }
+            'data': response_data
         }), 200
     except Exception as e:
         return jsonify({

@@ -230,19 +230,24 @@ class DatabaseManager:
                     dataset_id: int, model_file_path: str, hyperparameters: Dict,
                     performance_metrics: Dict, dataset_schema: Dict, input_requirements: Dict,
                     workflow_id: Optional[int] = None, encoder_id: Optional[int] = None,
-                    feature_importance: Optional[Dict] = None) -> int:
+                    feature_importance: Optional[Dict] = None,
+                    actual_hyperparameters: Optional[Dict] = None,
+                    complete_results: Optional[Dict] = None) -> int:
         """创建模型记录"""
         query = '''
             INSERT INTO models (name, algorithm_type, algorithm_name, workflow_id, dataset_id,
                                encoder_id, model_file_path, hyperparameters, performance_metrics,
-                               dataset_schema, input_requirements, feature_importance)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                               dataset_schema, input_requirements, feature_importance,
+                               actual_hyperparameters, complete_results)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         '''
         return self.execute_insert(query, (
             name, algorithm_type, algorithm_name, workflow_id, dataset_id, encoder_id,
             model_file_path, json.dumps(hyperparameters), json.dumps(performance_metrics),
             json.dumps(dataset_schema), json.dumps(input_requirements),
-            json.dumps(feature_importance) if feature_importance else None
+            json.dumps(feature_importance) if feature_importance else None,
+            json.dumps(actual_hyperparameters) if actual_hyperparameters else None,
+            json.dumps(complete_results) if complete_results else None
         ))
     
     def get_model(self, model_id: int) -> Optional[Dict]:
@@ -257,6 +262,10 @@ class DatabaseManager:
             model['input_requirements'] = json.loads(model['input_requirements'])
             if model['feature_importance']:
                 model['feature_importance'] = json.loads(model['feature_importance'])
+            if model.get('actual_hyperparameters'):
+                model['actual_hyperparameters'] = json.loads(model['actual_hyperparameters'])
+            if model.get('complete_results'):
+                model['complete_results'] = json.loads(model['complete_results'])
             return model
         return None
     
@@ -271,6 +280,10 @@ class DatabaseManager:
             model['input_requirements'] = json.loads(model['input_requirements'])
             if model['feature_importance']:
                 model['feature_importance'] = json.loads(model['feature_importance'])
+            if model.get('actual_hyperparameters'):
+                model['actual_hyperparameters'] = json.loads(model['actual_hyperparameters'])
+            if model.get('complete_results'):
+                model['complete_results'] = json.loads(model['complete_results'])
         return models
     
     def delete_model(self, model_id: int) -> bool:

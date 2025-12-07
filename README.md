@@ -1,6 +1,5 @@
 # ML Visual Builder - Machine Learning Visual Platform
 ## Opening Remarks
-Declaration: The main coding work of this project is completed by AI.
 The original idea came from the author’s exposure to extensive machine learning practices during work and study. It was observed that while existing Python machine learning frameworks are highly sophisticated, their utilization requires coding proficiency, which poses a barrier for many users without a solid programming foundation. Meanwhile, software like SPSS and Origin boast powerful functionalities but suffer from outdated algorithms, slow updates, and difficulties in accessing their latest versions. Inspired by the growing popularity of platforms such as Dify and Coze, the author conceived the idea of visualizing and modularizing Python machine learning algorithm frameworks. This approach allows users to intuitively visualize the machine learning workflow and configure it freely with ease.
 
 ## 🚀 Project Overview

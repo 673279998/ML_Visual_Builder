@@ -89,6 +89,48 @@ class AlgorithmFactory:
         'lda': LDAReduction,
     }
     
+    # 算法中文名称映射表
+    _display_names = {
+        # 分类算法
+        'logistic_regression': '逻辑回归',
+        'random_forest_classifier': '随机森林分类',
+        'decision_tree_classifier': '决策树分类',
+        'gradient_boosting_classifier': '梯度提升树分类',
+        'xgboost_classifier': 'XGBoost分类',
+        'lightgbm_classifier': 'LightGBM分类',
+        'catboost_classifier': 'CatBoost分类',
+        'svm_classifier': '支持向量机分类',
+        'naive_bayes': '朴素贝叶斯',
+        'knn_classifier': 'K近邻分类',
+        'mlp_classifier': '多层感知机分类',
+        
+        # 回归算法
+        'linear_regression': '线性回归',
+        'ridge_regression': '岭回归',
+        'lasso_regression': 'Lasso回归',
+        'elasticnet_regression': 'ElasticNet回归',
+        'decision_tree_regressor': '决策树回归',
+        'random_forest_regressor': '随机森林回归',
+        'gradient_boosting_regressor': '梯度提升树回归',
+        'xgboost_regressor': 'XGBoost回归',
+        'lightgbm_regressor': 'LightGBM回归',
+        'svr': '支持向量回归',
+        'mlp_regressor': '多层感知机回归',
+        
+        # 聚类算法
+        'kmeans': 'K均值聚类',
+        'hierarchical': '层次聚类',
+        'dbscan': 'DBSCAN聚类',
+        'gmm': '高斯混合模型',
+        'spectral': '谱聚类',
+        
+        # 降维算法
+        'pca': '主成分分析',
+        'tsne': 't-SNE降维',
+        'umap': 'UMAP降维',
+        'lda': '线性判别分析',
+    }
+    
     # 旧名称映射（用于兼容）
     _legacy_mapping = {
         'decision_tree': 'decision_tree_classifier',
@@ -141,7 +183,7 @@ class AlgorithmFactory:
             algorithms.append({
                 'name': name,
                 'type': instance.algorithm_type,
-                'display_name': name.replace('_', ' ').title()
+                'display_name': cls._display_names.get(name, name.replace('_', ' ').title())
             })
         return algorithms
     
@@ -176,3 +218,20 @@ class AlgorithmFactory:
         """
         all_algorithms = cls.get_algorithm_list()
         return [alg for alg in all_algorithms if alg['type'] == algorithm_type]
+    
+    @classmethod
+    def get_display_name(cls, algorithm_name: str) -> str:
+        """
+        获取算法的中文显示名称
+        
+        Args:
+            algorithm_name: 算法内部名称
+            
+        Returns:
+            中文显示名称
+        """
+        # 检查是否有旧名称映射
+        if algorithm_name in cls._legacy_mapping:
+            algorithm_name = cls._legacy_mapping[algorithm_name]
+        
+        return cls._display_names.get(algorithm_name, algorithm_name.replace('_', ' ').title())

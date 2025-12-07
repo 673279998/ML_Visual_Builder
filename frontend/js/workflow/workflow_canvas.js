@@ -31,10 +31,16 @@ class WorkflowCanvas {
         // 创建canvas元素
         const canvasEl = document.createElement('canvas');
         canvasEl.id = 'fabric-canvas';
-        canvasEl.width = container.clientWidth;
-        canvasEl.height = container.clientHeight;
         container.innerHTML = '';
         container.appendChild(canvasEl);
+        
+        // 计算画布实际可用空间
+        const containerWidth = container.clientWidth;
+        const containerHeight = container.clientHeight;
+        
+        // 同时设置canvas的HTML属性和Fabric的尺寸
+        canvasEl.width = containerWidth;
+        canvasEl.height = containerHeight;
         
         this.canvas = new fabric.Canvas('fabric-canvas', {
             backgroundColor: '#f8f9fa',
@@ -901,6 +907,56 @@ class WorkflowCanvas {
         const panel = document.querySelector('.properties-content');
         if (!panel) return;
         
+        // 如果是模型结果或可视化节点
+            if (node.nodeName === '模型结果' || node.nodeName === '可视化') {
+                if (node.executionResult) {
+                    this.showResultsInPanel(panel, node, nodeId);
+                    return;
+                } else if (node.nodeStatus === 'success') {
+                    // 状态为成功但无结果，可能是数据丢失或加载失败
+                    panel.innerHTML = `
+                        <div style="padding: 20px; text-align: center;">
+                            <h3 style="color: #ff9800; margin-bottom: 10px;">暂无结果数据</h3>
+                            <p style="color: #666; margin-bottom: 15px;">节点已运行完成，但未找到可显示的结果。</p>
+                            <div style="font-size: 12px; color: #999; background: #f5f5f5; padding: 10px; border-radius: 4px; text-align: left;">
+                                可能原因：<br>
+                                1. 模型训练未产生有效指标<br>
+                                2. 数据传输过程中丢失（建议重新运行工作流）<br>
+                                3. 结果格式不兼容
+                            </div>
+                        </div>
+                        <div class="property-section" style="padding: 0 20px 20px;">
+                            <button class="btn btn-primary btn-block" data-node-config="${nodeId}">
+                                配置节点
+                            </button>
+                            <button class="btn btn-secondary btn-block" data-node-delete="${nodeId}">
+                                删除节点
+                            </button>
+                        </div>
+                    `;
+                    
+                    // 绑定事件监听器
+                    const configBtn = panel.querySelector(`[data-node-config="${nodeId}"]`);
+                    const deleteBtn = panel.querySelector(`[data-node-delete="${nodeId}"]`);
+                    
+                    if (configBtn) {
+                        configBtn.addEventListener('click', () => {
+                            console.log('配置节点:', nodeId);
+                            this.showNodeConfig(nodeId);
+                        });
+                    }
+                    
+                    if (deleteBtn) {
+                        deleteBtn.addEventListener('click', () => {
+                            console.log('删除节点:', nodeId);
+                            this.deleteNode(nodeId);
+                        });
+                    }
+                    return;
+                }
+            }
+        
+        // 其他节点显示基本信息
         panel.innerHTML = `
             <div class="property-section">
                 <h4>节点信息</h4>
@@ -943,6 +999,172 @@ class WorkflowCanvas {
                 console.log('删除节点:', nodeId);
                 this.deleteNode(nodeId);
             });
+        }
+    }
+    
+    /**
+     * 在属性面板中显示结果
+     */
+    showResultsInPanel(panel, node, nodeId) {
+        const result = node.executionResult;
+        
+        console.log('显示结果到属性面板:', { nodeId, nodeName: node.nodeName, result });
+        
+        // 清空面板
+        panel.innerHTML = '';
+        panel.scrollTop = 0;
+        panel.style.overflowY = 'auto';
+        panel.style.maxHeight = 'calc(100vh - 150px)';
+        
+        // 添加标题
+        const header = document.createElement('div');
+        const algorithmName = result.algorithm_display_name || result.algorithm_name || result.algorithm || 'N/A';
+        header.style.cssText = 'padding: 15px; background: #f5f5f5; border-bottom: 2px solid #2196F3; position: sticky; top: 0; z-index: 10;';
+        header.innerHTML = `
+            <h3 style="margin: 0; color: #333; font-size: 16px;">
+                ${node.nodeName === '模型结果' ? '模型训练结果' : '可视化结果'}
+            </h3>
+            <p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">
+                节点ID: ${nodeId} | 算法: ${algorithmName}
+            </p>
+        `;
+        panel.appendChild(header);
+        
+        // 创建结果容器
+        const resultsContainer = document.createElement('div');
+        resultsContainer.id = `results-${nodeId}`;
+        resultsContainer.style.cssText = 'padding: 15px;';
+        panel.appendChild(resultsContainer);
+        
+        // 检查ResultVisualizer是否可用
+        if (!window.ResultVisualizer) {
+            console.error('ResultVisualizer未加载');
+            resultsContainer.innerHTML = `
+                <div style="padding: 20px; text-align: center; color: #f44336;">
+                    <p><strong>错误: ResultVisualizer未加载</strong></p>
+                    <p style="font-size: 12px; margin-top: 10px;">请检查index.html是否正确引入result_visualizer.js</p>
+                    <details style="margin-top: 20px; text-align: left;">
+                        <summary style="cursor: pointer; color: #666;">查看原始数据</summary>
+                        <pre style="background: #f5f5f5; padding: 10px; border-radius: 4px; max-height: 300px; overflow: auto; margin-top: 10px;">${JSON.stringify(result, null, 2)}</pre>
+                    </details>
+                </div>
+            `;
+            return;
+        }
+        
+        // 使用ResultVisualizer渲染结果
+        try {
+            const visualizer = new ResultVisualizer();
+            const algorithmType = result.algorithm_type || 'classification';
+            
+            if (node.nodeName === '模型结果') {
+                console.log('渲染模型结果...');
+                
+                // 模型结果节点:显示指标和基本信息
+                // 增强兼容性：优先从 complete_results 获取，其次从根对象获取
+                const metrics = result.complete_results?.metrics || result.performance_metrics || result.metrics || {};
+                console.log('指标数据:', metrics);
+                
+                if (Object.keys(metrics).length > 0) {
+                    visualizer.renderMetrics(
+                        resultsContainer, 
+                        algorithmType,
+                        metrics
+                    );
+                } else {
+                    resultsContainer.innerHTML += '<p style="color: #999; padding: 10px;">没有可用的指标数据</p>';
+                }
+                
+                // 如果有特征重要性，也显示出来
+                if (result.feature_importance) {
+                     // 简单显示特征重要性，或者可以调用 visualizer 的方法如果存在
+                     // ResultVisualizer 可能没有单独的 renderFeatureImportance 方法暴露出来，
+                     // 但我们可以检查一下。暂时先不加，以免报错。
+                }
+                
+            } else {
+                // 可视化节点:显示所有可视化图表
+                const visualizations = result.complete_results?.visualizations || result.visualizations || {};
+                
+                if (Object.keys(visualizations).length === 0) {
+                    resultsContainer.innerHTML += '<p style="color: #999; padding: 10px;">没有可用的可视化数据</p>';
+                } else {
+                    // 筛选最关键的一个可视化图表
+                    let criticalVis = {};
+                    let hasCritical = false;
+
+                    if (algorithmType === 'classification') {
+                        // 优先显示混淆矩阵，其次ROC曲线
+                        if (visualizations.confusion_matrix) {
+                            criticalVis.confusion_matrix = visualizations.confusion_matrix;
+                            hasCritical = true;
+                        } else if (visualizations.roc_curve) {
+                            criticalVis.roc_curve = visualizations.roc_curve;
+                            hasCritical = true;
+                        }
+                    } else if (algorithmType === 'regression') {
+                        // 优先显示预测vs实际，其次残差图
+                        if (visualizations.prediction_vs_actual) {
+                            criticalVis.prediction_vs_actual = visualizations.prediction_vs_actual;
+                            hasCritical = true;
+                        } else if (visualizations.residuals) {
+                            criticalVis.residuals = visualizations.residuals;
+                            hasCritical = true;
+                        }
+                    } else if (algorithmType === 'clustering') {
+                        // 优先显示散点图
+                        if (visualizations.cluster_scatter) {
+                            criticalVis.cluster_scatter = visualizations.cluster_scatter;
+                            hasCritical = true;
+                        } else if (visualizations.silhouette) {
+                            criticalVis.silhouette = visualizations.silhouette;
+                            hasCritical = true;
+                        }
+                    } else if (algorithmType === 'dimensionality_reduction') {
+                        if (visualizations.pca_scatter) {
+                            criticalVis.pca_scatter = visualizations.pca_scatter;
+                            hasCritical = true;
+                        } else if (visualizations.tsne_scatter) {
+                            criticalVis.tsne_scatter = visualizations.tsne_scatter;
+                            hasCritical = true;
+                        }
+                    }
+
+                    // 如果没有找到定义的关键图表，默认取第一个
+                    if (!hasCritical) {
+                        const firstKey = Object.keys(visualizations)[0];
+                        criticalVis[firstKey] = visualizations[firstKey];
+                    }
+
+                    if (algorithmType === 'classification') {
+                        visualizer.renderClassificationVisualizations(resultsContainer, criticalVis);
+                    } else if (algorithmType === 'regression') {
+                        visualizer.renderRegressionVisualizations(resultsContainer, criticalVis);
+                    } else if (algorithmType === 'clustering') {
+                        visualizer.renderClusteringVisualizations(resultsContainer, criticalVis);
+                    } else if (algorithmType === 'dimensionality_reduction') {
+                        visualizer.renderDimensionalityReductionVisualizations(resultsContainer, criticalVis);
+                    }
+                }
+            }
+            
+            // 添加详情链接提示
+            const footer = document.createElement('div');
+            footer.style.cssText = 'padding: 15px; text-align: center; color: #666; font-size: 12px; border-top: 1px solid #eee; margin-top: 20px;';
+            footer.innerHTML = '详细的内容请参见模型详情';
+            resultsContainer.appendChild(footer);
+        } catch (error) {
+            console.error('渲染结果失败:', error);
+            resultsContainer.innerHTML = `
+                <div style="padding: 20px; text-align: center; color: #f44336;">
+                    <p><strong>渲染错误</strong></p>
+                    <p style="font-size: 12px; margin-top: 10px;">${error.message}</p>
+                    <details style="margin-top: 20px; text-align: left;">
+                        <summary style="cursor: pointer; color: #666;">查看错误详情</summary>
+                        <pre style="background: #f5f5f5; padding: 10px; border-radius: 4px; max-height: 300px; overflow: auto; margin-top: 10px;">${error.stack}</pre>
+                    </details>
+                </div>
+            `;
         }
     }
     
@@ -1150,10 +1372,17 @@ class WorkflowCanvas {
     resize() {
         const container = document.getElementById(this.canvasId);
         if (container && this.canvas) {
-            this.canvas.setDimensions({
-                width: container.clientWidth,
-                height: container.clientHeight
-            });
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+            
+            // 同时更新canvas HTML属性和Fabric尺寸
+            const canvasEl = document.getElementById('fabric-canvas');
+            if (canvasEl) {
+                canvasEl.width = width;
+                canvasEl.height = height;
+            }
+            
+            this.canvas.setDimensions({ width, height });
             this.canvas.renderAll();
         }
     }

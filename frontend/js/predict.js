@@ -75,7 +75,8 @@ class PredictManager {
         this.models.forEach(model => {
             const option = document.createElement('option');
             option.value = model.id;
-            option.textContent = `${model.name} (${model.algorithm_name})`;
+            const algorithmName = model.algorithm_display_name || model.algorithm_name;
+            option.textContent = `${model.name} (${algorithmName})`;
             select.appendChild(option);
         });
     }
@@ -118,7 +119,8 @@ class PredictManager {
         const infoDiv = document.getElementById('model-info');
         
         document.getElementById('info-algorithm-type').textContent = model.algorithm_type;
-        document.getElementById('info-algorithm-name').textContent = model.algorithm_name;
+        const algorithmName = model.algorithm_display_name || model.algorithm_name;
+        document.getElementById('info-algorithm-name').textContent = algorithmName;
         document.getElementById('info-created-at').textContent = new Date(model.created_at).toLocaleString('zh-CN');
         
         // 显示输入特征

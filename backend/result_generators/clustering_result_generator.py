@@ -105,18 +105,25 @@ class ClusteringResultGenerator(BaseResultGenerator):
         try:
             silhouette_vals = silhouette_samples(X_test, y_pred)
             
-            # 按簇组织轮廓值
-            silhouette_by_cluster = {}
-            for label in np.unique(y_pred):
-                if label != -1:  # 跳过噪声点
-                    cluster_silhouette = silhouette_vals[y_pred == label]
-                    silhouette_by_cluster[int(label)] = {
-                        'values': cluster_silhouette.tolist(),
-                        'mean': float(np.mean(cluster_silhouette)),
-                        'count': int(len(cluster_silhouette))
-                    }
+            # 过滤噪声点（标签为-1的点）
+            valid_mask = y_pred != -1
+            valid_silhouette_vals = silhouette_vals[valid_mask]
+            valid_labels = y_pred[valid_mask]
             
-            visualizations['silhouette_plot'] = silhouette_by_cluster
+            # 按簇排序轮廓值（先按簇标签排序，再按轮廓值排序）
+            sorted_indices = np.lexsort((valid_silhouette_vals, valid_labels))
+            sorted_silhouette = valid_silhouette_vals[sorted_indices]
+            sorted_labels = valid_labels[sorted_indices]
+            
+            # 生成样本索引
+            sample_indices = list(range(len(sorted_silhouette)))
+            
+            visualizations['silhouette_plot'] = {
+                'silhouette_values': sorted_silhouette.tolist(),
+                'sample_indices': sample_indices,
+                'labels': sorted_labels.tolist(),
+                'avg_score': float(np.mean(valid_silhouette_vals))
+            }
         except Exception as e:
             visualizations['silhouette_error'] = str(e)
         

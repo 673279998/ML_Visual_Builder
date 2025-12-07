@@ -54,6 +54,12 @@ def get_models():
     """获取所有模型列表"""
     try:
         models = db.get_all_models()
+        
+        # 为每个模型添加中文显示名称
+        for model in models:
+            if 'algorithm_name' in model:
+                model['algorithm_display_name'] = AlgorithmFactory.get_display_name(model['algorithm_name'])
+        
         return jsonify({
             'success': True,
             'data': sanitize_for_json(models)
@@ -69,6 +75,10 @@ def get_model(model_id):
         model = db.get_model(model_id)
         if not model:
             return jsonify({'error': '模型不存在'}), 404
+        
+        # 添加中文显示名称
+        if 'algorithm_name' in model:
+            model['algorithm_display_name'] = AlgorithmFactory.get_display_name(model['algorithm_name'])
         
         # 获取训练结果
         result = db.get_training_result(model_id)

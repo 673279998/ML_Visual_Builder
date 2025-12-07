@@ -553,6 +553,11 @@ class TrainingService:
         
         if hyperparameters is None:
             hyperparameters = {}
+        
+        # 记录实际使用的超参数 (合并默认值和用户提供的值)
+        actual_hyperparameters = algorithm.get_default_hyperparameters()
+        actual_hyperparameters.update(hyperparameters)
+        
         algorithm.train(X_train, y_train, **hyperparameters)
         
         # 预测
@@ -580,7 +585,7 @@ class TrainingService:
         
         # 生成完整结果(指标+可视化)
         complete_results = self._generate_complete_results(
-            algorithm.algorithm_type, y_test, y_pred, algorithm.model, X_test, feature_names
+            algorithm.algorithm_type, y_test, y_pred, algorithm.model, X_test, feature_names, algorithm_name
         )
         
         # 保存模型
@@ -634,7 +639,9 @@ class TrainingService:
             performance_metrics=sanitize_for_json(metrics),
             dataset_schema=sanitize_for_json(dataset_schema),
             input_requirements=sanitize_for_json(input_requirements),
-            feature_importance=sanitize_for_json(feature_importance)
+            feature_importance=sanitize_for_json(feature_importance),
+            actual_hyperparameters=sanitize_for_json(actual_hyperparameters),
+            complete_results=sanitize_for_json(complete_results)
         )
         
         # 保存预处理组件到数据库
@@ -817,7 +824,8 @@ class TrainingService:
     def _generate_complete_results(self, algorithm_type: str, y_true: np.ndarray, 
                                    y_pred: np.ndarray, model: Any, 
                                    X_test: np.ndarray = None,
-                                   feature_names: List[str] = None) -> Dict[str, Any]:
+                                   feature_names: List[str] = None,
+                                   algorithm_name: str = None) -> Dict[str, Any]:
         """
         生成完整结果(指标+可视化)
         
@@ -828,6 +836,7 @@ class TrainingService:
             model: 训练好的模型
             X_test: 测试特征数据
             feature_names: 特征名称列表
+            algorithm_name: 算法名称
             
         Returns:
             完整结果字典
@@ -842,7 +851,8 @@ class TrainingService:
                 y_pred=y_pred,
                 model=model,
                 X_test=X_test,
-                feature_names=feature_names
+                feature_names=feature_names,
+                algorithm_name=algorithm_name
             )
             
             return complete_results

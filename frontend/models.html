@@ -196,7 +196,7 @@
                         </div>
                     </div>
                     <div class="model-info">
-                        算法: ${model.algorithm_name || '未知'}<br>
+                        算法: ${model.algorithm_display_name || model.algorithm_name || '未知'}<br>
                         创建时间: ${new Date(model.created_at).toLocaleString('zh-CN')}
                     </div>
                     ${mainMetrics.length > 0 ? `
@@ -352,20 +352,28 @@
                 
                 // 设置标题
                 document.getElementById('model-title').textContent = model.name || `模型 ${model.id}`;
+                const algorithmName = model.algorithm_display_name || model.algorithm_name;
                 document.getElementById('model-subtitle').textContent = 
-                    `${model.algorithm_name} - ${this.getAlgorithmTypeText(model.algorithm_type)} - ${new Date(model.created_at).toLocaleString('zh-CN')}`;
+                    `${algorithmName} - ${this.getAlgorithmTypeText(model.algorithm_type)} - ${new Date(model.created_at).toLocaleString('zh-CN')}`;
                 
                 // 清空之前的图表
                 this.visualizer.clearAll();
                 
-                // 渲染结果
-                this.visualizer.renderTrainingResults('results-content', {
+                // 渲染结果 - 使用complete_results字段
+                const resultsData = {
                     algorithm_type: model.algorithm_type,
                     algorithm_name: model.algorithm_name,
                     performance_metrics: model.performance_metrics,
-                    complete_results: model.complete_results,
+                    complete_results: model.complete_results,  // 完整的训练结果
                     feature_importance: model.feature_importance
-                });
+                };
+                
+                this.visualizer.renderTrainingResults('results-content', resultsData);
+                
+                // 添加超参数信息
+                if (model.actual_hyperparameters) {
+                    this.renderHyperparameters('results-content', model.actual_hyperparameters);
+                }
             }
             
             showListView() {
@@ -373,6 +381,40 @@
                 document.getElementById('model-detail-view').style.display = 'none';
                 this.currentModelId = null;
                 this.visualizer.clearAll();
+            }
+            
+            renderHyperparameters(containerId, hyperparameters) {
+                const container = document.getElementById(containerId);
+                const section = document.createElement('div');
+                section.className = 'results-section';
+                section.innerHTML = '<h3>模型超参数</h3>';
+                
+                const grid = document.createElement('div');
+                grid.className = 'metrics-grid';
+                grid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(200px, 1fr))';
+                
+                Object.entries(hyperparameters).forEach(([key, value]) => {
+                    const card = document.createElement('div');
+                    card.className = 'metric-card';
+                    
+                    let displayValue = value;
+                    if (typeof value === 'number') {
+                        displayValue = Number.isInteger(value) ? value : value.toFixed(4);
+                    } else if (typeof value === 'boolean') {
+                        displayValue = value ? '是' : '否';
+                    } else if (value === null) {
+                        displayValue = 'None';
+                    }
+                    
+                    card.innerHTML = `
+                        <div class="metric-label">${key}</div>
+                        <div class="metric-value" style="font-size: 0.9em;">${displayValue}</div>
+                    `;
+                    grid.appendChild(card);
+                });
+                
+                section.appendChild(grid);
+                container.appendChild(section);
             }
             
             async deleteModel(modelId) {

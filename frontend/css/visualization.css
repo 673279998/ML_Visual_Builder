@@ -93,7 +93,7 @@
     margin: 20px 0;
 }
 
-canvas {
+.results-section canvas {
     max-height: 400px;
 }
 

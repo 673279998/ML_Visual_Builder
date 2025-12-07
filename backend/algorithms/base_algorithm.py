@@ -13,6 +13,7 @@ class BaseAlgorithm(ABC):
         self.model = None
         self.algorithm_name = ""
         self.algorithm_type = ""  # classification, regression, clustering, reduction
+        self.display_name = ""  # 中文显示名称
     
     @abstractmethod
     def get_hyperparameters(self) -> List[Dict[str, Any]]:
@@ -104,6 +105,16 @@ class BaseAlgorithm(ABC):
                 validated[name] = hp_def.get('default')
         
         return validated
+    
+    def get_default_hyperparameters(self) -> Dict[str, Any]:
+        """
+        获取算法的默认超参数
+        
+        Returns:
+            默认超参数字典
+        """
+        hyperparams_def = self.get_hyperparameters()
+        return {hp['name']: hp['default'] for hp in hyperparams_def if 'default' in hp}
     
     def get_estimator(self) -> Any:
         """

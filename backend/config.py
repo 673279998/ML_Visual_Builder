@@ -40,7 +40,7 @@ class Config:
     
     # 服务器配置
     HOST = 'localhost'
-    PORT = 5000
+    PORT = 5002
     DEBUG = True
     
     # CORS配置
