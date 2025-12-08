@@ -95,7 +95,6 @@ class WorkflowManager {
                 break;
             case '模型结果':
             case '可视化':
-            case '模型保存':
             case '终止':
                 this.showOutputModuleConfig(nodeId, nodeName, config);
                 break;
@@ -414,10 +413,10 @@ class WorkflowManager {
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>超参数 / 参数范围 (JSON格式):</label>
+                    <label>固定超参数 (JSON格式):</label>
                     <textarea id="config-hyperparameters" class="form-control" rows="4" 
-                              placeholder='{"param1": [1, 10], "param2": "value"}'>${JSON.stringify(config.hyperparameters || {}, null, 2)}</textarea>
-                    <small class="form-text text-muted">用于固定参数或调优范围</small>
+                              placeholder='例如: {"random_state": 42, "n_jobs": -1}'>${JSON.stringify(config.fixed_hyperparameters || config.hyperparameters || {}, null, 2)}</textarea>
+                    <small class="form-text text-muted">在此处设置不需要调优的固定参数。如需调优，请在"超参数调优"节点中设置。</small>
                 </div>
             `, () => {
                 const algorithm = document.getElementById('config-algorithm').value;
@@ -440,7 +439,7 @@ class WorkflowManager {
                 
                 this.canvas.updateNodeConfig(nodeId, {
                     algorithm: algorithm,
-                    hyperparameters: hyperparameters,
+                    fixed_hyperparameters: hyperparameters, // 重命名为固定参数
                     algorithm_type: algorithmType
                 });
                 this.hideModal();
@@ -495,19 +494,38 @@ class WorkflowManager {
                 </select>
             </div>
             <div class="form-group">
+                <label>参数搜索空间 (JSON格式):</label>
+                <textarea id="config-custom-param-grid" class="form-control" rows="5" 
+                    placeholder='例如: {"n_estimators": [50, 100], "max_depth": [5, 10]}'>${config.custom_param_grid ? JSON.stringify(config.custom_param_grid, null, 2) : ''}</textarea>
+                <small class="form-text text-muted">定义需要搜索的参数网格。每个参数的值必须是列表。</small>
+            </div>
+            <div class="form-group">
                 <label>
                     <input type="checkbox" id="config-use-recommended" 
                            ${config.use_recommended !== false ? 'checked' : ''}>
-                    使用系统推荐参数网格
+                    使用系统推荐参数网格 (如果未提供搜索空间)
                 </label>
             </div>
         `, () => {
+            let customParamGrid = null;
+            const customParamGridStr = document.getElementById('config-custom-param-grid').value.trim();
+            if (customParamGridStr) {
+                try {
+                    customParamGrid = JSON.parse(customParamGridStr);
+                } catch (e) {
+                    alert('自定义参数网格JSON格式错误: ' + e.message);
+                    return;
+                }
+            }
+            
             this.canvas.updateNodeConfig(nodeId, {
                 method: document.getElementById('config-tuning-method').value,
                 cv: parseInt(document.getElementById('config-cv-folds').value),
                 n_iter: parseInt(document.getElementById('config-n-iter').value),
                 scoring: document.getElementById('config-scoring').value,
-                use_recommended: document.getElementById('config-use-recommended').checked
+                use_recommended: document.getElementById('config-use-recommended').checked,
+                custom_param_grid: customParamGrid,
+                hyperparameters: customParamGrid // 将其作为 hyperparameters 传递，会被 tuneHyperparameters 使用
             });
             this.hideModal();
         });
@@ -616,28 +634,12 @@ class WorkflowManager {
         
         let content = '';
         
-        if (nodeName === '模型保存') {
-            content = `
-                <div class="form-group">
-                    <label>模型名称:</label>
-                    <input type="text" id="config-model-name" class="form-control" 
-                           value="${config.model_name || ''}" placeholder="请输入模型名称">
-                </div>
-            `;
-        } else {
+        if (nodeName === '终止') {
             content = `<p>终止节点无需配置</p>`;
         }
         
         this.showModal(`${nodeName} 配置`, content, () => {
             let newConfig = {};
-            
-            if (nodeName === '模型保存') {
-                newConfig.model_name = document.getElementById('config-model-name').value;
-                if (!newConfig.model_name) {
-                    alert('请输入模型名称');
-                    return;
-                }
-            }
             
             this.canvas.updateNodeConfig(nodeId, newConfig);
             this.hideModal();
@@ -904,6 +906,11 @@ class WorkflowManager {
                         } else if (output.hyperparameters) {
                             config.upstream_hyperparameters = output.hyperparameters;
                         }
+                        
+                        // 传递 fixed_hyperparameters 信息 (来自算法选择节点)
+                        if (output.fixed_hyperparameters) {
+                            config.upstream_fixed_hyperparameters = output.fixed_hyperparameters;
+                        }
 
                         // 传递 preprocessing_components
                         if (output.preprocessing_components) {
@@ -937,6 +944,7 @@ class WorkflowManager {
                         algorithm_name: config.algorithm,
                         algorithm_type: config.algorithm_type,
                         hyperparameters: config.hyperparameters,
+                        fixed_hyperparameters: config.fixed_hyperparameters, // 传递固定参数
                         dataset_id: config.dataset_id
                     };
                     await new Promise(resolve => setTimeout(resolve, 500)); // 模拟短暂执行
@@ -954,6 +962,14 @@ class WorkflowManager {
                         algorithm: config.upstream_algorithm_name,
                         hyperparameters: config.upstream_hyperparameters || {}
                     };
+
+                    // 确保上游的固定参数也能被合并到hyperparameters中
+                    if (config.upstream_fixed_hyperparameters) {
+                        trainConfig.hyperparameters = {
+                            ...trainConfig.hyperparameters,
+                            ...config.upstream_fixed_hyperparameters
+                        };
+                    }
                     
                     result = await this.trainModelAsync(trainConfig, nodeId);
                     break;
@@ -1077,6 +1093,26 @@ class WorkflowManager {
      * 超参数调优
      */
     async tuneHyperparameters(config, nodeId) {
+        // 构造参数网格: 优先使用当前节点定义的custom_param_grid (存储在config.hyperparameters中)
+        let finalParamGrid = config.hyperparameters || {};
+        
+        // 如果有上游传入的固定参数，合并到网格中
+        // 注意：GridSearchCV要求所有参数值必须是列表
+        if (config.upstream_fixed_hyperparameters) {
+            // 深拷贝以避免修改原始对象
+            finalParamGrid = JSON.parse(JSON.stringify(finalParamGrid));
+            
+            for (const [key, value] of Object.entries(config.upstream_fixed_hyperparameters)) {
+                // 如果当前网格中没有该参数，则添加
+                if (!(key in finalParamGrid)) {
+                    // 如果值已经是列表，且看起来像搜索空间(多个值)，则保留
+                    // 但这里是"固定参数"，所以应该被视为单个值
+                    // 为了兼容GridSearchCV，必须包装成列表 [value]
+                    finalParamGrid[key] = [value];
+                }
+            }
+        }
+
         const response = await fetch('/api/hyperparameter/tune', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -1084,12 +1120,12 @@ class WorkflowManager {
                 dataset_id: config.dataset_id,
                 algorithm_name: config.algorithm,
                 target_columns: config.target_columns,
-                tuning_method: config.tuning_method || 'grid_search',
-                cv_folds: config.cv_folds || 5,
+                tuning_method: config.method || 'grid_search',
+                cv: config.cv || 5,
                 n_iter: config.n_iter || 10,
                 scoring: config.scoring || 'accuracy',
                 use_recommended: config.use_recommended !== false,
-                param_grid: config.hyperparameters
+                param_grid: finalParamGrid
             })
         });
         

@@ -824,6 +824,11 @@ class WorkflowCanvas {
      * 键盘事件
      */
     onKeyDown(e) {
+        // 如果当前焦点在输入框中，不触发删除
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable) {
+            return;
+        }
+
         // Delete或Backspace键删除选中对象
         if (e.key === 'Delete' || e.key === 'Backspace') {
             const activeObj = this.canvas.getActiveObject();

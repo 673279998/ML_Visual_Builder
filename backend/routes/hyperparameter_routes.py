@@ -88,8 +88,21 @@ def tune_hyperparameters():
                 
                 # 获取参数网格/分布
                 param_grid = data.get('param_grid')
+                
+                # 检查传入的param_grid是否有效（是否包含可搜索的空间）
+                if param_grid:
+                    is_valid_space = False
+                    for val in param_grid.values():
+                        if isinstance(val, list) and len(val) > 1:
+                            is_valid_space = True
+                            break
+                    
+                    if not is_valid_space:
+                        logger.info("传入的参数网格仅包含固定值，将使用默认推荐参数进行调优")
+                        param_grid = None
+
                 if not param_grid:
-                    if tuning_method == 'grid_search':
+                    if tuning_method in ['grid_search', 'grid']:
                         param_grid = HyperparameterRegistry.get_param_grid(algorithm_name)
                     else:
                         param_grid = HyperparameterRegistry.get_param_distributions(algorithm_name)
@@ -106,7 +119,7 @@ def tune_hyperparameters():
                     message=f'执行{tuning_method}调优...')
                 
                 # 执行调优
-                if tuning_method == 'grid_search':
+                if tuning_method in ['grid_search', 'grid']:
                     result = tuner.grid_search(
                         algorithm_name=algorithm_name,
                         X_train=X,
@@ -115,7 +128,7 @@ def tune_hyperparameters():
                         cv=cv,
                         scoring=scoring
                     )
-                elif tuning_method == 'random_search':
+                elif tuning_method in ['random_search', 'random']:
                     result = tuner.random_search(
                         algorithm_name=algorithm_name,
                         X_train=X,
@@ -125,7 +138,7 @@ def tune_hyperparameters():
                         cv=cv,
                         scoring=scoring
                     )
-                elif tuning_method == 'bayesian':
+                elif tuning_method in ['bayesian', 'bayesian_optimization']:
                     result = tuner.bayesian_optimization(
                         algorithm_name=algorithm_name,
                         X_train=X,

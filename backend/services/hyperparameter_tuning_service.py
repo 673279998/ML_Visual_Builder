@@ -316,6 +316,40 @@ class HyperparameterTuner:
         try:
             from skopt import BayesSearchCV
             from skopt.space import Real, Integer, Categorical
+            from scipy.stats import uniform, randint, loguniform
+            
+            # 将 scipy.stats 分布转换为 skopt 空间
+            skopt_space = {}
+            for key, value in param_space.items():
+                if hasattr(value, 'dist'):
+                    # 处理 scipy 分布
+                    if value.dist.name == 'uniform':
+                        # uniform(loc, scale) -> Real(loc, loc + scale)
+                        loc = value.args[0] if len(value.args) > 0 else value.kwds.get('loc', 0)
+                        scale = value.args[1] if len(value.args) > 1 else value.kwds.get('scale', 1)
+                        skopt_space[key] = Real(loc, loc + scale, prior='uniform')
+                    elif value.dist.name == 'randint':
+                        # randint(low, high) -> Integer(low, high)
+                        low = value.args[0] if len(value.args) > 0 else value.kwds.get('low', 0)
+                        high = value.args[1] if len(value.args) > 1 else value.kwds.get('high', 10)
+                        skopt_space[key] = Integer(low, high)
+                    elif value.dist.name == 'loguniform':
+                        # loguniform(a, b) -> Real(a, b, prior='log-uniform')
+                        a = value.args[0] if len(value.args) > 0 else value.kwds.get('a', 1e-6)
+                        b = value.args[1] if len(value.args) > 1 else value.kwds.get('b', 1e-2)
+                        skopt_space[key] = Real(a, b, prior='log-uniform')
+                    else:
+                        # 默认回退到列表，虽然可能不准确
+                        logger.warning(f"Unsupported distribution {value.dist.name} for {key}, using original")
+                        skopt_space[key] = value
+                elif isinstance(value, list):
+                    # 列表 -> Categorical
+                    skopt_space[key] = Categorical(value)
+                else:
+                    skopt_space[key] = value
+                    
+            param_space = skopt_space
+            
         except ImportError:
             logger.warning("scikit-optimize未安装,使用随机搜索替代")
             # 将贝叶斯参数空间转换为随机搜索格式

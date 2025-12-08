@@ -1,31 +1,30 @@
-# Web框架
 Flask
 Flask-CORS
 Werkzeug
 
-# 数据处理
+
 pandas
 numpy
 openpyxl
 
-# 机器学习核心库
-scikit-learn
 
-# 梯度提升库
+scikit-learn
+scikit-optimize
+
 xgboost
 lightgbm
 catboost
 
-# 降维
+
 umap-learn
 
-# 可视化
+
 matplotlib
 seaborn
 plotly
 
-# 模型序列化
+
 joblib
 
-# 工具库
+
 python-dateutil
