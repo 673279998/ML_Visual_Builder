@@ -37,6 +37,8 @@
                         <li><a href="#model-training" class="help-nav-link">模型训练</a></li>
                         <li><a href="#prediction" class="help-nav-link">模型预测</a></li>
                         <li><a href="#algorithms" class="help-nav-link">算法指南</a></li>
+                        <li><a href="#hyperparameter-tuning" class="help-nav-link">超参数调优</a></li>
+                        <li><a href="#workflow-management" class="help-nav-link">工作流管理</a></li>
                         <li><a href="#faq" class="help-nav-link">常见问题</a></li>
                         <li><a href="#contact" class="help-nav-link">联系我们</a></li>
                     </ul>
@@ -81,6 +83,49 @@
                         </div>
 
                         <div class="help-card">
+                            <h3>完整操作流程</h3>
+                            <p>平台的标准操作流程如下，建议按顺序执行：</p>
+                            <div class="workflow-steps">
+                                <div class="step">
+                                    <div class="step-number">1</div>
+                                    <div class="step-content">
+                                        <h4>数据上传与配置</h4>
+                                        <p>进入"数据管理"页面，上传CSV/Excel数据文件，点击列名配置数据类型、目标列和编码方式</p>
+                                    </div>
+                                </div>
+                                <div class="step">
+                                    <div class="step-number">2</div>
+                                    <div class="step-content">
+                                        <h4>工作流构建</h4>
+                                        <p>进入"工作流"页面，拖拽模块到画布，连接模块前后端点，在右侧面板点击配置按钮设置参数</p>
+                                    </div>
+                                </div>
+                                <div class="step">
+                                    <div class="step-number">3</div>
+                                    <div class="step-content">
+                                        <h4>模型训练与调优</h4>
+                                        <p>配置算法超参数、交叉验证设置，执行工作流进行模型训练和超参数调优</p>
+                                    </div>
+                                </div>
+                                <div class="step">
+                                    <div class="step-number">4</div>
+                                    <div class="step-content">
+                                        <h4>结果查看与管理</h4>
+                                        <p>在"模型管理"页面查看训练结果、可视化图表，管理已训练的模型</p>
+                                    </div>
+                                </div>
+                                <div class="step">
+                                    <div class="step-number">5</div>
+                                    <div class="step-content">
+                                        <h4>模型预测</h4>
+                                        <p>对于有监督学习任务，进入"模型预测"页面，输入数据执行预测并查看结果</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <p><strong>注意</strong>：每个步骤都有对应的详细说明，请参考后续章节。</p>
+                        </div>
+
+                        <div class="help-card">
                             <h3>启动平台</h3>
                             <p>平台支持多种启动方式：</p>
                             <div class="code-block">
@@ -119,30 +164,81 @@ python backend/app.py</code></pre>
                                 <div class="step">
                                     <div class="step-number">1</div>
                                     <div class="step-content">
-                                        <h4>选择模块</h4>
-                                        <p>从左侧模块面板拖拽需要的模块到画布</p>
+                                        <h4>拖拽模块</h4>
+                                        <p>从左侧模块面板<strong>拖拽</strong>需要的模块到画布中央区域</p>
                                     </div>
                                 </div>
                                 <div class="step">
                                     <div class="step-number">2</div>
                                     <div class="step-content">
-                                        <h4>配置参数</h4>
-                                        <p>双击模块打开配置面板，设置相关参数</p>
+                                        <h4>连接模块</h4>
+                                        <p>从一个模块的<strong>输出端口</strong>（右侧小圆点）拖拽到另一个模块的<strong>输入端口</strong>（左侧小圆点）</p>
                                     </div>
                                 </div>
                                 <div class="step">
                                     <div class="step-number">3</div>
                                     <div class="step-content">
-                                        <h4>连接模块</h4>
-                                        <p>从一个模块的输出端口拖拽到另一个模块的输入端口</p>
+                                        <h4>配置模块参数</h4>
+                                        <p><strong>在右侧面板点击配置按钮</strong>打开配置面板，设置相关参数（数据集选择、算法选择、超参数等）</p>
                                     </div>
                                 </div>
                                 <div class="step">
                                     <div class="step-number">4</div>
                                     <div class="step-content">
                                         <h4>执行工作流</h4>
-                                        <p>点击右上角"执行"按钮运行整个工作流</p>
+                                        <p>点击右上角"执行"按钮运行整个工作流，查看训练结果</p>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="help-card">
+                            <h3>详细操作指南</h3>
+                            <div class="detailed-steps">
+                                <div class="detailed-step">
+                                    <h4>1. 模块拖拽操作</h4>
+                                    <ul>
+                                        <li>在左侧模块面板找到需要的模块（如"数据集选择"、"分类算法选择"等）</li>
+                                        <li>按住鼠标左键，将模块拖拽到画布中央的空白区域</li>
+                                        <li>释放鼠标左键，模块会固定在画布上</li>
+                                        <li>可以拖拽模块调整位置，右键点击模块可以删除</li>
+                                    </ul>
+                                </div>
+                                <div class="detailed-step">
+                                    <h4>2. 模块连接操作</h4>
+                                    <ul>
+                                        <li>每个模块都有<strong>输入端口</strong>（左侧）和<strong>输出端口</strong>（右侧）</li>
+                                        <li>将鼠标移动到输出端口（小圆点），光标会变成十字形</li>
+                                        <li>按住鼠标左键，拖拽到目标模块的输入端口</li>
+                                        <li>连接线会自动生成，表示数据流向</li>
+                                        <li>可以点击连接线删除连接，或重新连接其他端口</li>
+                                    </ul>
+                                    <p><strong>注意</strong>：数据流向必须正确，通常从数据输入模块 → 预处理模块 → 算法模块 → 输出模块。</p>
+                                </div>
+                                <div class="detailed-step">
+                                    <h4>3. 模块配置操作</h4>
+                                    <ul>
+                                        <li><strong>在右侧面板点击配置按钮</strong>打开配置面板</li>
+                                        <li>不同模块有不同的配置选项：</li>
+                                        <ul>
+                                            <li><strong>数据集选择模块</strong>：选择已上传的数据集</li>
+                                            <li><strong>算法选择模块</strong>：选择具体算法（如随机森林、逻辑回归等）</li>
+                                            <li><strong>超参数模块</strong>：配置算法超参数（见下文详细说明）</li>
+                                            <li><strong>训练控制模块</strong>：设置交叉验证、评分指标等</li>
+                                        </ul>
+                                        <li>配置完成后点击"确定"保存设置</li>
+                                    </ul>
+                                </div>
+                                <div class="detailed-step">
+                                    <h4>4. 超参数设置</h4>
+                                    <p>在算法模块的配置面板中，可以设置以下超参数：</p>
+                                    <ul>
+                                        <li><strong>基本超参数</strong>：如树模型的max_depth、n_estimators等</li>
+                                        <li><strong>交叉验证设置</strong>：CV折数（默认5折）、评分指标选择</li>
+                                        <li><strong>随机种子</strong>：确保结果可复现</li>
+                                        <li><strong>训练测试划分</strong>：训练集比例（默认0.8）</li>
+                                    </ul>
+                                    <p>具体算法的超参数说明见<a href="#algorithms">算法指南</a>章节。</p>
                                 </div>
                             </div>
                         </div>
@@ -175,6 +271,14 @@ python backend/app.py</code></pre>
                                     </ul>
                                 </div>
                                 <div class="module-card">
+                                    <h4>训练控制模块</h4>
+                                    <ul>
+                                        <li>超参数调优：网格搜索、随机搜索、贝叶斯优化</li>
+                                        <li>交叉验证：设置CV折数和评分指标</li>
+                                        <li>模型训练：执行训练过程</li>
+                                    </ul>
+                                </div>
+                                <div class="module-card">
                                     <h4>输出模块</h4>
                                     <ul>
                                         <li>模型保存：保存训练好的模型</li>
@@ -183,6 +287,20 @@ python backend/app.py</code></pre>
                                     </ul>
                                 </div>
                             </div>
+                        </div>
+
+                        <div class="help-card">
+                            <h3>典型工作流示例</h3>
+                            <p>一个完整的分类任务工作流通常包含以下模块：</p>
+                            <ol>
+                                <li><strong>数据集选择模块</strong>：选择已配置好的数据集</li>
+                                <li><strong>预处理模块</strong>（可选）：数据清洗、特征编码</li>
+                                <li><strong>分类算法选择模块</strong>：选择具体分类算法（如随机森林）</li>
+                                <li><strong>超参数调优模块</strong>（可选）：配置网格搜索参数</li>
+                                <li><strong>模型训练模块</strong>：执行训练过程</li>
+                                <li><strong>结果可视化模块</strong>：查看评估指标和图表</li>
+                            </ol>
+                            <p>将这些模块按顺序连接起来，配置好每个模块的参数，然后点击"执行"按钮即可开始训练。</p>
                         </div>
                     </div>
 
@@ -199,10 +317,56 @@ python backend/app.py</code></pre>
                             <p>上传步骤：</p>
                             <ol>
                                 <li>进入"数据管理"页面</li>
-                                <li>点击"上传数据集"按钮</li>
+                                <li>点击"上传新数据"按钮</li>
                                 <li>选择文件并设置数据集名称</li>
                                 <li>点击"上传"按钮</li>
                             </ol>
+                            <p><strong>注意</strong>：上传成功后，数据会显示在左侧数据集列表中，可以在表格中直接查看和编辑。</p>
+                        </div>
+
+                        <div class="help-card">
+                            <h3>列属性配置（关键步骤）</h3>
+                            <p>数据上传后，必须对每一列的属性进行配置，这是模型训练的前提：</p>
+                            <div class="column-config-steps">
+                                <div class="config-step">
+                                    <h4>步骤1：选择列</h4>
+                                    <p>在数据表格中，<strong>点击列名</strong>（列标题），右侧会显示该列的属性配置面板。</p>
+                                </div>
+                                <div class="config-step">
+                                    <h4>步骤2：配置数据类型</h4>
+                                    <p>在右侧属性面板中，选择列的数据类型：</p>
+                                    <ul>
+                                        <li><strong>数值型</strong>：整数、浮点数等数值数据</li>
+                                        <li><strong>文本型</strong>：字符串、分类文本数据</li>
+                                        <li><strong>日期型</strong>：日期时间数据</li>
+                                        <li><strong>布尔型</strong>：True/False或0/1数据</li>
+                                    </ul>
+                                </div>
+                                <div class="config-step">
+                                    <h4>步骤3：设置目标列</h4>
+                                    <p>对于有监督学习任务，需要指定目标列（预测目标）：</p>
+                                    <ul>
+                                        <li>勾选"是否为目标列"选项</li>
+                                        <li>一个数据集只能有一个目标列</li>
+                                        <li>目标列的数据类型应与任务类型匹配（分类任务为类别，回归任务为数值）</li>
+                                    </ul>
+                                </div>
+                                <div class="config-step">
+                                    <h4>步骤4：选择编码方式</h4>
+                                    <p>对于文本型或类别型数据，需要选择合适的编码方式：</p>
+                                    <ul>
+                                        <li><strong>标签编码</strong>：将类别映射为整数（0,1,2...）</li>
+                                        <li><strong>独热编码</strong>：为每个类别创建二值特征列</li>
+                                        <li><strong>序数编码</strong>：按指定顺序为类别分配整数</li>
+                                        <li><strong>目标编码</strong>：使用目标变量的均值编码</li>
+                                        <li><strong>频率编码</strong>：使用类别出现频率编码</li>
+                                        <li><strong>二进制编码</strong>：将整数转换为二进制表示</li>
+                                        <li><strong>哈希编码</strong>：使用哈希函数映射到固定桶</li>
+                                    </ul>
+                                    <p>详细编码方式说明见<a href="#algorithms">算法指南</a>章节。</p>
+                                </div>
+                            </div>
+                            <p><strong>重要</strong>：必须为每一列都配置好属性，特别是目标列和编码方式，否则工作流执行会失败。</p>
                         </div>
 
                         <div class="help-card">
@@ -214,6 +378,7 @@ python backend/app.py</code></pre>
                                 <li><strong>行操作</strong>：添加、删除、筛选行</li>
                                 <li><strong>数据类型</strong>：设置数值型、文本型、日期型等</li>
                             </ul>
+                            <p>编辑完成后，记得点击"保存数据"按钮保存修改。</p>
                         </div>
 
                         <div class="help-card">
@@ -257,71 +422,189 @@ python backend/app.py</code></pre>
                                     </ul>
                                 </div>
                             </div>
+                            <p><strong>注意</strong>：预处理功能可以在数据管理页面直接操作，也可以在工作流中通过预处理模块实现。</p>
                         </div>
                     </div>
 
                     <div class="help-section" id="model-training">
                         <h2>模型训练</h2>
                         <div class="help-card">
-                            <h3>训练流程</h3>
-                            <ol>
-                                <li><strong>选择数据集</strong>：从已上传的数据集中选择训练数据</li>
-                                <li><strong>选择算法</strong>：根据任务类型选择合适的算法</li>
-                                <li><strong>设置参数</strong>：配置算法超参数和训练参数</li>
-                                <li><strong>划分数据集</strong>：设置训练集、验证集、测试集比例</li>
-                                <li><strong>开始训练</strong>：点击训练按钮开始模型训练</li>
-                                <li><strong>查看结果</strong>：训练完成后查看评估指标和可视化结果</li>
-                            </ol>
-                        </div>
-
-                        <div class="help-card">
-                            <h3>超参数调优</h3>
-                            <p>平台支持多种超参数调优方法：</p>
-                            <div class="tuning-methods">
-                                <div class="method">
-                                    <h4>网格搜索</h4>
-                                    <p>遍历所有可能的参数组合，寻找最优解</p>
+                            <h3>详细训练流程</h3>
+                            <p>模型训练是平台的核心功能，通过工作流系统实现完整的训练流程：</p>
+                            <div class="detailed-training-steps">
+                                <div class="training-step">
+                                    <h4>步骤1：准备工作流</h4>
+                                    <ul>
+                                        <li>进入"工作流"页面，创建新的工作流或加载已有工作流</li>
+                                        <li>从左侧模块面板拖拽"数据集选择"模块到画布</li>
+                                        <li>在右侧面板点击数据集模块的配置按钮，选择已配置好的数据集</li>
+                                        <li>确保数据集已正确配置列属性（数据类型、目标列、编码方式）</li>
+                                    </ul>
                                 </div>
-                                <div class="method">
-                                    <h4>随机搜索</h4>
-                                    <p>在参数空间中随机采样，效率更高</p>
+                                <div class="training-step">
+                                    <h4>步骤2：选择算法模块</h4>
+                                    <ul>
+                                        <li>根据任务类型拖拽相应的算法模块：
+                                            <ul>
+                                                <li><strong>分类任务</strong>：拖拽"分类算法选择"模块</li>
+                                                <li><strong>回归任务</strong>：拖拽"回归算法选择"模块</li>
+                                                <li><strong>聚类任务</strong>：拖拽"聚类算法选择"模块</li>
+                                                <li><strong>降维任务</strong>：拖拽"降维算法选择"模块</li>
+                                            </ul>
+                                        </li>
+                                        <li>连接数据集模块的输出端口到算法模块的输入端口</li>
+                                        <li>在右侧面板点击算法模块的配置按钮，选择具体算法（如随机森林、逻辑回归等）</li>
+                                    </ul>
                                 </div>
-                                <div class="method">
-                                    <h4>贝叶斯优化</h4>
-                                    <p>基于贝叶斯定理的智能优化方法</p>
+                                <div class="training-step">
+                                    <h4>步骤3：配置训练参数</h4>
+                                    <ul>
+                                        <li><strong>超参数设置</strong>：在算法模块配置面板中设置算法特定参数
+                                            <ul>
+                                                <li>树模型：max_depth、n_estimators、min_samples_split等</li>
+                                                <li>线性模型：C、penalty、solver等</li>
+                                                <li>神经网络：hidden_layer_sizes、learning_rate、max_iter等</li>
+                                            </ul>
+                                        </li>
+                                        <li><strong>交叉验证设置</strong>：设置CV折数（默认5折）、评分指标</li>
+                                        <li><strong>数据划分</strong>：训练集比例（默认0.8）、随机种子</li>
+                                        <li><strong>训练控制</strong>：最大迭代次数、早停设置、并行计算等</li>
+                                    </ul>
+                                </div>
+                                <div class="training-step">
+                                    <h4>步骤4：添加超参数调优（可选）</h4>
+                                    <ul>
+                                        <li>拖拽"超参数调优"模块到画布</li>
+                                        <li>连接算法模块到超参数调优模块</li>
+                                        <li>在右侧面板点击超参数调优模块的配置按钮，选择调优方法：
+                                            <ul>
+                                                <li><strong>网格搜索</strong>：遍历所有参数组合</li>
+                                                <li><strong>随机搜索</strong>：随机采样参数空间</li>
+                                                <li><strong>贝叶斯优化</strong>：智能搜索最优参数</li>
+                                            </ul>
+                                        </li>
+                                        <li>设置调优参数：参数网格、迭代次数、CV折数等</li>
+                                    </ul>
+                                </div>
+                                <div class="training-step">
+                                    <h4>步骤5：执行训练</h4>
+                                    <ul>
+                                        <li>点击右上角"执行"按钮开始训练</li>
+                                        <li>查看实时训练进度和日志</li>
+                                        <li>监控CPU、内存使用情况</li>
+                                        <li>训练过程中可以暂停、停止或查看中间结果</li>
+                                    </ul>
+                                </div>
+                                <div class="training-step">
+                                    <h4>步骤6：查看训练结果</h4>
+                                    <ul>
+                                        <li>训练完成后自动跳转到结果页面</li>
+                                        <li>查看评估指标和可视化图表</li>
+                                        <li>分析特征重要性（如果算法支持）</li>
+                                        <li>保存模型到模型库</li>
+                                    </ul>
                                 </div>
                             </div>
                         </div>
 
                         <div class="help-card">
-                            <h3>评估指标</h3>
-                            <div class="metrics-grid">
-                                <div class="metric-card">
-                                    <h4>分类任务</h4>
+                            <h3>模型结果查看与管理</h3>
+                            <p>训练完成后，可以在"模型管理"页面查看和管理所有训练的模型：</p>
+                            <div class="model-management-features">
+                                <div class="feature-item">
+                                    <h4>1. 模型列表查看</h4>
                                     <ul>
-                                        <li>准确率</li>
-                                        <li>精确率</li>
-                                        <li>召回率</li>
-                                        <li>F1分数</li>
-                                        <li>AUC-ROC</li>
-                                        <li>混淆矩阵</li>
+                                        <li>进入"模型管理"页面查看所有已训练的模型</li>
+                                        <li>每个模型卡片显示：算法名称、训练时间、主要评估指标</li>
+                                        <li>支持按算法类型、训练时间、性能指标排序</li>
+                                        <li>支持搜索和筛选模型</li>
                                     </ul>
                                 </div>
-                                <div class="metric-card">
-                                    <h4>回归任务</h4>
+                                <div class="feature-item">
+                                    <h4>2. 模型详情查看</h4>
                                     <ul>
-                                        <li>均方误差</li>
-                                        <li>平均绝对误差</li>
-                                        <li>R²分数</li>
-                                        <li>解释方差</li>
+                                        <li>点击模型卡片或"查看详情"按钮进入模型详情页</li>
+                                        <li>查看完整的训练结果：
+                                            <ul>
+                                                <li><strong>评估指标</strong>：准确率、F1分数、AUC-ROC等</li>
+                                                <li><strong>可视化图表</strong>：学习曲线、混淆矩阵、特征重要性等</li>
+                                                <li><strong>超参数信息</strong>：训练使用的具体参数值</li>
+                                                <li><strong>训练日志</strong>：详细的训练过程记录</li>
+                                            </ul>
+                                        </li>
+                                        <li>支持图表交互：缩放、平移、下载图表</li>
                                     </ul>
                                 </div>
-                                <div class="metric-card">
-                                    <h4>聚类任务</h4>
+                                <div class="feature-item">
+                                    <h4>3. 模型删除与管理</h4>
                                     <ul>
-                                        <li>轮廓系数</li>
-                                        <li>Calinski-Harabasz指数</li>
-                                        <li>Davies-Bouldin指数</li>
+                                        <li><strong>单个删除</strong>：点击模型卡片的"删除"按钮删除单个模型</li>
+                                        <li><strong>批量删除</strong>：勾选多个模型，点击"批量删除"按钮
+                                            <ul>
+                                                <li>勾选模型前的复选框选择模型</li>
+                                                <li>点击"全选"选择所有模型</li>
+                                                <li>点击"批量删除"按钮删除选中的模型</li>
+                                            </ul>
+                                        </li>
+                                        <li><strong>清理垃圾文件</strong>：点击"清理垃圾文件"按钮删除未使用的模型文件、临时文件等</li>
+                                        <li><strong>模型导出</strong>：导出模型为joblib格式文件，可在其他环境中使用</li>
+                                    </ul>
+                                </div>
+                                <div class="feature-item">
+                                    <h4>4. 多余文件清理</h4>
+                                    <p>平台会自动清理以下类型的多余文件：</p>
+                                    <ul>
+                                        <li><strong>未使用的处理后数据集</strong>：训练完成后生成的中间数据文件</li>
+                                        <li><strong>临时模型文件</strong>：训练过程中生成的临时文件</li>
+                                        <li><strong>旧的预测结果</strong>：历史预测结果文件</li>
+                                        <li><strong>缓存文件</strong>：系统缓存文件</li>
+                                    </ul>
+                                    <p>清理操作不会删除正在使用的文件和数据库记录。</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="help-card">
+                            <h3>模型输出结果说明</h3>
+                            <p>模型训练完成后，平台会生成以下类型的输出结果：</p>
+                            <div class="output-results">
+                                <div class="result-type">
+                                    <h4>1. 评估指标结果</h4>
+                                    <ul>
+                                        <li><strong>分类模型</strong>：准确率、精确率、召回率、F1分数、AUC-ROC、混淆矩阵</li>
+                                        <li><strong>回归模型</strong>：均方误差(MSE)、平均绝对误差(MAE)、R²分数、解释方差</li>
+                                        <li><strong>聚类模型</strong>：轮廓系数、Calinski-Harabasz指数、Davies-Bouldin指数</li>
+                                        <li><strong>降维模型</strong>：解释方差比、累计解释方差</li>
+                                    </ul>
+                                </div>
+                                <div class="result-type">
+                                    <h4>2. 可视化结果</h4>
+                                    <ul>
+                                        <li><strong>学习曲线</strong>：训练集和验证集的学习过程</li>
+                                        <li><strong>特征重要性</strong>：各特征对预测结果的重要性排序</li>
+                                        <li><strong>混淆矩阵热图</strong>：分类模型的预测结果分布</li>
+                                        <li><strong>ROC曲线</strong>：分类模型的性能曲线</li>
+                                        <li><strong>残差图</strong>：回归模型的预测误差分布</li>
+                                        <li><strong>聚类可视化</strong>：聚类结果的二维/三维可视化</li>
+                                        <li><strong>降维可视化</strong>：高维数据在低维空间的投影</li>
+                                    </ul>
+                                </div>
+                                <div class="result-type">
+                                    <h4>3. 模型文件</h4>
+                                    <ul>
+                                        <li><strong>模型文件</strong>：训练好的模型保存为joblib格式</li>
+                                        <li><strong>预处理组件</strong>：数据预处理步骤的序列化文件</li>
+                                        <li><strong>特征编码器</strong>：特征编码器的序列化文件</li>
+                                        <li><strong>配置文件</strong>：模型配置和超参数信息</li>
+                                    </ul>
+                                </div>
+                                <div class="result-type">
+                                    <h4>4. 训练报告</h4>
+                                    <ul>
+                                        <li><strong>训练摘要</strong>：算法类型、训练时间、数据规模等</li>
+                                        <li><strong>参数设置</strong>：使用的超参数和训练参数</li>
+                                        <li><strong>性能分析</strong>：模型在不同数据集上的表现</li>
+                                        <li><strong>错误分析</strong>：模型的主要错误类型和改进建议</li>
                                     </ul>
                                 </div>
                             </div>
@@ -331,53 +614,253 @@ python backend/app.py</code></pre>
                     <div class="help-section" id="prediction">
                         <h2>模型预测</h2>
                         <div class="help-card">
-                            <h3>预测流程</h3>
-                            <ol>
-                                <li><strong>选择模型</strong>：从已训练的模型中选择</li>
-                                <li><strong>准备数据</strong>：上传或输入预测数据</li>
-                                <li><strong>配置参数</strong>：设置预测参数（如是否返回概率）</li>
-                                <li><strong>执行预测</strong>：点击预测按钮开始预测</li>
-                                <li><strong>查看结果</strong>：查看预测结果和可视化分析</li>
-                            </ol>
+                            <h3>详细预测流程</h3>
+                            <p>对于有监督学习任务（分类和回归），可以在"模型预测"页面使用训练好的模型进行预测：</p>
+                            <div class="detailed-prediction-steps">
+                                <div class="prediction-step">
+                                    <h4>步骤1：选择预测模型</h4>
+                                    <ul>
+                                        <li>进入"模型预测"页面</li>
+                                        <li>在"选择模型"下拉菜单中选择已训练的模型</li>
+                                        <li>系统会自动显示模型信息：
+                                            <ul>
+                                                <li><strong>算法类型</strong>：分类、回归等</li>
+                                                <li><strong>算法名称</strong>：随机森林、逻辑回归等</li>
+                                                <li><strong>训练时间</strong>：模型训练的时间</li>
+                                                <li><strong>输入特征</strong>：模型需要的特征列信息</li>
+                                            </ul>
+                                        </li>
+                                        <li>查看数据预处理详情：数据集格式、特征列信息、预处理方法等</li>
+                                    </ul>
+                                </div>
+                                <div class="prediction-step">
+                                    <h4>步骤2：准备预测数据</h4>
+                                    <p>平台支持两种输入方式：</p>
+                                    <div class="input-methods">
+                                        <div class="method">
+                                            <h5>方法一：手动输入（推荐）</h5>
+                                            <ul>
+                                                <li>选择"手动输入"模式</li>
+                                                <li>在文本框中输入JSON格式的数据</li>
+                                                <li><strong>数据格式要求</strong>：
+                                                    <pre><code>[
+  {"feature1": 5.1, "feature2": 3.5, "feature3": 1.4},
+  {"feature1": 6.2, "feature2": 2.8, "feature3": 4.8}
+]</code></pre>
+                                                </li>
+                                                <li><strong>注意事项</strong>：
+                                                    <ul>
+                                                        <li>特征名称必须与训练时完全一致</li>
+                                                        <li>数值类型必须正确（整数、浮点数）</li>
+                                                        <li>分类特征需要与训练时相同的编码</li>
+                                                        <li>支持单条或多条数据同时预测</li>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="method">
+                                            <h5>方法二：选择数据集</h5>
+                                            <ul>
+                                                <li>选择"选择数据集"模式</li>
+                                                <li>从下拉菜单中选择已上传的数据集</li>
+                                                <li>系统会自动使用该数据集的所有数据进行预测</li>
+                                                <li><strong>适用场景</strong>：批量预测、测试集评估</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="prediction-step">
+                                    <h4>步骤3：配置预测参数</h4>
+                                    <ul>
+                                        <li><strong>返回概率</strong>（仅分类模型）：勾选"返回预测概率"选项
+                                            <ul>
+                                                <li>对于分类模型，可以返回每个类别的预测概率</li>
+                                                <li>概率值范围0-1，所有类别概率之和为1</li>
+                                                <li>可用于不确定性分析、阈值调整等</li>
+                                            </ul>
+                                        </li>
+                                        <li><strong>输出格式</strong>：选择预测结果的输出格式
+                                            <ul>
+                                                <li><strong>简洁格式</strong>：只返回预测值</li>
+                                                <li><strong>详细格式</strong>：返回预测值、概率、置信度等</li>
+                                                <li><strong>可视化格式</strong>：生成可视化图表</li>
+                                            </ul>
+                                        </li>
+                                        <li><strong>批量处理</strong>：设置批量预测的批次大小
+                                            <ul>
+                                                <li>大数据集可以分批次预测，避免内存溢出</li>
+                                                <li>默认批次大小：1000条/批次</li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="prediction-step">
+                                    <h4>步骤4：执行预测</h4>
+                                    <ul>
+                                        <li>点击"开始预测"按钮开始预测</li>
+                                        <li>查看实时预测进度和状态</li>
+                                        <li>预测过程中可以：
+                                            <ul>
+                                                <li><strong>暂停</strong>：暂停当前预测任务</li>
+                                                <li><strong>停止</strong>：停止预测并清理临时文件</li>
+                                                <li><strong>查看日志</strong>：查看详细的预测过程日志</li>
+                                            </ul>
+                                        </li>
+                                        <li>预测完成后自动显示结果</li>
+                                    </ul>
+                                </div>
+                                <div class="prediction-step">
+                                    <h4>步骤5：查看预测结果</h4>
+                                    <p>预测完成后，平台会显示以下结果：</p>
+                                    <div class="result-types">
+                                        <div class="result-type">
+                                            <h5>1. 表格结果</h5>
+                                            <ul>
+                                                <li><strong>预测值表格</strong>：每条数据的预测结果</li>
+                                                <li><strong>概率表格</strong>（如果启用）：每个类别的预测概率</li>
+                                                <li><strong>置信度</strong>：预测结果的置信度分数</li>
+                                                <li>支持表格排序、筛选、搜索功能</li>
+                                            </ul>
+                                        </div>
+                                        <div class="result-type">
+                                            <h5>2. 可视化分析</h5>
+                                            <ul>
+                                                <li><strong>预测分布图</strong>：预测结果的分布情况</li>
+                                                <li><strong>概率分布图</strong>：预测概率的分布情况</li>
+                                                <li><strong>错误分析图</strong>：预测错误的样本分析</li>
+                                                <li><strong>特征贡献图</strong>：各特征对预测结果的贡献度</li>
+                                            </ul>
+                                        </div>
+                                        <div class="result-type">
+                                            <h5>3. 统计摘要</h5>
+                                            <ul>
+                                                <li><strong>预测统计</strong>：预测值的统计信息（均值、标准差等）</li>
+                                                <li><strong>类别分布</strong>（分类）：各预测类别的数量和比例</li>
+                                                <li><strong>性能评估</strong>（如果有真实标签）：准确率、误差等指标</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="help-card">
-                            <h3>批量预测</h3>
-                            <p>支持批量数据预测：</p>
-                            <ul>
-                                <li>上传CSV文件进行批量预测</li>
-                                <li>支持实时数据输入预测</li>
-                                <li>预测结果可下载为CSV文件</li>
-                                <li>支持概率预测（分类任务）</li>
-                            </ul>
+                            <h3>预测数据输入详细说明</h3>
+                            <p>预测数据的输入格式和注意事项：</p>
+                            <div class="input-details">
+                                <div class="detail-item">
+                                    <h4>1. JSON格式要求</h4>
+                                    <p>手动输入时必须使用正确的JSON格式：</p>
+                                    <pre><code>// 单条数据预测
+{"feature1": 5.1, "feature2": 3.5, "feature3": 1.4}
+
+// 多条数据预测（推荐）
+[
+  {"feature1": 5.1, "feature2": 3.5, "feature3": 1.4},
+  {"feature1": 6.2, "feature2": 2.8, "feature3": 4.8},
+  {"feature1": 5.8, "feature2": 2.7, "feature3": 5.1}
+]</code></pre>
+                                    <p><strong>常见错误</strong>：</p>
+                                    <ul>
+                                        <li>缺少逗号分隔符</li>
+                                        <li>字符串未加引号</li>
+                                        <li>数组格式不正确</li>
+                                        <li>特征名称拼写错误</li>
+                                    </ul>
+                                </div>
+                                <div class="detail-item">
+                                    <h4>2. 特征匹配要求</h4>
+                                    <ul>
+                                        <li><strong>特征名称</strong>：必须与训练时完全一致（包括大小写）</li>
+                                        <li><strong>特征顺序</strong>：不需要与训练时相同，系统会自动匹配</li>
+                                        <li><strong>特征数量</strong>：必须包含所有训练时使用的特征</li>
+                                        <li><strong>缺失特征</strong>：不允许有缺失特征，必须提供所有特征值</li>
+                                    </ul>
+                                    <p><strong>提示</strong>：在选择模型后，系统会显示模型需要的特征列表，请参考该列表准备数据。</p>
+                                </div>
+                                <div class="detail-item">
+                                    <h4>3. 数据类型要求</h4>
+                                    <ul>
+                                        <li><strong>数值特征</strong>：整数或浮点数，如5、3.14、-2.5</li>
+                                        <li><strong>分类特征</strong>：字符串或整数，需要与训练时相同的编码
+                                            <ul>
+                                                <li>如果训练时使用标签编码，预测时使用相同的整数编码</li>
+                                                <li>如果训练时使用独热编码，预测时使用原始字符串</li>
+                                            </ul>
+                                        </li>
+                                        <li><strong>布尔特征</strong>：true/false或0/1</li>
+                                        <li><strong>日期特征</strong>：ISO格式字符串，如"2023-01-15"</li>
+                                    </ul>
+                                </div>
+                                <div class="detail-item">
+                                    <h4>4. 数据预处理</h4>
+                                    <p>预测数据会自动应用与训练时相同的预处理：</p>
+                                    <ul>
+                                        <li><strong>特征缩放</strong>：标准化、归一化等</li>
+                                        <li><strong>特征编码</strong>：标签编码、独热编码等</li>
+                                        <li><strong>缺失值处理</strong>：均值填充、中位数填充等</li>
+                                        <li><strong>特征选择</strong>：只使用训练时选择的特征子集</li>
+                                    </ul>
+                                    <p><strong>注意</strong>：预处理参数（如均值和标准差）使用训练时计算的值，确保预测的一致性。</p>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="help-card">
-                            <h3>结果分析</h3>
-                            <div class="analysis-grid">
-                                <div class="analysis-item">
-                                    <h4>分类结果</h4>
+                            <h3>预测结果查看与导出</h3>
+                            <p>预测完成后，可以查看和导出预测结果：</p>
+                            <div class="result-export">
+                                <div class="export-option">
+                                    <h4>1. 在线查看</h4>
                                     <ul>
-                                        <li>预测类别分布</li>
-                                        <li>概率分布图</li>
-                                        <li>错误分析</li>
+                                        <li><strong>表格查看</strong>：在网页表格中查看所有预测结果</li>
+                                        <li><strong>图表查看</strong>：查看各种可视化图表</li>
+                                        <li><strong>统计查看</strong>：查看预测结果的统计摘要</li>
+                                        <li><strong>详细查看</strong>：点击某行查看该条数据的详细预测信息</li>
                                     </ul>
                                 </div>
-                                <div class="analysis-item">
-                                    <h4>回归结果</h4>
+                                <div class="export-option">
+                                    <h4>2. 结果导出</h4>
                                     <ul>
-                                        <li>预测值与真实值对比</li>
-                                        <li>残差分析</li>
-                                        <li>误差分布</li>
+                                        <li><strong>CSV导出</strong>：导出预测结果为CSV文件
+                                            <ul>
+                                                <li>包含原始特征和预测值</li>
+                                                <li>可选包含预测概率和置信度</li>
+                                                <li>支持中文字符编码</li>
+                                            </ul>
+                                        </li>
+                                        <li><strong>Excel导出</strong>：导出为Excel文件
+                                            <ul>
+                                                <li>包含多个工作表：预测结果、统计摘要、可视化图表</li>
+                                                <li>支持格式化和公式</li>
+                                            </ul>
+                                        </li>
+                                        <li><strong>JSON导出</strong>：导出为JSON格式，便于程序处理</li>
+                                        <li><strong>报告导出</strong>：导出完整的预测报告（PDF格式）</li>
                                     </ul>
                                 </div>
-                                <div class="analysis-item">
-                                    <h4>聚类结果</h4>
+                                <div class="export-option">
+                                    <h4>3. 预测历史</h4>
                                     <ul>
-                                        <li>聚类分布可视化</li>
-                                        <li>聚类中心分析</li>
-                                        <li>样本归属分析</li>
+                                        <li><strong>历史记录</strong>：保存每次预测的记录</li>
+                                        <li><strong>历史查看</strong>：在"预测历史"区域查看所有历史预测</li>
+                                        <li><strong>历史比较</strong>：比较不同时间点的预测结果</li>
+                                        <li><strong>历史导出</strong>：导出历史预测记录</li>
+                                        <li><strong>历史删除</strong>：删除不需要的历史记录</li>
                                     </ul>
+                                </div>
+                                <div class="export-option">
+                                    <h4>4. API调用</h4>
+                                    <p>平台提供预测API，支持程序化调用：</p>
+                                    <pre><code>POST /api/predictions/predict
+Content-Type: application/json
+
+{
+  "model_id": "模型ID",
+  "input_data": [...],
+  "return_probabilities": true
+}</code></pre>
+                                    <p>API返回JSON格式的预测结果，便于集成到其他系统。</p>
                                 </div>
                             </div>
                         </div>
@@ -385,6 +868,30 @@ python backend/app.py</code></pre>
 
                     <div class="help-section" id="algorithms">
                         <h2>算法指南</h2>
+                        
+                        <div class="help-card">
+                            <h3>算法超参数配置说明</h3>
+                            <p>平台支持31种机器学习算法，每种算法都有特定的超参数配置。在工作流中<strong>在右侧面板点击算法模块的配置按钮</strong>即可打开配置面板，设置以下类型的参数：</p>
+                            <div class="hyperparameter-types">
+                                <div class="type-item">
+                                    <h4>1. 算法特定参数</h4>
+                                    <p>每种算法独有的核心参数，如树模型的max_depth、n_estimators，线性模型的C、penalty等。</p>
+                                </div>
+                                <div class="type-item">
+                                    <h4>2. 训练控制参数</h4>
+                                    <p>控制训练过程的参数，如max_iter（最大迭代次数）、random_state（随机种子）等。</p>
+                                </div>
+                                <div class="type-item">
+                                    <h4>3. 交叉验证设置</h4>
+                                    <p>CV折数（默认5折）、评分指标选择（accuracy、f1、roc_auc等）。</p>
+                                </div>
+                                <div class="type-item">
+                                    <h4>4. 数据划分设置</h4>
+                                    <p>训练集比例（默认0.8）、是否打乱数据、随机种子等。</p>
+                                </div>
+                            </div>
+                            <p><strong>注意</strong>: 超参数调优可以通过"超参数调优"模块实现，支持网格搜索、随机搜索、贝叶斯优化等方法。</p>
+                        </div>
                         
                         <div class="help-card">
                             <h3>特征编码方式详解</h3>
@@ -595,13 +1102,58 @@ python backend/app.py</code></pre>
 
                         <div class="help-card">
                             <h3>分类算法详解</h3>
+                            <p>平台支持11种分类算法，每种算法都有特定的超参数配置。在工作流中在右侧面板点击算法模块的配置按钮即可打开配置面板设置这些参数。</p>
+                            
                             <div class="algorithm-details">
                                 <div class="algorithm-item">
                                     <h4>1. 逻辑回归 (Logistic Regression)</h4>
                                     <p><strong>原理</strong>: 使用逻辑函数将线性回归的输出映射到[0,1]区间，用于二分类或多分类任务。</p>
                                     <p><strong>特点</strong>: 可解释性强，计算效率高，适合线性可分数据。</p>
                                     <p><strong>适用场景</strong>: 二分类问题，需要概率输出的场景。</p>
-                                    <p><strong>关键参数</strong>: C(正则化强度)、penalty(正则化类型)、solver(优化算法)</p>
+                                    <p><strong>可配置超参数</strong>:</p>
+                                    <table class="hyperparameter-table">
+                                        <thead>
+                                            <tr>
+                                                <th>参数名</th>
+                                                <th>类型</th>
+                                                <th>默认值</th>
+                                                <th>范围/选项</th>
+                                                <th>说明</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>C</td>
+                                                <td>浮点数</td>
+                                                <td>1.0</td>
+                                                <td>0.001 - 100</td>
+                                                <td>正则化强度的倒数，值越小正则化越强</td>
+                                            </tr>
+                                            <tr>
+                                                <td>penalty</td>
+                                                <td>选择</td>
+                                                <td>l2</td>
+                                                <td>l1, l2, elasticnet, none</td>
+                                                <td>正则化类型，l1产生稀疏解，l2防止过拟合</td>
+                                            </tr>
+                                            <tr>
+                                                <td>max_iter</td>
+                                                <td>整数</td>
+                                                <td>100</td>
+                                                <td>50 - 1000</td>
+                                                <td>最大迭代次数，优化算法收敛的最大迭代</td>
+                                            </tr>
+                                            <tr>
+                                                <td>solver</td>
+                                                <td>选择</td>
+                                                <td>lbfgs</td>
+                                                <td>lbfgs, liblinear, newton-cg, sag, saga</td>
+                                                <td>优化算法，不同算法支持不同的正则化类型</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <p><strong>模型输出结果</strong>: 分类概率、预测类别、系数权重、特征重要性（线性系数）</p>
+                                    <p><strong>可视化结果</strong>: ROC曲线、混淆矩阵、特征系数条形图、决策边界图</p>
                                 </div>
                                 
                                 <div class="algorithm-item">
@@ -609,7 +1161,43 @@ python backend/app.py</code></pre>
                                     <p><strong>原理</strong>: 集成学习方法，通过构建多个决策树并投票决定最终分类结果。</p>
                                     <p><strong>特点</strong>: 抗过拟合能力强，可处理高维数据，提供特征重要性评估。</p>
                                     <p><strong>适用场景</strong>: 各种分类任务，特别是特征维度较高的数据集。</p>
-                                    <p><strong>关键参数</strong>: n_estimators(树的数量)、max_depth(树的最大深度)</p>
+                                    <p><strong>可配置超参数</strong>:</p>
+                                    <table class="hyperparameter-table">
+                                        <thead>
+                                            <tr>
+                                                <th>参数名</th>
+                                                <th>类型</th>
+                                                <th>默认值</th>
+                                                <th>范围/选项</th>
+                                                <th>说明</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>n_estimators</td>
+                                                <td>整数</td>
+                                                <td>100</td>
+                                                <td>10 - 500</td>
+                                                <td>决策树的数量，数量越多模型越稳定但训练越慢</td>
+                                            </tr>
+                                            <tr>
+                                                <td>max_depth</td>
+                                                <td>整数</td>
+                                                <td>None</td>
+                                                <td>1 - 50</td>
+                                                <td>树的最大深度，None表示不限制，控制模型复杂度</td>
+                                            </tr>
+                                            <tr>
+                                                <td>min_samples_split</td>
+                                                <td>整数</td>
+                                                <td>2</td>
+                                                <td>2 - 20</td>
+                                                <td>节点分裂所需的最小样本数，防止过拟合</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <p><strong>模型输出结果</strong>: 预测类别、分类概率、特征重要性、每棵树的预测结果</p>
+                                    <p><strong>可视化结果</strong>: 特征重要性条形图、决策树可视化、混淆矩阵、ROC曲线</p>
                                 </div>
                                 
                                 <div class="algorithm-item">
@@ -617,7 +1205,43 @@ python backend/app.py</code></pre>
                                     <p><strong>原理</strong>: 基于树结构的分类模型，通过特征划分构建决策路径。</p>
                                     <p><strong>特点</strong>: 可解释性强，可视化效果好，无需特征缩放。</p>
                                     <p><strong>适用场景</strong>: 需要可解释性的分类任务，特征重要性分析。</p>
-                                    <p><strong>关键参数</strong>: max_depth(最大深度)、min_samples_split(最小分裂样本数)</p>
+                                    <p><strong>可配置超参数</strong>:</p>
+                                    <table class="hyperparameter-table">
+                                        <thead>
+                                            <tr>
+                                                <th>参数名</th>
+                                                <th>类型</th>
+                                                <th>默认值</th>
+                                                <th>范围/选项</th>
+                                                <th>说明</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>max_depth</td>
+                                                <td>整数</td>
+                                                <td>None</td>
+                                                <td>1 - 50</td>
+                                                <td>树的最大深度，None表示不限制</td>
+                                            </tr>
+                                            <tr>
+                                                <td>min_samples_split</td>
+                                                <td>整数</td>
+                                                <td>2</td>
+                                                <td>2 - 20</td>
+                                                <td>节点分裂所需的最小样本数</td>
+                                            </tr>
+                                            <tr>
+                                                <td>min_samples_leaf</td>
+                                                <td>整数</td>
+                                                <td>1</td>
+                                                <td>1 - 20</td>
+                                                <td>叶子节点所需的最小样本数</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <p><strong>模型输出结果</strong>: 预测类别、决策树结构、特征重要性、叶子节点信息</p>
+                                    <p><strong>可视化结果</strong>: 决策树可视化图、特征重要性条形图、决策路径图、混淆矩阵</p>
                                 </div>
                                 
                                 <div class="algorithm-item">
@@ -625,7 +1249,43 @@ python backend/app.py</code></pre>
                                     <p><strong>原理</strong>: 集成学习方法，通过串行训练弱学习器，每轮纠正前一轮的错误。</p>
                                     <p><strong>特点</strong>: 预测精度高，可处理复杂非线性关系。</p>
                                     <p><strong>适用场景</strong>: 对预测精度要求高的分类任务。</p>
-                                    <p><strong>关键参数</strong>: n_estimators(弱学习器数量)、learning_rate(学习率)</p>
+                                    <p><strong>可配置超参数</strong>:</p>
+                                    <table class="hyperparameter-table">
+                                        <thead>
+                                            <tr>
+                                                <th>参数名</th>
+                                                <th>类型</th>
+                                                <th>默认值</th>
+                                                <th>范围/选项</th>
+                                                <th>说明</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>n_estimators</td>
+                                                <td>整数</td>
+                                                <td>100</td>
+                                                <td>10 - 500</td>
+                                                <td>弱学习器（树）的数量</td>
+                                            </tr>
+                                            <tr>
+                                                <td>learning_rate</td>
+                                                <td>浮点数</td>
+                                                <td>0.1</td>
+                                                <td>0.01 - 1.0</td>
+                                                <td>学习率，控制每棵树的贡献权重</td>
+                                            </tr>
+                                            <tr>
+                                                <td>max_depth</td>
+                                                <td>整数</td>
+                                                <td>3</td>
+                                                <td>1 - 20</td>
+                                                <td>树的最大深度，控制模型复杂度</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <p><strong>模型输出结果</strong>: 预测类别、分类概率、特征重要性、每棵树的贡献</p>
+                                    <p><strong>可视化结果</strong>: 特征重要性图、学习曲线、决策路径、SHAP值分析</p>
                                 </div>
                                 
                                 <div class="algorithm-item">
@@ -633,7 +1293,43 @@ python backend/app.py</code></pre>
                                     <p><strong>原理</strong>: 优化的梯度提升算法，加入正则化项防止过拟合。</p>
                                     <p><strong>特点</strong>: 速度快，精度高，支持并行计算。</p>
                                     <p><strong>适用场景</strong>: 大规模数据集，竞赛级分类任务。</p>
-                                    <p><strong>关键参数</strong>: n_estimators、max_depth、learning_rate</p>
+                                    <p><strong>可配置超参数</strong>:</p>
+                                    <table class="hyperparameter-table">
+                                        <thead>
+                                            <tr>
+                                                <th>参数名</th>
+                                                <th>类型</th>
+                                                <th>默认值</th>
+                                                <th>范围/选项</th>
+                                                <th>说明</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>n_estimators</td>
+                                                <td>整数</td>
+                                                <td>100</td>
+                                                <td>10 - 500</td>
+                                                <td>弱学习器（树）的数量</td>
+                                            </tr>
+                                            <tr>
+                                                <td>learning_rate</td>
+                                                <td>浮点数</td>
+                                                <td>0.1</td>
+                                                <td>0.01 - 1.0</td>
+                                                <td>学习率，控制每棵树的贡献权重</td>
+                                            </tr>
+                                            <tr>
+                                                <td>max_depth</td>
+                                                <td>整数</td>
+                                                <td>6</td>
+                                                <td>1 - 20</td>
+                                                <td>树的最大深度，控制模型复杂度</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <p><strong>模型输出结果</strong>: 预测类别、分类概率、特征重要性、每棵树的贡献</p>
+                                    <p><strong>可视化结果</strong>: 特征重要性图、学习曲线、SHAP值分析、决策路径</p>
                                 </div>
                                 
                                 <div class="algorithm-item">
@@ -641,7 +1337,43 @@ python backend/app.py</code></pre>
                                     <p><strong>原理</strong>: 基于直方图的梯度提升算法，使用叶子生长策略。</p>
                                     <p><strong>特点</strong>: 内存占用小，训练速度快，适合大规模数据。</p>
                                     <p><strong>适用场景</strong>: 大规模高维数据集，需要快速训练的场景。</p>
-                                    <p><strong>关键参数</strong>: num_leaves(叶子数量)、learning_rate</p>
+                                    <p><strong>可配置超参数</strong>:</p>
+                                    <table class="hyperparameter-table">
+                                        <thead>
+                                            <tr>
+                                                <th>参数名</th>
+                                                <th>类型</th>
+                                                <th>默认值</th>
+                                                <th>范围/选项</th>
+                                                <th>说明</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>n_estimators</td>
+                                                <td>整数</td>
+                                                <td>100</td>
+                                                <td>10 - 500</td>
+                                                <td>弱学习器（树）的数量</td>
+                                            </tr>
+                                            <tr>
+                                                <td>learning_rate</td>
+                                                <td>浮点数</td>
+                                                <td>0.1</td>
+                                                <td>0.01 - 1.0</td>
+                                                <td>学习率，控制每棵树的贡献权重</td>
+                                            </tr>
+                                            <tr>
+                                                <td>num_leaves</td>
+                                                <td>整数</td>
+                                                <td>31</td>
+                                                <td>10 - 100</td>
+                                                <td>叶子数量，控制模型复杂度</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <p><strong>模型输出结果</strong>: 预测类别、分类概率、特征重要性、叶子权重</p>
+                                    <p><strong>可视化结果</strong>: 特征重要性图、学习曲线、叶子分布图、决策路径</p>
                                 </div>
                                 
                                 <div class="algorithm-item">
@@ -649,7 +1381,43 @@ python backend/app.py</code></pre>
                                     <p><strong>原理</strong>: 梯度提升算法，专门优化了类别特征处理。</p>
                                     <p><strong>特点</strong>: 自动处理类别特征，抗过拟合能力强。</p>
                                     <p><strong>适用场景</strong>: 包含大量类别特征的数据集。</p>
-                                    <p><strong>关键参数</strong>: iterations(迭代次数)、depth(树深度)</p>
+                                    <p><strong>可配置超参数</strong>:</p>
+                                    <table class="hyperparameter-table">
+                                        <thead>
+                                            <tr>
+                                                <th>参数名</th>
+                                                <th>类型</th>
+                                                <th>默认值</th>
+                                                <th>范围/选项</th>
+                                                <th>说明</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>iterations</td>
+                                                <td>整数</td>
+                                                <td>100</td>
+                                                <td>10 - 500</td>
+                                                <td>迭代次数（树的数量）</td>
+                                            </tr>
+                                            <tr>
+                                                <td>learning_rate</td>
+                                                <td>浮点数</td>
+                                                <td>0.1</td>
+                                                <td>0.01 - 1.0</td>
+                                                <td>学习率，控制每棵树的贡献权重</td>
+                                            </tr>
+                                            <tr>
+                                                <td>depth</td>
+                                                <td>整数</td>
+                                                <td>6</td>
+                                                <td>1 - 16</td>
+                                                <td>树的最大深度，控制模型复杂度</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <p><strong>模型输出结果</strong>: 预测类别、分类概率、特征重要性、类别特征处理信息</p>
+                                    <p><strong>可视化结果</strong>: 特征重要性图、学习曲线、类别特征编码效果、决策路径</p>
                                 </div>
                                 
                                 <div class="algorithm-item">
@@ -657,7 +1425,43 @@ python backend/app.py</code></pre>
                                     <p><strong>原理</strong>: 寻找最优超平面，最大化类别间隔。</p>
                                     <p><strong>特点</strong>: 在高维空间表现好，适合小样本数据。</p>
                                     <p><strong>适用场景</strong>: 文本分类、图像识别等小样本高维数据。</p>
-                                    <p><strong>关键参数</strong>: C(惩罚系数)、kernel(核函数)</p>
+                                    <p><strong>可配置超参数</strong>:</p>
+                                    <table class="hyperparameter-table">
+                                        <thead>
+                                            <tr>
+                                                <th>参数名</th>
+                                                <th>类型</th>
+                                                <th>默认值</th>
+                                                <th>范围/选项</th>
+                                                <th>说明</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>C</td>
+                                                <td>浮点数</td>
+                                                <td>1.0</td>
+                                                <td>0.001 - 100</td>
+                                                <td>正则化参数，控制间隔大小与分类错误的权衡</td>
+                                            </tr>
+                                            <tr>
+                                                <td>kernel</td>
+                                                <td>选择</td>
+                                                <td>rbf</td>
+                                                <td>linear, poly, rbf, sigmoid</td>
+                                                <td>核函数类型，决定特征空间的映射方式</td>
+                                            </tr>
+                                            <tr>
+                                                <td>gamma</td>
+                                                <td>选择</td>
+                                                <td>scale</td>
+                                                <td>scale, auto</td>
+                                                <td>核函数系数，影响决策边界的形状</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <p><strong>模型输出结果</strong>: 预测类别、分类概率（如果支持）、支持向量、决策函数值</p>
+                                    <p><strong>可视化结果</strong>: 决策边界图、支持向量分布、核函数效果、分类间隔</p>
                                 </div>
                                 
                                 <div class="algorithm-item">
@@ -665,7 +1469,29 @@ python backend/app.py</code></pre>
                                     <p><strong>原理</strong>: 基于贝叶斯定理，假设特征之间条件独立。</p>
                                     <p><strong>特点</strong>: 计算速度快，适合文本分类，对缺失数据不敏感。</p>
                                     <p><strong>适用场景</strong>: 文本分类、垃圾邮件检测等。</p>
-                                    <p><strong>关键参数</strong>: alpha(平滑参数)</p>
+                                    <p><strong>可配置超参数</strong>:</p>
+                                    <table class="hyperparameter-table">
+                                        <thead>
+                                            <tr>
+                                                <th>参数名</th>
+                                                <th>类型</th>
+                                                <th>默认值</th>
+                                                <th>范围/选项</th>
+                                                <th>说明</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>var_smoothing</td>
+                                                <td>浮点数</td>
+                                                <td>1e-9</td>
+                                                <td>1e-10 - 1e-5</td>
+                                                <td>方差平滑参数，防止零概率问题</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <p><strong>模型输出结果</strong>: 预测类别、分类概率、先验概率、条件概率</p>
+                                    <p><strong>可视化结果</strong>: 特征概率分布、类别概率条形图、混淆矩阵、ROC曲线</p>
                                 </div>
                                 
                                 <div class="algorithm-item">
@@ -673,7 +1499,43 @@ python backend/app.py</code></pre>
                                     <p><strong>原理</strong>: 基于距离度量，根据最近邻样本的类别进行预测。</p>
                                     <p><strong>特点</strong>: 简单直观，无需训练过程，适合小数据集。</p>
                                     <p><strong>适用场景</strong>: 样本量较小的分类任务。</p>
-                                    <p><strong>关键参数</strong>: n_neighbors(邻居数量)、weights(权重函数)</p>
+                                    <p><strong>可配置超参数</strong>:</p>
+                                    <table class="hyperparameter-table">
+                                        <thead>
+                                            <tr>
+                                                <th>参数名</th>
+                                                <th>类型</th>
+                                                <th>默认值</th>
+                                                <th>范围/选项</th>
+                                                <th>说明</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>n_neighbors</td>
+                                                <td>整数</td>
+                                                <td>5</td>
+                                                <td>1 - 50</td>
+                                                <td>邻居数量，决定投票的样本数</td>
+                                            </tr>
+                                            <tr>
+                                                <td>weights</td>
+                                                <td>选择</td>
+                                                <td>uniform</td>
+                                                <td>uniform, distance</td>
+                                                <td>权重函数，uniform为等权重，distance为距离反比权重</td>
+                                            </tr>
+                                            <tr>
+                                                <td>metric</td>
+                                                <td>选择</td>
+                                                <td>minkowski</td>
+                                                <td>euclidean, manhattan, minkowski</td>
+                                                <td>距离度量方式，决定如何计算样本间距离</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <p><strong>模型输出结果</strong>: 预测类别、邻居距离、邻居索引、分类概率（如果支持）</p>
+                                    <p><strong>可视化结果</strong>: 决策边界图、邻居分布、距离热力图、分类区域</p>
                                 </div>
                                 
                                 <div class="algorithm-item">
@@ -681,7 +1543,43 @@ python backend/app.py</code></pre>
                                     <p><strong>原理</strong>: 人工神经网络，通过多层感知器学习复杂模式。</p>
                                     <p><strong>特点</strong>: 可学习复杂非线性关系，适合各种数据类型。</p>
                                     <p><strong>适用场景</strong>: 复杂模式识别，图像、语音等数据。</p>
-                                    <p><strong>关键参数</strong>: hidden_layer_sizes(隐藏层结构)、activation(激活函数)</p>
+                                    <p><strong>可配置超参数</strong>:</p>
+                                    <table class="hyperparameter-table">
+                                        <thead>
+                                            <tr>
+                                                <th>参数名</th>
+                                                <th>类型</th>
+                                                <th>默认值</th>
+                                                <th>范围/选项</th>
+                                                <th>说明</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>hidden_layer_sizes</td>
+                                                <td>整数</td>
+                                                <td>100</td>
+                                                <td>10 - 1000</td>
+                                                <td>隐藏层神经元数量，控制网络容量</td>
+                                            </tr>
+                                            <tr>
+                                                <td>learning_rate_init</td>
+                                                <td>浮点数</td>
+                                                <td>0.001</td>
+                                                <td>0.0001 - 0.1</td>
+                                                <td>初始学习率，控制权重更新步长</td>
+                                            </tr>
+                                            <tr>
+                                                <td>max_iter</td>
+                                                <td>整数</td>
+                                                <td>200</td>
+                                                <td>50 - 1000</td>
+                                                <td>最大迭代次数，控制训练时长</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <p><strong>模型输出结果</strong>: 预测类别、分类概率、网络权重、激活值</p>
+                                    <p><strong>可视化结果</strong>: 学习曲线、网络结构图、激活函数效果、决策边界</p>
                                 </div>
                             </div>
                         </div>
@@ -694,7 +1592,29 @@ python backend/app.py</code></pre>
                                     <p><strong>原理</strong>: 建立特征与目标值之间的线性关系模型。</p>
                                     <p><strong>特点</strong>: 简单直观，可解释性强，计算速度快。</p>
                                     <p><strong>适用场景</strong>: 特征与目标呈线性关系的预测任务。</p>
-                                    <p><strong>关键参数</strong>: fit_intercept(是否计算截距)</p>
+                                    <p><strong>可配置超参数</strong>:</p>
+                                    <table class="hyperparameter-table">
+                                        <thead>
+                                            <tr>
+                                                <th>参数名</th>
+                                                <th>类型</th>
+                                                <th>默认值</th>
+                                                <th>范围/选项</th>
+                                                <th>说明</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>fit_intercept</td>
+                                                <td>布尔</td>
+                                                <td>True</td>
+                                                <td>True, False</td>
+                                                <td>是否计算截距项</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <p><strong>模型输出结果</strong>: 预测值、回归系数、截距、R²分数</p>
+                                    <p><strong>可视化结果</strong>: 残差图、回归线、系数条形图、预测 vs 实际图</p>
                                 </div>
                                 
                                 <div class="algorithm-item">
@@ -702,7 +1622,29 @@ python backend/app.py</code></pre>
                                     <p><strong>原理</strong>: 在线性回归基础上加入L2正则化项。</p>
                                     <p><strong>特点</strong>: 解决多重共线性问题，防止过拟合。</p>
                                     <p><strong>适用场景</strong>: 特征之间存在相关性的回归任务。</p>
-                                    <p><strong>关键参数</strong>: alpha(正则化强度)</p>
+                                    <p><strong>可配置超参数</strong>:</p>
+                                    <table class="hyperparameter-table">
+                                        <thead>
+                                            <tr>
+                                                <th>参数名</th>
+                                                <th>类型</th>
+                                                <th>默认值</th>
+                                                <th>范围/选项</th>
+                                                <th>说明</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>alpha</td>
+                                                <td>浮点数</td>
+                                                <td>1.0</td>
+                                                <td>0.001 - 100</td>
+                                                <td>正则化强度，值越大正则化越强</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <p><strong>模型输出结果</strong>: 预测值、回归系数、截距、R²分数</p>
+                                    <p><strong>可视化结果</strong>: 正则化路径、系数收缩图、残差图、预测 vs 实际图</p>
                                 </div>
                                 
                                 <div class="algorithm-item">
@@ -710,7 +1652,36 @@ python backend/app.py</code></pre>
                                     <p><strong>原理</strong>: 在线性回归基础上加入L1正则化项。</p>
                                     <p><strong>特点</strong>: 可进行特征选择，产生稀疏解。</p>
                                     <p><strong>适用场景</strong>: 高维数据，需要进行特征选择的场景。</p>
-                                    <p><strong>关键参数</strong>: alpha(正则化强度)</p>
+                                    <p><strong>可配置超参数</strong>:</p>
+                                    <table class="hyperparameter-table">
+                                        <thead>
+                                            <tr>
+                                                <th>参数名</th>
+                                                <th>类型</th>
+                                                <th>默认值</th>
+                                                <th>范围/选项</th>
+                                                <th>说明</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>alpha</td>
+                                                <td>浮点数</td>
+                                                <td>1.0</td>
+                                                <td>0.001 - 100</td>
+                                                <td>正则化强度，值越大正则化越强</td>
+                                            </tr>
+                                            <tr>
+                                                <td>fit_intercept</td>
+                                                <td>布尔</td>
+                                                <td>True</td>
+                                                <td>True, False</td>
+                                                <td>是否计算截距项</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <p><strong>模型输出结果</strong>: 预测值、稀疏回归系数、截距、R²分数、选择的特征</p>
+                                    <p><strong>可视化结果</strong>: 正则化路径、系数稀疏性、特征选择图、残差图</p>
                                 </div>
                                 
                                 <div class="algorithm-item">
@@ -718,7 +1689,36 @@ python backend/app.py</code></pre>
                                     <p><strong>原理</strong>: 结合L1和L2正则化的线性回归。</p>
                                     <p><strong>特点</strong>: 兼具岭回归和Lasso回归的优点。</p>
                                     <p><strong>适用场景</strong>: 特征数量多于样本数量的回归任务。</p>
-                                    <p><strong>关键参数</strong>: alpha(正则化强度)、l1_ratio(L1比例)</p>
+                                    <p><strong>可配置超参数</strong>:</p>
+                                    <table class="hyperparameter-table">
+                                        <thead>
+                                            <tr>
+                                                <th>参数名</th>
+                                                <th>类型</th>
+                                                <th>默认值</th>
+                                                <th>范围/选项</th>
+                                                <th>说明</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>alpha</td>
+                                                <td>浮点数</td>
+                                                <td>1.0</td>
+                                                <td>0.001 - 100</td>
+                                                <td>正则化强度，值越大正则化越强</td>
+                                            </tr>
+                                            <tr>
+                                                <td>l1_ratio</td>
+                                                <td>浮点数</td>
+                                                <td>0.5</td>
+                                                <td>0 - 1</td>
+                                                <td>L1正则化比例，0为纯岭回归，1为纯Lasso回归</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <p><strong>模型输出结果</strong>: 预测值、回归系数、截距、R²分数</p>
+                                    <p><strong>可视化结果</strong>: 正则化路径、系数收缩图、弹性网络效果、残差图</p>
                                 </div>
                                 
                                 <div class="algorithm-item">
@@ -726,7 +1726,36 @@ python backend/app.py</code></pre>
                                     <p><strong>原理</strong>: 基于树结构的回归模型，通过特征划分预测连续值。</p>
                                     <p><strong>特点</strong>: 可解释性强，可处理非线性关系。</p>
                                     <p><strong>适用场景</strong>: 需要可解释性的回归任务。</p>
-                                    <p><strong>关键参数</strong>: max_depth(最大深度)、min_samples_split(最小分裂样本数)</p>
+                                    <p><strong>可配置超参数</strong>:</p>
+                                    <table class="hyperparameter-table">
+                                        <thead>
+                                            <tr>
+                                                <th>参数名</th>
+                                                <th>类型</th>
+                                                <th>默认值</th>
+                                                <th>范围/选项</th>
+                                                <th>说明</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>max_depth</td>
+                                                <td>整数</td>
+                                                <td>None</td>
+                                                <td>1 - 50</td>
+                                                <td>树的最大深度，None表示不限制</td>
+                                            </tr>
+                                            <tr>
+                                                <td>min_samples_split</td>
+                                                <td>整数</td>
+                                                <td>2</td>
+                                                <td>2 - 20</td>
+                                                <td>节点分裂所需的最小样本数</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <p><strong>模型输出结果</strong>: 预测值、决策树结构、特征重要性、叶子节点值</p>
+                                    <p><strong>可视化结果</strong>: 决策树可视化、特征重要性图、预测 vs 实际图、残差图</p>
                                 </div>
                                 
                                 <div class="algorithm-item">
@@ -734,7 +1763,36 @@ python backend/app.py</code></pre>
                                     <p><strong>原理</strong>: 集成多个决策树，通过平均预测值提高精度。</p>
                                     <p><strong>特点</strong>: 抗过拟合能力强，可提供特征重要性。</p>
                                     <p><strong>适用场景</strong>: 各种回归任务，特别是复杂非线性关系。</p>
-                                    <p><strong>关键参数</strong>: n_estimators(树的数量)、max_depth(树的最大深度)</p>
+                                    <p><strong>可配置超参数</strong>:</p>
+                                    <table class="hyperparameter-table">
+                                        <thead>
+                                            <tr>
+                                                <th>参数名</th>
+                                                <th>类型</th>
+                                                <th>默认值</th>
+                                                <th>范围/选项</th>
+                                                <th>说明</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>n_estimators</td>
+                                                <td>整数</td>
+                                                <td>100</td>
+                                                <td>10 - 500</td>
+                                                <td>决策树的数量</td>
+                                            </tr>
+                                            <tr>
+                                                <td>max_depth</td>
+                                                <td>整数</td>
+                                                <td>None</td>
+                                                <td>1 - 50</td>
+                                                <td>树的最大深度，None表示不限制</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <p><strong>模型输出结果</strong>: 预测值、特征重要性、每棵树的预测、R²分数</p>
+                                    <p><strong>可视化结果</strong>: 特征重要性图、预测 vs 实际图、残差图、树的可视化</p>
                                 </div>
                                 
                                 <div class="algorithm-item">
@@ -742,7 +1800,36 @@ python backend/app.py</code></pre>
                                     <p><strong>原理</strong>: 串行训练弱学习器，逐步减少残差。</p>
                                     <p><strong>特点</strong>: 预测精度高，可处理复杂模式。</p>
                                     <p><strong>适用场景</strong>: 对预测精度要求高的回归任务。</p>
-                                    <p><strong>关键参数</strong>: n_estimators(弱学习器数量)、learning_rate(学习率)</p>
+                                    <p><strong>可配置超参数</strong>:</p>
+                                    <table class="hyperparameter-table">
+                                        <thead>
+                                            <tr>
+                                                <th>参数名</th>
+                                                <th>类型</th>
+                                                <th>默认值</th>
+                                                <th>范围/选项</th>
+                                                <th>说明</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>n_estimators</td>
+                                                <td>整数</td>
+                                                <td>100</td>
+                                                <td>10 - 500</td>
+                                                <td>弱学习器（树）的数量</td>
+                                            </tr>
+                                            <tr>
+                                                <td>learning_rate</td>
+                                                <td>浮点数</td>
+                                                <td>0.1</td>
+                                                <td>0.01 - 1.0</td>
+                                                <td>学习率，控制每棵树的贡献权重</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <p><strong>模型输出结果</strong>: 预测值、特征重要性、每棵树的贡献、误差变化</p>
+                                    <p><strong>可视化结果</strong>: 特征重要性图、学习曲线、预测 vs 实际图、残差图</p>
                                 </div>
                                 
                                 <div class="algorithm-item">
@@ -750,7 +1837,36 @@ python backend/app.py</code></pre>
                                     <p><strong>原理</strong>: 优化的梯度提升算法，加入正则化项。</p>
                                     <p><strong>特点</strong>: 速度快，精度高，支持并行计算。</p>
                                     <p><strong>适用场景</strong>: 大规模数据集，竞赛级回归任务。</p>
-                                    <p><strong>关键参数</strong>: n_estimators、max_depth、learning_rate</p>
+                                    <p><strong>可配置超参数</strong>:</p>
+                                    <table class="hyperparameter-table">
+                                        <thead>
+                                            <tr>
+                                                <th>参数名</th>
+                                                <th>类型</th>
+                                                <th>默认值</th>
+                                                <th>范围/选项</th>
+                                                <th>说明</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>n_estimators</td>
+                                                <td>整数</td>
+                                                <td>100</td>
+                                                <td>10 - 500</td>
+                                                <td>弱学习器（树）的数量</td>
+                                            </tr>
+                                            <tr>
+                                                <td>learning_rate</td>
+                                                <td>浮点数</td>
+                                                <td>0.1</td>
+                                                <td>0.01 - 1.0</td>
+                                                <td>学习率，控制每棵树的贡献权重</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <p><strong>模型输出结果</strong>: 预测值、特征重要性、每棵树的贡献、正则化参数</p>
+                                    <p><strong>可视化结果</strong>: 特征重要性图、学习曲线、预测 vs 实际图、SHAP值分析</p>
                                 </div>
                                 
                                 <div class="algorithm-item">
@@ -758,7 +1874,43 @@ python backend/app.py</code></pre>
                                     <p><strong>原理</strong>: 基于直方图的梯度提升算法。</p>
                                     <p><strong>特点</strong>: 内存占用小，训练速度快。</p>
                                     <p><strong>适用场景</strong>: 大规模高维数据集。</p>
-                                    <p><strong>关键参数</strong>: num_leaves(叶子数量)、learning_rate</p>
+                                    <p><strong>可配置超参数</strong>:</p>
+                                    <table class="hyperparameter-table">
+                                        <thead>
+                                            <tr>
+                                                <th>参数名</th>
+                                                <th>类型</th>
+                                                <th>默认值</th>
+                                                <th>范围/选项</th>
+                                                <th>说明</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>n_estimators</td>
+                                                <td>整数</td>
+                                                <td>100</td>
+                                                <td>10 - 500</td>
+                                                <td>弱学习器（树）的数量</td>
+                                            </tr>
+                                            <tr>
+                                                <td>learning_rate</td>
+                                                <td>浮点数</td>
+                                                <td>0.1</td>
+                                                <td>0.01 - 1.0</td>
+                                                <td>学习率，控制每棵树的贡献权重</td>
+                                            </tr>
+                                            <tr>
+                                                <td>num_leaves</td>
+                                                <td>整数</td>
+                                                <td>31</td>
+                                                <td>10 - 100</td>
+                                                <td>叶子数量，控制模型复杂度</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <p><strong>模型输出结果</strong>: 预测值、特征重要性、叶子权重、树的结构信息</p>
+                                    <p><strong>可视化结果</strong>: 特征重要性图、叶子分布图、学习曲线、预测 vs 实际图</p>
                                 </div>
                                 
                                 <div class="algorithm-item">
@@ -766,7 +1918,43 @@ python backend/app.py</code></pre>
                                     <p><strong>原理</strong>: 支持向量机在回归问题上的应用。</p>
                                     <p><strong>特点</strong>: 对异常值不敏感，适合小样本数据。</p>
                                     <p><strong>适用场景</strong>: 小样本回归任务，需要鲁棒性的场景。</p>
-                                    <p><strong>关键参数</strong>: C(惩罚系数)、kernel(核函数)</p>
+                                    <p><strong>可配置超参数</strong>:</p>
+                                    <table class="hyperparameter-table">
+                                        <thead>
+                                            <tr>
+                                                <th>参数名</th>
+                                                <th>类型</th>
+                                                <th>默认值</th>
+                                                <th>范围/选项</th>
+                                                <th>说明</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>C</td>
+                                                <td>浮点数</td>
+                                                <td>1.0</td>
+                                                <td>0.001 - 100</td>
+                                                <td>正则化参数，控制间隔大小与回归误差的权衡</td>
+                                            </tr>
+                                            <tr>
+                                                <td>kernel</td>
+                                                <td>选择</td>
+                                                <td>rbf</td>
+                                                <td>linear, poly, rbf, sigmoid</td>
+                                                <td>核函数类型，决定特征空间的映射方式</td>
+                                            </tr>
+                                            <tr>
+                                                <td>epsilon</td>
+                                                <td>浮点数</td>
+                                                <td>0.1</td>
+                                                <td>0.001 - 1.0</td>
+                                                <td>ε-不敏感损失参数，控制支持向量的数量</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <p><strong>模型输出结果</strong>: 预测值、支持向量、决策函数值、ε-不敏感带</p>
+                                    <p><strong>可视化结果</strong>: 支持向量分布、回归曲线、ε-不敏感带、决策边界</p>
                                 </div>
                                 
                                 <div class="algorithm-item">
@@ -774,7 +1962,43 @@ python backend/app.py</code></pre>
                                     <p><strong>原理</strong>: 人工神经网络用于回归任务。</p>
                                     <p><strong>特点</strong>: 可学习复杂非线性关系。</p>
                                     <p><strong>适用场景</strong>: 复杂非线性回归任务。</p>
-                                    <p><strong>关键参数</strong>: hidden_layer_sizes(隐藏层结构)、activation(激活函数)</p>
+                                    <p><strong>可配置超参数</strong>:</p>
+                                    <table class="hyperparameter-table">
+                                        <thead>
+                                            <tr>
+                                                <th>参数名</th>
+                                                <th>类型</th>
+                                                <th>默认值</th>
+                                                <th>范围/选项</th>
+                                                <th>说明</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>hidden_layer_sizes</td>
+                                                <td>整数</td>
+                                                <td>100</td>
+                                                <td>10 - 1000</td>
+                                                <td>隐藏层神经元数量，控制网络容量</td>
+                                            </tr>
+                                            <tr>
+                                                <td>learning_rate_init</td>
+                                                <td>浮点数</td>
+                                                <td>0.001</td>
+                                                <td>0.0001 - 0.1</td>
+                                                <td>初始学习率，控制权重更新步长</td>
+                                            </tr>
+                                            <tr>
+                                                <td>max_iter</td>
+                                                <td>整数</td>
+                                                <td>200</td>
+                                                <td>50 - 1000</td>
+                                                <td>最大迭代次数，控制训练时长</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <p><strong>模型输出结果</strong>: 预测值、网络权重、激活值、损失函数值</p>
+                                    <p><strong>可视化结果</strong>: 学习曲线、网络结构图、激活函数效果、预测 vs 实际图</p>
                                 </div>
                             </div>
                         </div>
@@ -787,7 +2011,36 @@ python backend/app.py</code></pre>
                                     <p><strong>原理</strong>: 将数据划分为K个簇，使簇内样本距离最小化。</p>
                                     <p><strong>特点</strong>: 简单高效，适合球形簇，需要指定簇数量。</p>
                                     <p><strong>适用场景</strong>: 数据分布呈球形的聚类任务。</p>
-                                    <p><strong>关键参数</strong>: n_clusters(簇数量)、init(初始化方法)</p>
+                                    <p><strong>可配置超参数</strong>:</p>
+                                    <table class="hyperparameter-table">
+                                        <thead>
+                                            <tr>
+                                                <th>参数名</th>
+                                                <th>类型</th>
+                                                <th>默认值</th>
+                                                <th>范围/选项</th>
+                                                <th>说明</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>n_clusters</td>
+                                                <td>整数</td>
+                                                <td>3</td>
+                                                <td>2 - 20</td>
+                                                <td>簇的数量</td>
+                                            </tr>
+                                            <tr>
+                                                <td>max_iter</td>
+                                                <td>整数</td>
+                                                <td>300</td>
+                                                <td>50 - 1000</td>
+                                                <td>最大迭代次数</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <p><strong>模型输出结果</strong>: 簇标签、簇中心、样本到簇中心的距离、惯性值</p>
+                                    <p><strong>可视化结果</strong>: 簇分布图、肘部法则图、轮廓系数图、簇中心图</p>
                                 </div>
                                 
                                 <div class="algorithm-item">
@@ -795,7 +2048,36 @@ python backend/app.py</code></pre>
                                     <p><strong>原理</strong>: 通过层次分解或合并构建聚类树。</p>
                                     <p><strong>特点</strong>: 无需指定簇数量，可生成树状图。</p>
                                     <p><strong>适用场景</strong>: 需要探索不同层次聚类结构的任务。</p>
-                                    <p><strong>关键参数</strong>: n_clusters(簇数量)、linkage(链接方法)</p>
+                                    <p><strong>可配置超参数</strong>:</p>
+                                    <table class="hyperparameter-table">
+                                        <thead>
+                                            <tr>
+                                                <th>参数名</th>
+                                                <th>类型</th>
+                                                <th>默认值</th>
+                                                <th>范围/选项</th>
+                                                <th>说明</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>n_clusters</td>
+                                                <td>整数</td>
+                                                <td>3</td>
+                                                <td>2 - 20</td>
+                                                <td>簇的数量</td>
+                                            </tr>
+                                            <tr>
+                                                <td>linkage</td>
+                                                <td>选择</td>
+                                                <td>ward</td>
+                                                <td>ward, complete, average, single</td>
+                                                <td>链接方法，决定簇间距离计算方式</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <p><strong>模型输出结果</strong>: 簇标签、树状图、链接矩阵、距离矩阵</p>
+                                    <p><strong>可视化结果</strong>: 树状图、簇分布图、热力图、轮廓系数图</p>
                                 </div>
                                 
                                 <div class="algorithm-item">
@@ -803,7 +2085,36 @@ python backend/app.py</code></pre>
                                     <p><strong>原理</strong>: 基于密度的聚类，识别高密度区域。</p>
                                     <p><strong>特点</strong>: 可发现任意形状的簇，自动确定簇数量。</p>
                                     <p><strong>适用场景</strong>: 非球形簇，密度不均匀的数据。</p>
-                                    <p><strong>关键参数</strong>: eps(邻域半径)、min_samples(最小样本数)</p>
+                                    <p><strong>可配置超参数</strong>:</p>
+                                    <table class="hyperparameter-table">
+                                        <thead>
+                                            <tr>
+                                                <th>参数名</th>
+                                                <th>类型</th>
+                                                <th>默认值</th>
+                                                <th>范围/选项</th>
+                                                <th>说明</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>eps</td>
+                                                <td>浮点数</td>
+                                                <td>0.5</td>
+                                                <td>0.1 - 5.0</td>
+                                                <td>邻域半径，决定样本的邻域大小</td>
+                                            </tr>
+                                            <tr>
+                                                <td>min_samples</td>
+                                                <td>整数</td>
+                                                <td>5</td>
+                                                <td>1 - 50</td>
+                                                <td>核心点所需的最小邻域样本数</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <p><strong>模型输出结果</strong>: 簇标签（-1表示噪声点）、核心点、边界点、噪声点</p>
+                                    <p><strong>可视化结果</strong>: 簇分布图、核心点标记、噪声点识别、密度图</p>
                                 </div>
                                 
                                 <div class="algorithm-item">
@@ -811,7 +2122,36 @@ python backend/app.py</code></pre>
                                     <p><strong>原理</strong>: 假设数据由多个高斯分布混合生成。</p>
                                     <p><strong>特点</strong>: 软聚类，提供样本属于各簇的概率。</p>
                                     <p><strong>适用场景</strong>: 需要概率输出的聚类任务。</p>
-                                    <p><strong>关键参数</strong>: n_components(混合成分数量)</p>
+                                    <p><strong>可配置超参数</strong>:</p>
+                                    <table class="hyperparameter-table">
+                                        <thead>
+                                            <tr>
+                                                <th>参数名</th>
+                                                <th>类型</th>
+                                                <th>默认值</th>
+                                                <th>范围/选项</th>
+                                                <th>说明</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>n_components</td>
+                                                <td>整数</td>
+                                                <td>3</td>
+                                                <td>2 - 20</td>
+                                                <td>高斯分布的数量</td>
+                                            </tr>
+                                            <tr>
+                                                <td>covariance_type</td>
+                                                <td>选择</td>
+                                                <td>full</td>
+                                                <td>full, tied, diag, spherical</td>
+                                                <td>协方差类型，决定分布的形状</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <p><strong>模型输出结果</strong>: 簇标签、簇概率、各高斯分布参数、似然函数值</p>
+                                    <p><strong>可视化结果</strong>: 概率等高线图、簇分布图、协方差椭圆、概率热力图</p>
                                 </div>
                                 
                                 <div class="algorithm-item">
@@ -819,7 +2159,36 @@ python backend/app.py</code></pre>
                                     <p><strong>原理</strong>: 基于图论的聚类方法，利用特征向量进行聚类。</p>
                                     <p><strong>特点</strong>: 可发现复杂形状的簇，适合高维数据。</p>
                                     <p><strong>适用场景</strong>: 非凸形状的簇，图数据聚类。</p>
-                                    <p><strong>关键参数</strong>: n_clusters(簇数量)、affinity(相似度度量)</p>
+                                    <p><strong>可配置超参数</strong>:</p>
+                                    <table class="hyperparameter-table">
+                                        <thead>
+                                            <tr>
+                                                <th>参数名</th>
+                                                <th>类型</th>
+                                                <th>默认值</th>
+                                                <th>范围/选项</th>
+                                                <th>说明</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>n_clusters</td>
+                                                <td>整数</td>
+                                                <td>3</td>
+                                                <td>2 - 20</td>
+                                                <td>簇的数量</td>
+                                            </tr>
+                                            <tr>
+                                                <td>affinity</td>
+                                                <td>选择</td>
+                                                <td>rbf</td>
+                                                <td>rbf, nearest_neighbors, precomputed</td>
+                                                <td>相似度度量方式</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <p><strong>模型输出结果</strong>: 簇标签、拉普拉斯矩阵特征向量、相似度矩阵</p>
+                                    <p><strong>可视化结果</strong>: 特征向量空间图、相似度矩阵热力图、簇分布图</p>
                                 </div>
                             </div>
                         </div>
@@ -832,7 +2201,29 @@ python backend/app.py</code></pre>
                                     <p><strong>原理</strong>: 通过正交变换将相关特征转换为线性无关的主成分。</p>
                                     <p><strong>特点</strong>: 线性降维，保留最大方差，可解释性强。</p>
                                     <p><strong>适用场景</strong>: 高维数据可视化，特征压缩。</p>
-                                    <p><strong>关键参数</strong>: n_components(主成分数量)</p>
+                                    <p><strong>可配置超参数</strong>:</p>
+                                    <table class="hyperparameter-table">
+                                        <thead>
+                                            <tr>
+                                                <th>参数名</th>
+                                                <th>类型</th>
+                                                <th>默认值</th>
+                                                <th>范围/选项</th>
+                                                <th>说明</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>n_components</td>
+                                                <td>整数</td>
+                                                <td>2</td>
+                                                <td>1 - 50</td>
+                                                <td>主成分数量</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <p><strong>模型输出结果</strong>: 降维后的数据、主成分、解释方差比、特征向量</p>
+                                    <p><strong>可视化结果</strong>: 主成分图、方差解释图、双标图、特征向量热力图</p>
                                 </div>
                                 
                                 <div class="algorithm-item">
@@ -840,7 +2231,36 @@ python backend/app.py</code></pre>
                                     <p><strong>原理</strong>: 基于概率分布的降维，保持局部相似性。</p>
                                     <p><strong>特点</strong>: 非线性降维，可视化效果好，计算复杂度高。</p>
                                     <p><strong>适用场景</strong>: 高维数据可视化，探索数据结构。</p>
-                                    <p><strong>关键参数</strong>: n_components(目标维度)、perplexity(困惑度)</p>
+                                    <p><strong>可配置超参数</strong>:</p>
+                                    <table class="hyperparameter-table">
+                                        <thead>
+                                            <tr>
+                                                <th>参数名</th>
+                                                <th>类型</th>
+                                                <th>默认值</th>
+                                                <th>范围/选项</th>
+                                                <th>说明</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>n_components</td>
+                                                <td>整数</td>
+                                                <td>2</td>
+                                                <td>1 - 3</td>
+                                                <td>目标维度（通常为2或3）</td>
+                                            </tr>
+                                            <tr>
+                                                <td>perplexity</td>
+                                                <td>浮点数</td>
+                                                <td>30.0</td>
+                                                <td>5.0 - 50.0</td>
+                                                <td>困惑度，控制局部与全局结构的平衡</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <p><strong>模型输出结果</strong>: 降维后的数据、KL散度、迭代过程记录</p>
+                                    <p><strong>可视化结果</strong>: 降维散点图、困惑度效果图、迭代过程动画</p>
                                 </div>
                                 
                                 <div class="algorithm-item">
@@ -848,7 +2268,36 @@ python backend/app.py</code></pre>
                                     <p><strong>原理</strong>: 基于流形学习的降维方法，保持全局和局部结构。</p>
                                     <p><strong>特点</strong>: 速度快，可处理大规模数据，可视化效果好。</p>
                                     <p><strong>适用场景</strong>: 大规模高维数据可视化。</p>
-                                    <p><strong>关键参数</strong>: n_components(目标维度)、n_neighbors(邻居数量)</p>
+                                    <p><strong>可配置超参数</strong>:</p>
+                                    <table class="hyperparameter-table">
+                                        <thead>
+                                            <tr>
+                                                <th>参数名</th>
+                                                <th>类型</th>
+                                                <th>默认值</th>
+                                                <th>范围/选项</th>
+                                                <th>说明</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>n_components</td>
+                                                <td>整数</td>
+                                                <td>2</td>
+                                                <td>1 - 50</td>
+                                                <td>目标维度</td>
+                                            </tr>
+                                            <tr>
+                                                <td>n_neighbors</td>
+                                                <td>整数</td>
+                                                <td>15</td>
+                                                <td>2 - 100</td>
+                                                <td>邻居数量，控制局部结构的粒度</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <p><strong>模型输出结果</strong>: 降维后的数据、流形结构、邻居图</p>
+                                    <p><strong>可视化结果</strong>: 降维散点图、流形可视化、邻居连接图</p>
                                 </div>
                                 
                                 <div class="algorithm-item">
@@ -856,7 +2305,29 @@ python backend/app.py</code></pre>
                                     <p><strong>原理</strong>: 有监督的降维方法，最大化类间距离，最小化类内距离。</p>
                                     <p><strong>特点</strong>: 有监督降维，适合分类任务的特征提取。</p>
                                     <p><strong>适用场景</strong>: 分类任务的特征降维。</p>
-                                    <p><strong>关键参数</strong>: n_components(目标维度)</p>
+                                    <p><strong>可配置超参数</strong>:</p>
+                                    <table class="hyperparameter-table">
+                                        <thead>
+                                            <tr>
+                                                <th>参数名</th>
+                                                <th>类型</th>
+                                                <th>默认值</th>
+                                                <th>范围/选项</th>
+                                                <th>说明</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>n_components</td>
+                                                <td>整数</td>
+                                                <td>2</td>
+                                                <td>1 - 20</td>
+                                                <td>目标维度（最多为类别数-1）</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <p><strong>模型输出结果</strong>: 降维后的数据、判别向量、类间散度矩阵、类内散度矩阵</p>
+                                    <p><strong>可视化结果</strong>: 判别空间图、类别分离度、特征投影图</p>
                                 </div>
                             </div>
                         </div>
@@ -895,40 +2366,492 @@ python backend/app.py</code></pre>
                         </div>
                     </div>
 
+                    <div class="help-section" id="hyperparameter-tuning">
+                        <h2>超参数调优</h2>
+                        <div class="help-card">
+                            <h3>超参数调优概述</h3>
+                            <p>超参数调优是机器学习中的重要步骤，通过搜索最优的超参数组合来提高模型性能。平台支持三种调优方法：网格搜索、随机搜索和贝叶斯优化。</p>
+                            <p><strong>使用步骤</strong>：</p>
+                            <ol>
+                                <li>在工作流中添加"超参数调优"模块</li>
+                                <li>连接算法模块到超参数调优模块</li>
+                                <li>在右侧面板点击超参数调优模块的配置按钮打开配置面板</li>
+                                <li>选择调优方法并设置参数</li>
+                                <li>执行工作流开始调优</li>
+                            </ol>
+                        </div>
+
+                        <div class="help-card">
+                            <h3>1. 网格搜索 (Grid Search)</h3>
+                            <p><strong>原理</strong>：遍历所有可能的参数组合，寻找最优解。</p>
+                            <p><strong>特点</strong>：</p>
+                            <ul>
+                                <li><strong>优点</strong>：能找到全局最优解（在给定参数网格内）</li>
+                                <li><strong>缺点</strong>：计算成本高，参数组合数量呈指数增长</li>
+                                <li><strong>适用场景</strong>：参数空间较小，需要精确最优解</li>
+                            </ul>
+                            <p><strong>用户输入格式</strong>：在超参数调优节点中，您需要为每个参数指定一个搜索范围（列表）。平台会自动遍历所有可能的组合。</p>
+                            <p><strong>示例</strong>：</p>
+                            <pre><code>{
+  "max_depth": [3, 5, 7, 10],
+  "n_estimators": [50, 100, 200],
+  "learning_rate": [0.01, 0.1, 0.3]
+}</code></pre>
+                            <p><strong>使用说明</strong>：</p>
+                            <ol>
+                                <li>参考<a href="#algorithms">算法指南</a>中每个算法的参数范围建议</li>
+                                <li>为每个参数指定一个列表，包含要搜索的具体值</li>
+                                <li>参数组合数量 = 各参数列表长度的乘积</li>
+                                <li>建议从粗粒度搜索开始，逐步细化</li>
+                            </ol>
+                            <p><strong>注意事项</strong>：参数组合过多会导致计算时间急剧增加，请合理设置搜索范围。</p>
+                        </div>
+
+                        <div class="help-card">
+                            <h3>2. 随机搜索 (Random Search)</h3>
+                            <p><strong>原理</strong>：在参数空间中随机采样，寻找较优解。</p>
+                            <p><strong>特点</strong>：</p>
+                            <ul>
+                                <li><strong>优点</strong>：计算效率高，适合高维参数空间</li>
+                                <li><strong>缺点</strong>：可能错过全局最优解</li>
+                                <li><strong>适用场景</strong>：参数空间较大，需要快速找到较好解</li>
+                            </ul>
+                            <p><strong>用户输入格式</strong>：在超参数调优节点中，您需要为每个参数指定一个搜索分布或范围。平台会从这些分布中随机采样参数组合。</p>
+                            <p><strong>示例</strong>：</p>
+                            <pre><code>{
+  "max_depth": [3, 5, 7, 10],
+  "n_estimators": [50, 100, 200],
+  "learning_rate": [0.01, 0.1, 0.3]
+}</code></pre>
+                            <p>或者使用scipy.stats分布：</p>
+                            <pre><code>{
+  "max_depth": "randint(3, 10)",
+  "learning_rate": "uniform(0.01, 0.3)",
+  "n_estimators": "randint(50, 300)"
+}</code></pre>
+                            <p><strong>使用说明</strong>：</p>
+                            <ol>
+                                <li>参考<a href="#algorithms">算法指南</a>中每个算法的参数范围建议</li>
+                                <li>为每个参数指定一个列表（离散值）或分布（连续范围）</li>
+                                <li>设置n_iter参数控制随机采样次数（默认50次）</li>
+                                <li>随机搜索比网格搜索更适合高维参数空间</li>
+                            </ol>
+                            <p><strong>注意事项</strong>：随机搜索不保证找到全局最优解，但通常能在较短时间内找到较好的解。</p>
+                        </div>
+
+                        <div class="help-card">
+                            <h3>3. 贝叶斯优化 (Bayesian Optimization)</h3>
+                            <p><strong>原理</strong>：基于贝叶斯定理，利用先前评估结果指导后续搜索。</p>
+                            <p><strong>特点</strong>：</p>
+                            <ul>
+                                <li><strong>优点</strong>：智能搜索，效率最高</li>
+                                <li><strong>缺点</strong>：实现复杂，需要更多计算资源</li>
+                                <li><strong>适用场景</strong>：计算成本高的模型，需要高效搜索</li>
+                            </ul>
+                            <p><strong>用户输入格式</strong>：在超参数调优节点中，您需要为每个参数指定一个搜索空间（范围）。平台会使用贝叶斯优化算法智能搜索最优参数。</p>
+                            <p><strong>示例</strong>：</p>
+                            <pre><code>{
+  "max_depth": (3, 10),
+  "learning_rate": (0.01, 0.3),
+  "n_estimators": (50, 300)
+}</code></pre>
+                            <p>对于离散参数：</p>
+                            <pre><code>{
+  "kernel": ["linear", "rbf", "poly"],
+  "C": (0.1, 10.0),
+  "gamma": (0.01, 1.0)
+}</code></pre>
+                            <p><strong>使用说明</strong>：</p>
+                            <ol>
+                                <li>参考<a href="#algorithms">算法指南</a>中每个算法的参数范围建议</li>
+                                <li>为连续参数指定范围（元组形式，如(最小值, 最大值)）</li>
+                                <li>为离散参数指定列表（如["选项1", "选项2"]）</li>
+                                <li>设置n_iter参数控制迭代次数（默认30次）</li>
+                                <li>贝叶斯优化适合计算成本高的模型，能更高效地找到最优解</li>
+                            </ol>
+                            <p><strong>注意事项</strong>：贝叶斯优化需要scikit-optimize库支持，如果未安装会自动回退到随机搜索。</p>
+                        </div>
+
+                        <div class="help-card">
+                            <h3>交叉验证设置</h3>
+                            <p>所有超参数调优方法都使用交叉验证来评估参数性能：</p>
+                            <div class="cv-settings">
+                                <div class="cv-item">
+                                    <h4>CV折数选择</h4>
+                                    <ul>
+                                        <li><strong>5折交叉验证</strong>：默认设置，平衡计算成本和稳定性</li>
+                                        <li><strong>10折交叉验证</strong>：更稳定但计算成本更高</li>
+                                        <li><strong>3折交叉验证</strong>：快速但可能不稳定，适合大数据集</li>
+                                    </ul>
+                                </div>
+                                <div class="cv-item">
+                                    <h4>评分指标</h4>
+                                    <ul>
+                                        <li><strong>分类任务</strong>：accuracy, f1, roc_auc, precision, recall</li>
+                                        <li><strong>回归任务</strong>：neg_mean_squared_error, r2, neg_mean_absolute_error</li>
+                                        <li><strong>聚类任务</strong>：silhouette_score, calinski_harabasz_score</li>
+                                    </ul>
+                                </div>
+                                <div class="cv-item">
+                                    <h4>随机种子</h4>
+                                    <p>设置random_state确保结果可复现，相同的随机种子会产生相同的结果。</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="help-card">
+                            <h3>调优结果解读</h3>
+                            <p>调优完成后，平台会提供以下结果：</p>
+                            <ul>
+                                <li><strong>最佳参数</strong>：找到的最优超参数组合</li>
+                                <li><strong>最佳分数</strong>：最佳参数在验证集上的得分</li>
+                                <li><strong>参数重要性</strong>：各参数对模型性能的影响程度</li>
+                                <li><strong>学习曲线</strong>：参数变化对性能的影响趋势</li>
+                                <li><strong>并行坐标图</strong>：多维参数空间的性能可视化</li>
+                            </ul>
+                            <p><strong>建议</strong>：调优完成后，使用最佳参数重新训练模型，并在独立测试集上评估性能。</p>
+                        </div>
+                    </div>
+
+                    <div class="help-section" id="workflow-management">
+                        <h2>工作流管理</h2>
+                        <div class="help-card">
+                            <h3>工作流保存与加载</h3>
+                            <p>平台支持工作流的保存和加载功能，方便复用和分享机器学习流程：</p>
+                            <div class="workflow-management-steps">
+                                <div class="management-step">
+                                    <h4>1. 保存工作流</h4>
+                                    <p>在工作流页面右上角，点击"保存工作流"按钮：</p>
+                                    <ul>
+                                        <li>输入工作流名称（建议使用有意义的名称）</li>
+                                        <li>添加描述（可选，说明工作流的用途）</li>
+                                        <li>点击"保存"按钮</li>
+                                    </ul>
+                                    <p><strong>保存内容</strong>：工作流结构、模块配置、连接关系、超参数设置等所有信息。</p>
+                                </div>
+                                <div class="management-step">
+                                    <h4>2. 加载工作流</h4>
+                                    <p>在工作流页面右上角，点击"加载工作流"按钮：</p>
+                                    <ul>
+                                        <li>从列表中选择已保存的工作流</li>
+                                        <li>点击"加载"按钮</li>
+                                        <li>工作流会自动恢复到画布上</li>
+                                    </ul>
+                                    <p><strong>注意</strong>：加载工作流会覆盖当前画布内容，请先保存当前工作流。</p>
+                                </div>
+                                <div class="management-step">
+                                    <h4>3. 管理工作流</h4>
+                                    <p>在"工作流管理"页面可以：</p>
+                                    <ul>
+                                        <li><strong>查看列表</strong>：查看所有已保存的工作流</li>
+                                        <li><strong>重命名</strong>：修改工作流名称和描述</li>
+                                        <li><strong>删除</strong>：删除不需要的工作流</li>
+                                        <li><strong>导出</strong>：导出工作流为JSON文件</li>
+                                        <li><strong>导入</strong>：从JSON文件导入工作流</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="help-card">
+                            <h3>工作流版本控制</h3>
+                            <p>平台提供简单的工作流版本控制功能：</p>
+                            <div class="version-control">
+                                <div class="version-item">
+                                    <h4>自动版本</h4>
+                                    <p>每次保存工作流时，平台会自动：</p>
+                                    <ul>
+                                        <li>创建新版本（如果工作流已存在）</li>
+                                        <li>保留历史版本（最多保留10个版本）</li>
+                                        <li>记录保存时间、用户操作等信息</li>
+                                    </ul>
+                                </div>
+                                <div class="version-item">
+                                    <h4>版本回退</h4>
+                                    <p>可以回退到任意历史版本：</p>
+                                    <ul>
+                                        <li>在工作流管理页面选择工作流</li>
+                                        <li>点击"版本历史"查看所有版本</li>
+                                        <li>选择要恢复的版本并点击"恢复"</li>
+                                    </ul>
+                                </div>
+                                <div class="version-item">
+                                    <h4>版本比较</h4>
+                                    <p>比较不同版本之间的差异：</p>
+                                    <ul>
+                                        <li>模块增减变化</li>
+                                        <li>参数配置修改</li>
+                                        <li>连接关系变化</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="help-card">
+                            <h3>工作流分享与协作</h3>
+                            <p>平台支持工作流的分享和协作功能：</p>
+                            <div class="collaboration-features">
+                                <div class="feature-item">
+                                    <h4>导出分享</h4>
+                                    <p>将工作流导出为JSON文件，分享给其他用户：</p>
+                                    <ul>
+                                        <li>在工作流管理页面选择工作流</li>
+                                        <li>点击"导出"按钮下载JSON文件</li>
+                                        <li>其他用户可以通过"导入"功能加载该工作流</li>
+                                    </ul>
+                                </div>
+                                <div class="feature-item">
+                                    <h4>模板库</h4>
+                                    <p>平台提供预定义的工作流模板：</p>
+                                    <ul>
+                                        <li><strong>分类任务模板</strong>：标准分类流程</li>
+                                        <li><strong>回归任务模板</strong>：标准回归流程</li>
+                                        <li><strong>聚类任务模板</strong>：标准聚类流程</li>
+                                        <li><strong>自定义模板</strong>：用户自定义的模板</li>
+                                    </ul>
+                                    <p>可以从模板库快速创建新工作流。</p>
+                                </div>
+                                <div class="feature-item">
+                                    <h4>最佳实践</h4>
+                                    <p>工作流设计的最佳实践：</p>
+                                    <ul>
+                                        <li><strong>模块化设计</strong>：将复杂流程分解为多个子工作流</li>
+                                        <li><strong>参数化配置</strong>：使用变量代替硬编码参数</li>
+                                        <li><strong>文档化</strong>：为工作流添加详细说明文档</li>
+                                        <li><strong>测试验证</strong>：创建测试工作流验证流程正确性</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="help-card">
+                            <h3>工作流执行与监控</h3>
+                            <p>工作流执行过程中的监控和管理：</p>
+                            <div class="execution-monitoring">
+                                <div class="monitoring-item">
+                                    <h4>执行控制</h4>
+                                    <ul>
+                                        <li><strong>开始执行</strong>：点击"执行"按钮开始运行工作流</li>
+                                        <li><strong>暂停执行</strong>：在长时间运行的任务中可以暂停</li>
+                                        <li><strong>停止执行</strong>：强制停止正在执行的工作流</li>
+                                        <li><strong>重新执行</strong>：重新运行整个工作流或特定模块</li>
+                                    </ul>
+                                </div>
+                                <div class="monitoring-item">
+                                    <h4>进度监控</h4>
+                                    <ul>
+                                        <li><strong>实时进度</strong>：显示每个模块的执行进度</li>
+                                        <li><strong>日志查看</strong>：查看详细的执行日志</li>
+                                        <li><strong>性能监控</strong>：监控CPU、内存使用情况</li>
+                                        <li><strong>错误提示</strong>：实时显示错误信息和解决方案</li>
+                                    </ul>
+                                </div>
+                                <div class="monitoring-item">
+                                    <h4>结果管理</h4>
+                                    <ul>
+                                        <li><strong>自动保存</strong>：执行结果自动保存到数据库</li>
+                                        <li><strong>结果查看</strong>：在模型管理页面查看训练结果</li>
+                                        <li><strong>结果导出</strong>：导出评估报告、可视化图表等</li>
+                                        <li><strong>结果比较</strong>：比较不同工作流的执行结果</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="help-section" id="faq">
                         <h2>常见问题</h2>
                         <div class="faq-list">
                             <div class="faq-item">
-                                <h3>Q: 如何添加新的机器学习算法？</h3>
-                                <p>A: 在 <code>backend/algorithms/</code> 相应目录下创建新的算法类，继承 <code>BaseAlgorithm</code>，并在 <code>algorithm_factory.py</code> 中注册。</p>
+                                <h3>Q: 数据上传后为什么无法在工作流中使用？</h3>
+                                <p>A: 数据上传后必须配置列属性才能在工作流中使用。请按以下步骤操作：</p>
+                                <ol>
+                                    <li>进入"数据管理"页面</li>
+                                    <li>点击数据表格中的列名（列标题）</li>
+                                    <li>在右侧属性面板中配置：
+                                        <ul>
+                                            <li><strong>数据类型</strong>：数值型、文本型、日期型等</li>
+                                            <li><strong>目标列</strong>：对于有监督学习，勾选"是否为目标列"</li>
+                                            <li><strong>编码方式</strong>：对于文本/类别数据，选择合适的编码方式</li>
+                                        </ul>
+                                    </li>
+                                    <li>为每一列都配置好属性后，数据就可以在工作流中使用了</li>
+                                </ol>
                             </div>
                             <div class="faq-item">
-                                <h3>Q: 如何自定义预处理步骤？</h3>
-                                <p>A: 在 <code>backend/services/preprocessing_service.py</code> 中添加新的预处理方法，并在相应路由中暴露API。</p>
+                                <h3>Q: 工作流执行失败，提示"数据集未配置"怎么办？</h3>
+                                <p>A: 这通常是因为数据集没有正确配置列属性。请检查：</p>
+                                <ul>
+                                    <li>是否为目标列设置了正确的数据类型（分类任务为类别，回归任务为数值）</li>
+                                    <li>是否为文本/类别列选择了合适的编码方式</li>
+                                    <li>是否所有必需的列都已配置属性</li>
+                                    <li>可以在数据管理页面重新检查每列的配置</li>
+                                </ul>
                             </div>
                             <div class="faq-item">
-                                <h3>Q: 数据存储在哪里？</h3>
-                                <p>A: 所有数据都存储在本地 <code>data/</code> 目录中，包括数据库文件、上传的数据集、训练的模型等。</p>
+                                <h3>Q: 超参数怎么设置？有哪些注意事项？</h3>
+                                <p>A: 超参数设置在工作流的算法模块中：</p>
+                                <ul>
+                                    <li><strong>设置位置</strong>：在右侧面板点击算法模块的配置按钮打开配置面板</li>
+                                    <li><strong>参数类型</strong>：
+                                        <ul>
+                                            <li>算法特定参数（如树模型的max_depth、n_estimators）</li>
+                                            <li>训练控制参数（如max_iter、random_state）</li>
+                                            <li>交叉验证设置（CV折数、评分指标）</li>
+                                        </ul>
+                                    </li>
+                                    <li><strong>注意事项</strong>：
+                                        <ul>
+                                            <li>参数值必须在合理范围内（参考算法指南中的建议）</li>
+                                            <li>复杂的参数组合可以使用超参数调优模块自动搜索</li>
+                                            <li>设置随机种子确保结果可复现</li>
+                                        </ul>
+                                    </li>
+                                </ul>
                             </div>
                             <div class="faq-item">
-                                <h3>Q: 如何备份数据？</h3>
-                                <p>A: 直接复制整个 <code>data/</code> 目录即可备份所有数据。</p>
+                                <h3>Q: 超参数调优怎么设置？交叉验证怎么设置？</h3>
+                                <p>A: 使用"超参数调优"模块：</p>
+                                <ol>
+                                    <li>在工作流中添加"超参数调优"模块</li>
+                                    <li>连接算法模块到超参数调优模块</li>
+                                    <li>在右侧面板点击超参数调优模块的配置按钮选择调优方法：
+                                        <ul>
+                                            <li><strong>网格搜索</strong>：遍历所有参数组合</li>
+                                            <li><strong>随机搜索</strong>：随机采样参数空间</li>
+                                            <li><strong>贝叶斯优化</strong>：智能搜索最优参数</li>
+                                        </ul>
+                                    </li>
+                                    <li>设置交叉验证：
+                                        <ul>
+                                            <li><strong>CV折数</strong>：通常5或10折</li>
+                                            <li><strong>评分指标</strong>：分类用accuracy，回归用neg_mean_squared_error</li>
+                                            <li><strong>随机种子</strong>：确保结果可复现</li>
+                                        </ul>
+                                    </li>
+                                    <li>执行工作流开始调优</li>
+                                </ol>
                             </div>
                             <div class="faq-item">
-                                <h3>Q: 平台支持哪些数据格式？</h3>
-                                <p>A: 支持CSV、Excel、JSON等常见数据格式。</p>
+                                <h3>Q: 模型结果怎么查看？有哪些可视化图表？</h3>
+                                <p>A: 训练完成后可以在"模型管理"页面查看结果：</p>
+                                <ul>
+                                    <li><strong>评估指标</strong>：准确率、F1分数、AUC-ROC、均方误差等</li>
+                                    <li><strong>可视化图表</strong>：
+                                        <ul>
+                                            <li>学习曲线：训练集和验证集的学习过程</li>
+                                            <li>特征重要性：各特征对预测结果的重要性</li>
+                                            <li>混淆矩阵：分类模型的预测结果分布</li>
+                                            <li>ROC曲线：分类模型的性能曲线</li>
+                                            <li>残差图：回归模型的预测误差分布</li>
+                                        </ul>
+                                    </li>
+                                    <li><strong>超参数信息</strong>：训练使用的具体参数值</li>
+                                    <li><strong>训练日志</strong>：详细的训练过程记录</li>
+                                </ul>
                             </div>
                             <div class="faq-item">
-                                <h3>Q: 如何查看训练进度？</h3>
-                                <p>A: 训练过程中会显示进度条和实时日志，可在训练页面查看。</p>
+                                <h3>Q: 模型怎么删除？模型相关的东西怎么删除？</h3>
+                                <p>A: 在"模型管理"页面进行删除操作：</p>
+                                <ul>
+                                    <li><strong>单个删除</strong>：点击模型卡片的"删除"按钮</li>
+                                    <li><strong>批量删除</strong>：
+                                        <ol>
+                                            <li>勾选要删除的模型（点击模型前的复选框）</li>
+                                            <li>点击"批量删除"按钮</li>
+                                            <li>确认删除操作</li>
+                                        </ol>
+                                    </li>
+                                    <li><strong>清理垃圾文件</strong>：点击"清理垃圾文件"按钮删除未使用的文件</li>
+                                </ul>
+                                <p><strong>注意</strong>：删除操作会同时删除模型文件、预处理组件、预测结果等相关文件。</p>
                             </div>
                             <div class="faq-item">
-                                <h3>Q: 模型训练失败怎么办？</h3>
-                                <p>A: 检查数据格式是否正确、内存是否充足、参数设置是否合理。查看错误日志获取详细信息。</p>
+                                <h3>Q: 怎么执行预测？预测数据怎么输入？</h3>
+                                <p>A: 在"模型预测"页面执行预测：</p>
+                                <ol>
+                                    <li>选择已训练的模型</li>
+                                    <li>准备预测数据：
+                                        <ul>
+                                            <li><strong>手动输入</strong>：输入JSON格式数据，如<code>[{"feature1": 5.1, "feature2": 3.5}]</code></li>
+                                            <li><strong>选择数据集</strong>：从已上传的数据集中选择</li>
+                                        </ul>
+                                    </li>
+                                    <li>配置预测参数（如是否返回概率）</li>
+                                    <li>点击"开始预测"按钮</li>
+                                    <li>查看预测结果和可视化分析</li>
+                                </ol>
+                                <p><strong>数据格式要求</strong>：特征名称必须与训练时一致，数据类型必须正确。</p>
                             </div>
                             <div class="faq-item">
-                                <h3>Q: 如何导出训练结果？</h3>
-                                <p>A: 训练完成后，可在结果页面下载评估报告、可视化图表和模型文件。</p>
+                                <h3>Q: 怎么保存工作流？怎么加载工作流？</h3>
+                                <p>A: 工作流保存和加载功能：</p>
+                                <ul>
+                                    <li><strong>保存工作流</strong>：
+                                        <ol>
+                                            <li>在工作流页面右上角点击"保存工作流"</li>
+                                            <li>输入工作流名称和描述</li>
+                                            <li>点击"保存"按钮</li>
+                                        </ol>
+                                    </li>
+                                    <li><strong>加载工作流</strong>：
+                                        <ol>
+                                            <li>在工作流页面右上角点击"加载工作流"</li>
+                                            <li>从列表中选择已保存的工作流</li>
+                                            <li>点击"加载"按钮</li>
+                                        </ol>
+                                    </li>
+                                    <li><strong>管理工作流</strong>：在"工作流管理"页面可以重命名、删除、导出、导入工作流</li>
+                                </ul>
+                            </div>
+                            <div class="faq-item">
+                                <h3>Q: 正确的操作流程是什么？</h3>
+                                <p>A: 推荐的标准操作流程：</p>
+                                <ol>
+                                    <li><strong>数据管理</strong>：上传数据 → 点击列名配置属性（数据类型、目标列、编码方式）</li>
+                                    <li><strong>工作流构建</strong>：拖拽模块 → 连接模块 → 在右侧面板点击配置按钮设置参数</li>
+                                    <li><strong>模型训练</strong>：执行工作流 → 查看训练结果</li>
+                                    <li><strong>模型管理</strong>：查看模型详情 → 管理模型（删除、导出等）</li>
+                                    <li><strong>模型预测</strong>（有监督学习）：选择模型 → 输入数据 → 执行预测 → 查看结果</li>
+                                </ol>
+                            </div>
+                            <div class="faq-item">
+                                <h3>Q: 平台支持哪些算法？每种算法可以配置哪些超参数？</h3>
+                                <p>A: 平台支持31种机器学习算法：</p>
+                                <ul>
+                                    <li><strong>分类算法（11种）</strong>：逻辑回归、随机森林、决策树、梯度提升、XGBoost、LightGBM、CatBoost、SVM、朴素贝叶斯、KNN、MLP</li>
+                                    <li><strong>回归算法（11种）</strong>：线性回归、岭回归、Lasso、弹性网络、决策树回归、随机森林回归、梯度提升回归、XGBoost回归、LightGBM回归、SVR、MLP回归</li>
+                                    <li><strong>聚类算法（5种）</strong>：K-Means、层次聚类、DBSCAN、高斯混合模型、谱聚类</li>
+                                    <li><strong>降维算法（4种）</strong>：PCA、t-SNE、UMAP、LDA</li>
+                                </ul>
+                                <p>每种算法的具体超参数请参考<a href="#algorithms">算法指南</a>章节的详细说明。</p>
+                            </div>
+                            <div class="faq-item">
+                                <h3>Q: 编码方式有哪些？怎么选择？</h3>
+                                <p>A: 平台支持7种编码方式：</p>
+                                <ul>
+                                    <li><strong>标签编码</strong>：将类别映射为整数，适合树模型</li>
+                                    <li><strong>独热编码</strong>：为每个类别创建二值列，适合线性模型</li>
+                                    <li><strong>序数编码</strong>：按指定顺序编码，适合有序类别</li>
+                                    <li><strong>目标编码</strong>：使用目标均值编码，适合高基数类别</li>
+                                    <li><strong>频率编码</strong>：使用类别频率编码</li>
+                                    <li><strong>二进制编码</strong>：将整数转换为二进制表示</li>
+                                    <li><strong>哈希编码</strong>：使用哈希函数映射</li>
+                                </ul>
+                                <p>详细说明请参考<a href="#algorithms">算法指南</a>章节的编码方式详解。</p>
+                            </div>
+                            <div class="faq-item">
+                                <h3>Q: 模型输出的结果和可视化结果怎么解读？</h3>
+                                <p>A: 模型输出包括：</p>
+                                <ul>
+                                    <li><strong>评估指标</strong>：量化模型性能，如准确率越高越好，均方误差越低越好</li>
+                                    <li><strong>学习曲线</strong>：训练集和验证集误差随训练进程的变化，用于诊断过拟合/欠拟合</li>
+                                    <li><strong>特征重要性</strong>：显示各特征对预测的贡献度，用于特征选择</li>
+                                    <li><strong>混淆矩阵</strong>：显示分类模型的预测结果分布，对角线上的值越多越好</li>
+                                    <li><strong>ROC曲线</strong>：曲线下面积(AUC)越大，模型性能越好</li>
+                                    <li><strong>残差图</strong>：残差应随机分布，无明显模式</li>
+                                </ul>
+                                <p>详细解读方法请参考<a href="#model-training">模型训练</a>章节的结果说明。</p>
                             </div>
                         </div>
                     </div>
