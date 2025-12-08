@@ -89,18 +89,8 @@ def tune_hyperparameters():
                 # 获取参数网格/分布
                 param_grid = data.get('param_grid')
                 
-                # 检查传入的param_grid是否有效（是否包含可搜索的空间）
-                if param_grid:
-                    is_valid_space = False
-                    for val in param_grid.values():
-                        if isinstance(val, list) and len(val) > 1:
-                            is_valid_space = True
-                            break
-                    
-                    if not is_valid_space:
-                        logger.info("传入的参数网格仅包含固定值，将使用默认推荐参数进行调优")
-                        param_grid = None
-
+                # 移除之前的"有效空间检查"，允许用户只传入固定参数
+                # 如果param_grid为空(None或{})，才加载默认推荐参数
                 if not param_grid:
                     if tuning_method in ['grid_search', 'grid']:
                         param_grid = HyperparameterRegistry.get_param_grid(algorithm_name)

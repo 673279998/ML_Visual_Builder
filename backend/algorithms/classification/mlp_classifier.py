@@ -94,8 +94,10 @@ class MLPClassifier(BaseAlgorithm):
         Returns:
             self
         """
+        # print(f"DEBUG: MLPClassifier.train called with params: {params}")
         # 验证超参数
         validated_params = self.validate_hyperparameters(params)
+        # print(f"DEBUG: MLPClassifier validated_params: {validated_params}")
         
         # 创建并训练模型
         self.model = SKMLPClassifier(**validated_params)

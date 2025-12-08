@@ -555,8 +555,10 @@ class TrainingService:
             hyperparameters = {}
         
         # 记录实际使用的超参数 (合并默认值和用户提供的值)
+        # print(f"DEBUG: training_service received hyperparameters: {hyperparameters}")
         actual_hyperparameters = algorithm.get_default_hyperparameters()
         actual_hyperparameters.update(hyperparameters)
+        # print(f"DEBUG: actual_hyperparameters after update: {actual_hyperparameters}")
         
         algorithm.train(X_train, y_train, **hyperparameters)
         

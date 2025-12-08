@@ -89,6 +89,7 @@ class HyperparameterTuner:
             搜索结果
         """
         logger.info(f"开始网格搜索: {algorithm_name}")
+        logger.info(f"DEBUG: grid_search received param_grid: {param_grid}")
         start_time = time.time()
         
         # 创建算法实例
@@ -295,6 +296,7 @@ class HyperparameterTuner:
         n_iter: int = 50,
         cv: int = 5,
         scoring: Optional[str] = None,
+        n_jobs: int = -1,
         random_state: int = 42
     ) -> Dict[str, Any]:
         """
@@ -308,6 +310,7 @@ class HyperparameterTuner:
             n_iter: 迭代次数
             cv: 交叉验证折数
             scoring: 评分方法
+            n_jobs: 并行任务数
             random_state: 随机种子
             
         Returns:
@@ -346,16 +349,26 @@ class HyperparameterTuner:
                     # 列表 -> Categorical
                     skopt_space[key] = Categorical(value)
                 else:
-                    skopt_space[key] = value
+                    # 默认情况，如果不是list也不是dist，可能是单值
+                    # skopt BayesSearchCV 也可以接受 Categorical([value]) 来表示固定值
+                    skopt_space[key] = Categorical([value]) if not isinstance(value, list) else Categorical(value)
                     
             param_space = skopt_space
+            print(f"DEBUG: Converted skopt_space: {skopt_space}")
             
         except ImportError:
             logger.warning("scikit-optimize未安装,使用随机搜索替代")
             # 将贝叶斯参数空间转换为随机搜索格式
             param_distributions = {}
             for key, value in param_space.items():
-                if isinstance(value, tuple) and len(value) == 2:
+                # 处理单值列表（即固定参数）
+                if isinstance(value, list) and len(value) == 1:
+                    param_distributions[key] = value
+                # 处理多值列表
+                elif isinstance(value, list) and len(value) > 1:
+                    param_distributions[key] = value
+                # 处理元组（通常是范围）
+                elif isinstance(value, tuple) and len(value) == 2:
                     param_distributions[key] = value
             return self.random_search(
                 algorithm_name, X_train, y_train,
@@ -363,6 +376,7 @@ class HyperparameterTuner:
             )
         
         logger.info(f"开始贝叶斯优化: {algorithm_name}")
+        logger.info(f"DEBUG: bayesian_optimization received param_space: {param_space}")
         start_time = time.time()
         
         # 创建算法实例
@@ -404,7 +418,7 @@ class HyperparameterTuner:
             n_iter=n_iter,
             cv=cv,
             scoring=scoring,
-            n_jobs=-1,
+            n_jobs=n_jobs,
             verbose=1,
             random_state=random_state,
             return_train_score=True

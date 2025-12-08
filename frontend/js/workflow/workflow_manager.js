@@ -415,8 +415,11 @@ class WorkflowManager {
                 <div class="form-group">
                     <label>固定超参数 (JSON格式):</label>
                     <textarea id="config-hyperparameters" class="form-control" rows="4" 
-                              placeholder='例如: {"random_state": 42, "n_jobs": -1}'>${JSON.stringify(config.fixed_hyperparameters || config.hyperparameters || {}, null, 2)}</textarea>
-                    <small class="form-text text-muted">在此处设置不需要调优的固定参数。如需调优，请在"超参数调优"节点中设置。</small>
+                              placeholder='例如: {"random_state": 42, "max_iter": 500, "n_jobs": -1}'>${JSON.stringify(config.fixed_hyperparameters || config.hyperparameters || {}, null, 2)}</textarea>
+                    <small class="form-text text-muted">
+                        在此处设置不需要调优的固定参数。如需调优，请在"超参数调优"节点中设置。<br>
+                        <strong>示例格式:</strong> <code>{"max_iter": 500, "random_state": 42}</code>
+                    </small>
                 </div>
             `, () => {
                 const algorithm = document.getElementById('config-algorithm').value;
@@ -440,6 +443,7 @@ class WorkflowManager {
                 this.canvas.updateNodeConfig(nodeId, {
                     algorithm: algorithm,
                     fixed_hyperparameters: hyperparameters, // 重命名为固定参数
+                    hyperparameters: null, // 清除旧的hyperparameters字段，避免干扰下游节点
                     algorithm_type: algorithmType
                 });
                 this.hideModal();
@@ -497,7 +501,10 @@ class WorkflowManager {
                 <label>参数搜索空间 (JSON格式):</label>
                 <textarea id="config-custom-param-grid" class="form-control" rows="5" 
                     placeholder='例如: {"n_estimators": [50, 100], "max_depth": [5, 10]}'>${config.custom_param_grid ? JSON.stringify(config.custom_param_grid, null, 2) : ''}</textarea>
-                <small class="form-text text-muted">定义需要搜索的参数网格。每个参数的值必须是列表。</small>
+                <small class="form-text text-muted">
+                    定义需要搜索的参数网格。每个参数的值必须是列表。<br>
+                    <strong>示例格式:</strong> <code>{"hidden_layer_sizes": [[50], [100]], "activation": ["relu", "tanh"]}</code>
+                </small>
             </div>
             <div class="form-group">
                 <label>
@@ -1093,12 +1100,14 @@ class WorkflowManager {
      * 超参数调优
      */
     async tuneHyperparameters(config, nodeId) {
+        console.log('DEBUG: tuneHyperparameters config:', config);
         // 构造参数网格: 优先使用当前节点定义的custom_param_grid (存储在config.hyperparameters中)
         let finalParamGrid = config.hyperparameters || {};
         
         // 如果有上游传入的固定参数，合并到网格中
         // 注意：GridSearchCV要求所有参数值必须是列表
         if (config.upstream_fixed_hyperparameters) {
+            console.log('DEBUG: Found upstream_fixed_hyperparameters:', config.upstream_fixed_hyperparameters);
             // 深拷贝以避免修改原始对象
             finalParamGrid = JSON.parse(JSON.stringify(finalParamGrid));
             
@@ -1112,6 +1121,7 @@ class WorkflowManager {
                 }
             }
         }
+        console.log('DEBUG: finalParamGrid sent to backend:', finalParamGrid);
 
         const response = await fetch('/api/hyperparameter/tune', {
             method: 'POST',
